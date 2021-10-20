@@ -10,7 +10,7 @@ from render import rendering
 FPS = 60
 u = 0.5
 
-map = [[1,1,1,1,1,1,1,1,1],[1,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,1],[1,1,1,1,1,1,1,1,1]]
+map = [[1,1,1,1,1,1,1,1,1],[1,0,0,0,0,0,0,0,1],[1,0,0,0,1,1,0,0,1],[1,0,0,0,0,1,1,0,1],[1,1,1,1,1,1,1,1,1]]
 
 class billy:
     
@@ -42,7 +42,7 @@ class billy:
 def start():
     global pe
 
-    rend = rendering(0.5,0.01,screen)
+    rend = rendering(0.5,0.005,screen)
 
     print("start")
     bill = billy(150,150,-math.pi/2,"VAn")
@@ -104,7 +104,7 @@ def update():
     
     a = bill.a
 
-    rend.render(map,0.01,0.01,a-u,a+u,0.01,7,bill.x,bill.y)
+    rend.render(map,0.005,0.1,a-u,a+u,0.15,7,bill.x,bill.y)
 
 
 

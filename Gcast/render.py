@@ -7,9 +7,6 @@ from pygame.locals import Color
 from pygame import display
 
 
-FPS = 60
-u = 0.5
-
 
 
 class rendering:
@@ -24,7 +21,7 @@ class rendering:
         self.W , self.H = W ,H
         self.dw = W*density / (2*u) 
 
-        self.ston = pygame.image.load(os.path.join(sys.path[0],"stone.png"))
+        self.ston = pygame.image.load(os.path.join(sys.path[0],"wall_slave.jpg"))
         floor =  pygame.image.load(os.path.join(sys.path[0],"floor.jpg"))
         self.floor = pygame.transform.scale(floor,(int(W*8.76/10.1),H//2))
 
@@ -33,6 +30,27 @@ class rendering:
         self.stepy = 100
 
 
+
+
+        
+        self.sky = pygame.Surface((W,H//2))
+        self.ground = pygame.Surface((W,H//2))
+
+        self.gradientRect(self.sky,(128,50,128),(0,0,0),pygame.Rect(0,0,W,H//2))
+        self.gradientRect(self.ground,(0,0,0),(128,50,50),pygame.Rect(0,0,W,H//2))
+
+    def find_clothest_point(self,map,l,xp,yp,xc,yc,cos,sin,lc,lmin):
+        
+
+        while map[int(yc)][int(xc)]!=0:
+            l = l -lc
+            xc = xc - cos
+            yc = yc - sin
+
+        if lc <= lmin:
+            return xc+cos,yc+sin,l+lc
+        if lc>lmin:
+            return self.find_clothest_point(map,l+lc,xp,yp,xc+cos,yc+sin,cos/10,sin/10,lc/10,lmin)
         
     def ray_cast(self,map,density,dl,a0,a1,minR,maxR,x0,y0):
         
@@ -46,105 +64,126 @@ class rendering:
         mapC =[[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]]
         mapP = [[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]]
 
+        mapCH =[[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]]
+        mapCV =[[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]]
+
         render_data = []
         render_pol = []
 
         a = a0
+
+        HM = True
+        VM = False
 
         while a < a1:
             
             mapP = [[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]]
             
             x , y = 0,0
-            render_data.append([8,1,1])
+            render_data.append([maxR,1,1])
             l = minR
             
             sin =math.sin(a)*dl
             cos=math.cos(a)*dl
 
-            up = True
-            left =True
-            right = True
-            down = True
-
             render_pol_buffer = []
-            previous = (0,0)
 
-            yp,xp = int(y+y0/stepy),int(x+x0/stepx)
-            
+            xp,yp = int(x+x0/stepx),int(y+y0/stepy)
 
-            #if abs((int(y0/stepy)-y0/stepy) / sin)<abs((int(x0/stepx)-x0/stepx) / cos):
-             #   k = 1
-            #else:
-             #   k =-1
-            
 
-            
 
             while l <maxR:
 
-                
+                rX,rY = int(x+x0/stepx),int(y+y0/stepy)
 
-                renderZ = map[int(y+y0/stepy)][int(x+x0/stepx)]
+                renderZ = map[rY][rX]
 
-                if mapP[int(y+y0/stepy)][int(x+x0/stepx)] == 0:
-                    mapP[int(y+y0/stepy)][int(x+x0/stepx)] += 1
-                    
-                    render_pol_buffer.append(l)
+                if mapP[rY][rX] == 0:
+                    mapP[rY][rX] = 1
+                    l_ = l
+                    xc,yc = x+x0/stepx,y+y0/stepy
+                    while map[int(yc)][int(xc)]!=0:
+                        l_ = l_ -dl/100
+                        xc = xc - cos/100
+                        yc = yc - sin/100
+                        rY,rX = int(yc),int(xc)
+                    render_pol_buffer.append(l_)
 
-                #if yp !=int(y+y0/stepy) or xp != int(x+x0/stepx):
-                    #k = -k
-
-                
-
-                if renderZ>0:
-                    #k = -k
-
-
-                    dx = int(x+x0/stepx) - x - x0/stepx
-                    dy = int(y+y0/stepy) - y - y0/stepy
-
-                    k = 0
-
-                    if yp >int(y+y0/stepy):
-                        k = abs(dx)
-                    if yp <int(y+y0/stepy):
-                        k = 1-abs(dx)
-
-                    if xp <int(x+x0/stepx):
-                        k = abs(dy)
-                    if xp >int(x+x0/stepx):
-                        k = 1-abs(dy)
+                if map[rY][rX]>0:
 
 
 
-                    #if a<=math.pi/2:
-                    #    dy = int(y+y0/stepy) - y - y0/stepy
 
-                    #if a>math.pi/2:
+                    xc,yc = x+x0/stepx,y+y0/stepy
+
+                    xc,yc,l = self.find_clothest_point(map,l,xp,yp,xc,yc,cos/10,sin/10,dl/10,0.01)
+
+
+                    #l = math.sqrt(math.pow(yc - y0/stepy,2)+math.pow(xc - x0/stepx,2))
+
+                    rY,rX = int(yc),int(xc)
+
+
+                     
+
+                    dx = abs(rX - xc)
+                    dy = abs(rY - yc)
 
                    
 
+                    if yp !=rY and xp != rX:
+                         k = max(dx,dy)
 
-                    
+                    else:
+                        if yp >rY:
+                            k = dx
+                            HM = True
+                            VM = False
 
-                    mapC[int(y+y0/stepy)][int(x+x0/stepx)] = mapC[int(y+y0/stepy)][int(x+x0/stepx)] + 1
+                        if yp <rY:
+                            k = 1-dx
+                            HM = True
+                            VM = False
+
+                        if xp <rX:
+                            k = dy
+                            VM = True
+                            HM = False
+
+                        if xp >rX:
+                            k = 1-dy
+                            VM = True
+                            HM =False
+
+
+
+
+                        
+
+                    mapC[rY][rX] += 1
+
+                    if HM:
+                        mapCH[rY][rX] += 1
+                    if VM:
+                        mapCV[rY][rX] += 1
+
                     render_pol.append(render_pol_buffer)
-                    render_data[-1]=[l, mapC[int(y+y0/stepy)][int(x+x0/stepx)],k]
-                    
+
+                    if HM:
+                        render_data[-1]=[l, mapCH[rY][rX],k]
+                    if VM:
+                        render_data[-1]=[l, mapCV[rY][rX],k]
 
                     break
 
-                yp,xp = int(y+y0/stepy),int(x+x0/stepx)
+                yp,xp = rY,rX
 
                 y = y + sin
                 x = x + cos
                 l = l+dl
 
-                
-
             a = a + density
-            #print(len(render_data),len(render_pol))
+
         return render_data,render_pol
 
 
@@ -158,32 +197,38 @@ class rendering:
         dw = self.dw
         pe = self.pe
 
+        x = 0
+
         for i in range(len(render_data)):
 
             if render_data[i][1] == 1:
                 n.append(i)
 
+
         n.append(len(render_data))
     
         for j in range(len(n)-1):
             n_.append(n[j+1]-n[j])
-        x = 0
+
         for j in range(len(n_)):
 
-            k1 = render_data[x][2]
-            k2 = render_data[x+n_[j]-1][2]
+            k1 = 1
+            k2 = 0
 
+            for i in range(x,x+n_[j]):
+                
 
+                k1 = min(k1,render_data[i][2])
+                k2 = max(k2,render_data[i][2])
             
 
             if k2<k1:
               k2,k1 = k1, k2
 
-            #k1 = 0
-            #k2 = 1
 
-
-
+            if k2 - k1 < 0.01:
+                k2 = 1
+                k1 = 0
 
 
 
@@ -192,15 +237,17 @@ class rendering:
             ston_.blit(ston,(0,0),(k1*width,0,width,height))
 
             width,height = ston_.get_width(), ston_.get_height()
-            #ston_ = ston
+
             for i in range(n_[j]):
 
                 stone.append(pygame.Surface((dw, int(2*pe/render_data[x][0])) ))
             
                 stone[-1].blit(pygame.transform.scale(ston_,(round(dw*n_[j]),int(2*pe/render_data[x][0]))),(0,0),(round(dw*i),0,dw,int(2*pe/render_data[x][0])))
+                
                 dark = pygame.Surface(stone[-1].get_size()).convert_alpha()
                 dark.fill((0, 0, 0, render_data[x][0]*255/7))
                 stone[-1].blit(dark,(0,0))
+
                 x = x+1
         return stone
 
@@ -260,9 +307,9 @@ class rendering:
 
     def draw_background(self):
         W,H = self.W,self.H
-        self.gradientRect(self.render_surface,(0,0,0),(128,50,128),pygame.Rect(0,H//2,W,H//2))
-        self.gradientRect(self.render_surface,(128,50,50),(0,0,0),pygame.Rect(0,0,W,H//2))
 
+        self.render_surface.blit(self.sky,(0,0))
+        self.render_surface.blit(self.ground,(0,H//2))
 
     def render(self,map,density,dl,a0,a1,minR,maxR,x0,y0):
 
