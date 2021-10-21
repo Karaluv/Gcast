@@ -6,11 +6,13 @@ import sys
 from pygame.locals import Color
 from pygame import display
 from render import rendering
+import mazeG
 
 FPS = 60
 u = 0.5
 
-map = [[1,1,1,1,1,1,1,1,1],[1,0,0,0,0,0,0,0,1],[1,0,0,0,1,1,0,0,1],[1,0,0,0,0,1,1,0,1],[1,1,1,1,1,1,1,1,1]]
+
+
 
 class billy:
     
@@ -27,26 +29,19 @@ class billy:
 
     def Move(self,l,n):
         a = self.a
-        x_ = self.x+l*math.sin(a)+n*math.cos(a)
-        y_ = self.y+l*math.cos(a)+n*math.sin(a)
+        x_ = self.x-l*math.sin(math.pi - a)+n*math.cos(a)
+        y_ = self.y-l*math.cos(math.pi - a)+n*math.sin(a)
         global map1
-        if map[int(y_/100+0.25)][int(x_/100+0.25)] == 0:
-            if map[int(y_/100-0.25)][int(x_/100-0.25)] == 0:
-                if map[int(y_/100-0.25)][int(x_/100+0.25)] == 0:
-                    if map[int(y_/100+0.25)][int(x_/100-0.25)] == 0:
+        if map[int(y_/100+0.05)][int(x_/100+0.05)] == 0:
+            if map[int(y_/100-0.05)][int(x_/100-0.05)] == 0:
+                if map[int(y_/100-0.05)][int(x_/100+0.05)] == 0:
+                    if map[int(y_/100+0.05)][int(x_/100-0.05)] == 0:
                         self.y = y_
                         self.x = x_
 
 
 
-def start():
-    global pe
 
-    rend = rendering(0.5,0.005,screen)
-
-    print("start")
-    bill = billy(150,150,-math.pi/2,"VAn")
-    return  rend,bill 
 
 def input(user_input):
 
@@ -55,7 +50,7 @@ def input(user_input):
 
 
     for event in user_input:
-        global kw,ks,kd,ka
+        global kw,ks,kd,ka,shift
 
         if event.type == pygame.KEYDOWN:
             #if event.key == pygame.K_q:
@@ -68,6 +63,8 @@ def input(user_input):
                 ka =True
             if event.key == pygame.K_d:
                 kd =True
+            if event.key == pygame.K_LSHIFT:
+                shift =True
 
             if event.key == pygame.K_q:
                 bill.Rotate(-0.1)
@@ -83,6 +80,8 @@ def input(user_input):
                 ka =False
             if event.key == pygame.K_d:
                 kd =False
+            if event.key == pygame.K_LSHIFT:
+                shift =False
 
         
 
@@ -96,20 +95,53 @@ def input(user_input):
         if event.type == pygame.MOUSEBUTTONDOWN:
             #mouse event part
             #shoot(event.pos)
-            print("shoot")
+            global fire
+            fire = 5
+
+def draw_stuff():
+    global fire
+    if fire == 0:
+        screen.blit(luger,(W-550,H-luger.get_height()+50))
+    else:
+        screen.blit(luger_fire,(W-550,H-luger.get_height()+50))
+        fire = fire -1
 
 
+def start():
+    global pe
+
+    height = 11
+    width = 27
+
+    mazeG.height = height
+    mazeG.width = width
+
+    mazeG
+
+    maze = [[1,1,1,1,1,1,1,1],[1,0,0,0,0,0,0,1],[1,0,0,1,1,0,0,1],[1,0,0,0,1,1,0,1],[1,1,1,1,1,1,1,1]]
+
+    rend = rendering(0.5,0.006,render_zone,height+4,width+4)
+
+    print("start")
+    bill = billy((width)*100+50,(height+1)*100+50,-math.pi/2,"VAn")
+    print(mazeG.maze[int(bill.y/100)][int(bill.x/100)])
+
+    return  rend,bill,mazeG.maze
 
 def update():
     
     a = bill.a
 
-    rend.render(map,0.005,0.1,a-u,a+u,0.15,7,bill.x,bill.y)
-
-
+    x = rend.render(map,0.006,0.03,a-u,a+u,0.15,7,bill.x,bill.y)
+    final_render = pygame.transform.smoothscale(render_zone,(int(W*render_zone.get_width()/x),int(H+40)))
+    screen.blit(final_render,(math.sin(Tx)*10-10,math.cos(Ty)*20-20))
+    draw_stuff()
+    #pygame.draw.rect(screen,(128,128,0),(1367,0,800,1080),0)
 
 
 pygame.init()
+
+
 
 pygame.mouse.set_visible(False)
 
@@ -117,19 +149,26 @@ infoObject = pygame.display.Info()
 
 W,H = infoObject.current_w, infoObject.current_h
 
-W,H = W // 2,H // 2
+#W,H = W // 2,H // 2
+
+render_zone = pygame.Surface(((W+40)//2,(H+30)//2))
+
 ys = 10
 h0 = 10000
 l0 = 100
 w0 = 1
 dens = 0.01
 dw = W*0.01 / (2*u) 
+fire = 0
 
 
-ston = pygame.image.load(os.path.join(sys.path[0],"stone.png"))
-floor =  pygame.image.load(os.path.join(sys.path[0],"floor.jpg"))
-floor = pygame.transform.scale(floor,(int(W*8.76/10.1),H//2))
+wh = (255,255,255)
 
+
+luger =  pygame.image.load(os.path.join(sys.path[0],"luger.png"))
+luger_fire =  pygame.image.load(os.path.join(sys.path[0],"luger_fire.png"))
+luger.set_colorkey(wh)
+luger_fire.set_colorkey(wh)
 i =0
 
 move = False
@@ -139,31 +178,24 @@ move = False
 
 #screen = pygame.display.set_mode((infoObject.current_w, infoObject.current_h),pygame.FULLSCREEN)
 
-screen = pygame.display.set_mode((infoObject.current_w // 2, infoObject.current_h // 2))
+screen = pygame.display.set_mode((W, H))
 
 pygame.display.update()
 clock = pygame.time.Clock()
 finished = False
 bl = (0,0,0)
-rend,bill = start()
+rend,bill,map = start()
 L0 = 25
 pe =200
 stepx =100
 stepy = 100
 
-kw,ks,ka,kd = False,False,False,False
+Tx = 0
+Ty = 0
 
-def gradientRect( window, left_colour, right_colour, target_rect ):
-    """ Draw a horizontal-gradient filled rectangle covering <target_rect> """
-    colour_rect = pygame.Surface( ( 2, 2 ) )                                   # tiny! 2x2 bitmap
-    pygame.draw.line( colour_rect, left_colour,  ( 0,0 ), ( 1,0 ) )            # left colour line
-    pygame.draw.line( colour_rect, right_colour, ( 0,1 ), ( 1,1 ) )            # right colour line
-    colour_rect = pygame.transform.smoothscale( colour_rect, ( target_rect.width, target_rect.height ) )  # stretch!
-    window.blit( colour_rect, target_rect )                                    # paint it
+kw,ks,ka,kd,shift = False,False,False,False,False
 
 
-
-#main loop
 while not finished:
     clock.tick(FPS)
     
@@ -172,13 +204,27 @@ while not finished:
     pygame.display.flip()
     screen.fill(bl)
 
+    speed = 1
+
+    if shift:
+        speed = 2
+    else:
+        speed = 1
     if kw:
-        bill.Move(0,3)
+        bill.Move(0,3*speed)
+        Tx = Tx+0.1*speed
+        Ty = Ty+0.1*speed
     if ks:
-        bill.Move(0,-3)
+        bill.Move(0,-3*speed)
+        Tx = Tx+0.1*speed
+        Ty = Ty+0.1*speed
     if ka:
-        bill.Move(-3,0)
+        bill.Move(-3*speed,0)
+        Tx = Tx+0.1*speed
+        Ty = Ty+0.1*speed
     if kd:
-        bill.Move(3,0)
+        bill.Move(3*speed,0)
+        Tx = Tx+0.1*speed
+        Ty = Ty+0.1*speed
 
     
