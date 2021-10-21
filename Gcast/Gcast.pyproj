@@ -22,7 +22,13 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Gcast.py" />
+    <Compile Include="mazeG.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="render.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="tst.py">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
