@@ -21,11 +21,20 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="billy.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Gcast.py" />
+    <Compile Include="input.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="mazeG.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="render.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="slave.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="tst.py">
