@@ -29,7 +29,7 @@ class billy:
 
         self.max_shoot_frame = 8
 
-        self.shoot_speed = 0.5
+        self.shoot_speed = 0.7
 
         self.makarov.append([])
         path = os.path.join(sys.path[0],"pony\\weapon\\makarov\\stay")
@@ -108,12 +108,10 @@ class billy:
     
 
         while not find and l<maxR:
-            l = dl+l
-            x = x+dcos
-            y = y+dsin
 
 
-            if map[int(y)][int(x)] == 1:
+
+            if map[int(y)][int(x)] > 0 :
                 find = True
                 break
             else:
@@ -125,4 +123,8 @@ class billy:
                         find = True
                         del slaves[j]
                         break
+
+            l = dl+l
+            x = x+dcos
+            y = y+dsin
         return slaves
