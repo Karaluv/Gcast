@@ -9,23 +9,23 @@ from render import rendering
 import mazeG
 from slave import slave
 from billy import billy
-import threading
+import multiprocessing
+
+from multiprocessing import Process
 
 
-
-
-FPS = 60
-u = 0.5
+FPS = 20
+u = 0.7
 
 stepx = 100
 stepy = 100
 pe = 100
 
-dl = 0.01
-density = 0.03
+dl = 0.2
+density = 0.009
 
-height = 11
-width = 27
+height = 10
+width = 10
 
 
 
@@ -79,48 +79,43 @@ def input(user_input):
         if event.type == pygame.QUIT:
             finished = True
         if event.type == pygame.MOUSEBUTTONDOWN:
-            if fire == 0:
+            if bill.shoot_frame == 0:
                 global slaves 
                 slaves = bill.shoot(slaves,map)
-                fire = 5
-                pygame.mixer.Channel(1).play(pygame.mixer.Sound(os.path.join(sys.path[0],"luger_sound.mp3")))
-
+                bill.shoot_frame = 1
+                pygame.mixer.Channel(1).play(pygame.mixer.Sound(os.path.join(sys.path[0],"pony\\weapon\\makarov\\shoot.mp3")))
+                pygame.mixer.Channel(1).set_volume(2)
 
                     
 
 def draw_stuff():
     global fire
-    if fire == 0:
-        screen.blit(luger,(W-550,H-luger.get_height()+50))
-    else:
-        if fire > 2:
-            screen.blit(luger_fire,(W-550,H-luger.get_height()+50))
-        else:
-            screen.blit(luger,(W-550,H-luger.get_height()+50))
-        fire = fire -1
+    bill.draw(screen)
+
 
 
 def start():
 
 
-    global pe,height,width
+    global pe,height,width,W,H,density,dl
     
-    mazeG.height = height
-    mazeG.width = width
 
     mazeG
 
     slaves = []
 
-    for i in range(160):
-        x,y = randint(1,27+3)+0.5,randint(1,11+3)+0.5
+    for i in range(50):
+        x,y = randint(2,height)+0.5,randint(2,width)+0.5
         if mazeG.maze[int(y)][int(x)] == 0:
-            slaves.append(slave(0,x,y,100,100))
+            slaves.append(slave(randint(0,2),x,y,100,100))
 
-    rend = rendering(0.5,0.006,render_zone,height+4,width+4)
+    rend = rendering(0.5,density,dl,render_zone,height+2,width+2)
 
     print("start")
-    bill = billy((width)*100+40,(height+2)*100+40,-math.pi/2,"VAn")
+    
+    bill = billy((width-1)*100+40,(height)*100+40,2*math.pi/2,"VAn",W,H)
+    if mazeG.maze[int(bill.y/100)][int(bill.x/100)] != 0 :
+        bill = billy((width-2)*100+40,(height)*100+40,2*math.pi/2,"VAn",W,H)
     print(mazeG.maze[int(bill.y/100)][int(bill.x/100)])
 
     return  rend,bill,mazeG.maze,slaves
@@ -146,7 +141,10 @@ def update():
         slaves[i].walk(map)
         enemies.append([slaves[i].x,slaves[i].y,slaves[i].type,slaves[i].frame])
 
-    x = rend.render(map,enemies,density,a-u,a+u,0.15,7,bill.x,bill.y)
+    rend.render(map,enemies,a-u,a+u,0.15,7,bill.x,bill.y)
+
+
+    x = rend.xs
     final_render = pygame.transform.smoothscale(render_zone,(int(W*render_zone.get_width()/x),int(H+40)))
     screen.blit(final_render,(math.sin(Tx)*10-10,math.cos(Ty)*20-20))
     draw_stuff()
@@ -170,13 +168,10 @@ Ty = 0
 wh = (255,255,255)
 bl = (0,0,0)
 
-luger =  pygame.image.load(os.path.join(sys.path[0],"luger.png"))
-luger_fire =  pygame.image.load(os.path.join(sys.path[0],"luger_fire.png"))
-luger.set_colorkey(wh)
-luger_fire.set_colorkey(wh)
 
-pygame.mixer.Channel(0).play(pygame.mixer.Sound(os.path.join(sys.path[0],"gachi_doom.mp3")))
-
+pygame.mixer.music.load(os.path.join(sys.path[0]+"\\pony\\music\\","main_theme.mp3"))
+pygame.mixer.music.set_volume(0.5)
+pygame.mixer.music.play(-1)
 
 screen = pygame.display.set_mode((W, H))
 
@@ -185,12 +180,16 @@ clock = pygame.time.Clock()
 
 finished = False
 
-
 rend,bill,map,slaves = start()
 
 
 kw,ks,ka,kd,shift = False,False,False,False,False
 
+import time
+
+start_time = time.time()
+x = 1 # displays the frame rate every 1 second
+counter = 0
 
 
 
@@ -201,6 +200,13 @@ while not finished:
     update()
     pygame.display.flip()
     screen.fill(bl)
+
+
+    counter+=1
+    if (time.time() - start_time) > x :
+        print("FPS: ", counter / (time.time() - start_time))
+        counter = 0
+        start_time = time.time()
 
     speed = 1
 
