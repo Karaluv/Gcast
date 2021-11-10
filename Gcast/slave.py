@@ -24,6 +24,10 @@ class slave:
             self.maxFrame  = 9
             self.speed_animation = 0.2
 
+        if type == 3:
+            self.maxFrame  = 105
+            self.speed_animation = 1
+
         self.frame = randint(0,self.maxFrame) 
 
     def walk(self,map):

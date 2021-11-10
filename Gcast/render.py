@@ -90,6 +90,7 @@ class rendering:
             self.sprites[-1].append(pygame.image.load(files[0]+"\\"+onlyfiles[2][i]).convert_alpha())
 
 
+
         self.pe = 200
         self.stepx =100
         self.stepy = 100
@@ -101,8 +102,8 @@ class rendering:
         self.sky = pygame.Surface((W,H//2-maxR/self.pe))
         self.ground = pygame.Surface((W,H//2-maxR/self.pe))
 
-        self.gradientRect(self.sky,(153, 153, 102),(0,0,0),pygame.Rect(0,0,W,H//2))
-        self.gradientRect(self.ground,(0,0,0),(135,62,35),pygame.Rect(0,0,W,H//2))
+        self.gradientRect(self.sky,(153, 153, 102),(0,0,0),pygame.Rect(0,0,W,H//2-maxR/self.pe))
+        self.gradientRect(self.ground,(0,0,0),(135,62,35),pygame.Rect(0,0,W,H//2-maxR/self.pe))
 
         self.width = width
         self.height = height
@@ -168,7 +169,7 @@ class rendering:
                     w = k / density
                     if ch<0 and zn<0:
                         if wall_data[min(int(w),len(wall_data)-1)][0]>l:
-                            enemy_render_data.append([l,w,enemies[i][2],enemies[i][3]])
+                            enemy_render_data.append([l+0.3,w,enemies[i][2],enemies[i][3]])
 
         return enemy_render_data
 
@@ -207,11 +208,7 @@ class rendering:
 
         ugol = 1
 
-        dl_ = dl
-        sin_ = sin
-        cos_ = cos
-
-        sc = 10
+        sc = 4
         x,y =0,0
 
         rX,rY = int(x+x0/stepx),int(y+y0/stepy)
@@ -257,18 +254,21 @@ class rendering:
                             d -=(ugol+1)
                             t -= (ugol+1)*density
 
-                            del render_data[-(ugol):]
+                            del render_data[-(ugol+1):]
+                            del history[-(ugol+1):]
 
-                            rX,rY,VM = history[-1][0],history[-1][1],history[-1][2]
+                            if len(history)>3:
+                                rX,rY,VM = history[-(3)][0],history[-(3)][1],history[-(3)][2]
+
+                            elif len(history)>2:
+                                rX,rY,VM = history[-(2)][0],history[-(2)][1],history[-(2)][2]
+                            else:
+                                rX,rY,VM = history[-(1)][0],history[-(1)][1],history[-(1)][2]
+
                             ugol +=1
                             break
                     
-                
-
                 if map[rY][rX]>0:
-                    
-
-                        
 
 
                     xc,yc = x+x0/stepx,y+y0/stepy
@@ -340,10 +340,16 @@ class rendering:
                                     d -= (ugol+1)
                                     t -= (ugol+1)*density
                                 
-                                    del render_data[-ugol:]
+                                    del render_data[-(ugol+1):]
+                                    del history[-(ugol+1):]
 
+                                    if len(history)>3:
+                                        rX,rY,VM = history[-(3)][0],history[-(3)][1],history[-(3)][2]
 
-                                    rX,rY,VM = history[-1][0],history[-1][1],history[-1][2]
+                                    elif len(history)>2:
+                                        rX,rY,VM = history[-(2)][0],history[-(2)][1],history[-(2)][2]
+                                    else:
+                                        rX,rY,VM = history[-(1)][0],history[-(1)][1],history[-(1)][2]
 
                                     ugol +=2
 
@@ -373,7 +379,6 @@ class rendering:
             t += density
             
             d+= 1
-
 
         return render_data
 

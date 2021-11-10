@@ -6,13 +6,14 @@ import sys
 from pygame.locals import Color
 from pygame import display
 from render import rendering
-import mazeG
+
 from slave import slave
 from billy import billy
 import multiprocessing
 
 from multiprocessing import Process
 
+import mazeG
 
 FPS = 20
 u = 0.7
@@ -21,11 +22,12 @@ stepx = 100
 stepy = 100
 pe = 100
 
-dl = 0.2
+dl = 0.3
 density = 0.009
 
-height = 10
-width = 10
+height = 15
+width = 15
+
 
 
 
@@ -56,6 +58,10 @@ def input(user_input):
                 kd =True
             if event.key == pygame.K_LSHIFT:
                 shift =True
+            if event.key == pygame.K_r:
+                if bill.shoot_frame == 0 and not bill.B_reload:
+                    bill.reload()
+
 
 
         if event.type == pygame.KEYUP:
@@ -72,19 +78,18 @@ def input(user_input):
 
         
 
-        bill.Rotate((-W/2 +  pygame.mouse.get_pos()[0])/400)
+        bill.Rotate((-W/2 +  pygame.mouse.get_pos()[0])/800)
         pygame.mouse.set_pos((W//2,H//2))
  
 
         if event.type == pygame.QUIT:
             finished = True
         if event.type == pygame.MOUSEBUTTONDOWN:
-            if bill.shoot_frame == 0:
+            if bill.shoot_frame == 0 and not bill.B_reload:
                 global slaves 
                 slaves = bill.shoot(slaves,map)
                 bill.shoot_frame = 1
-                pygame.mixer.Channel(1).play(pygame.mixer.Sound(os.path.join(sys.path[0],"pony\\weapon\\makarov\\shoot.mp3")))
-                pygame.mixer.Channel(1).set_volume(2)
+
 
                     
 
@@ -100,11 +105,11 @@ def start():
     global pe,height,width,W,H,density,dl
     
 
-    mazeG
+    mazeG.main(height,width)
 
     slaves = []
 
-    for i in range(50):
+    for i in range(height*width//2):
         x,y = randint(2,height)+0.5,randint(2,width)+0.5
         if mazeG.maze[int(y)][int(x)] == 0:
             slaves.append(slave(randint(0,2),x,y,100,100))
@@ -146,7 +151,7 @@ def update():
 
     x = rend.xs
     final_render = pygame.transform.smoothscale(render_zone,(int(W*render_zone.get_width()/x),int(H+40)))
-    screen.blit(final_render,(math.sin(Tx)*10-10,math.cos(Ty)*20-20))
+    screen.blit(final_render,(math.sin(Tx)*10-10,math.cos(Ty)*18-20))
     draw_stuff()
 
 
@@ -208,7 +213,7 @@ while not finished:
         counter = 0
         start_time = time.time()
 
-    speed = 1
+    speed = 0.5
 
     if shift:
         speed = 2
