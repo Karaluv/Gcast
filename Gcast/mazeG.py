@@ -17,8 +17,8 @@ def build_matrix(rows, cols):
 
 ## Functions
 def printMaze(maze):
-	for i in range(0, height+4):
-		for j in range(0, width+4):
+	for i in range(0, height+2):
+		for j in range(0, width+2):
 			if (maze[i][j] == 0):
 				print(Fore.WHITE + str(maze[i][j]), end=" ")
 			elif (maze[i][j] == 0):
@@ -32,27 +32,27 @@ def transform_maze(maze):
 	for i in range(0, height):
 		for j in range(0, width):
 			if (maze[i][j] == 'u'):
-				maze[i][j] = 0
+				maze[i][j] = 3
 			elif (maze[i][j] == 'c'):
 				maze[i][j] = 0
 			else:
-				maze[i][j] = 1
+				maze[i][j] = random.randint(1,2)
 
 def border(maze):
 	border = build_matrix(height+4,width+4)
-	for i in range(0, height+4):
-		for j in range(0, width+4):
+	for i in range(0, height+2):
+		for j in range(0, width+2):
 			if j == 0:
-				border[i][j] = 1
+				border[i][j] = 4
 			if i == 0:
-				border[i][j] = 1
-			if j == width+3:
-				border[i][j] = 1
-			if i == height+3:
-				border[i][j] = 1
-			if (i-2) in range(height):
-				if (j-2) in range(width):
-					border[i][j] = maze[i-2][j-2]
+				border[i][j] = 4
+			if j == width+1:
+				border[i][j] = 3
+			if i == height+1:
+				border[i][j] = 3
+			if (i-1) in range(height):
+				if (j-1) in range(width):
+					border[i][j] = maze[i-1][j-1]
 	return border
 
 # Find number of surrounding cells
@@ -75,8 +75,8 @@ def surroundingCells(rand_wall):
 wall = 'w'
 cell = 'c'
 unvisited = 'u'
-height = 11
-width = 27
+height = 10
+width = 10
 maze = []
 
 # Initialize colorama

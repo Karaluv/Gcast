@@ -14,13 +14,22 @@ class slave:
         self.stepx = stepx
         self.stepy = stepy
         if type == 0:
-            self.maxFrame  = 100
+            self.maxFrame  = 37
+            self.speed_animation = 0.2
+        if type == 1:
+            self.maxFrame  = 10
+            self.speed_animation = 0.2
+
+        if type == 2:
+            self.maxFrame  = 9
+            self.speed_animation = 0.2
+
         self.frame = randint(0,self.maxFrame) 
 
     def walk(self,map):
 
-        self.frame+=1
-        if self.frame == self.maxFrame:
+        self.frame+=self.speed_animation
+        if self.frame > self.maxFrame-1:
             self.frame = 0
 
         a = self.rotation

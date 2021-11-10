@@ -1,14 +1,19 @@
 from random import randint
 import math
+import pygame
+import sys
+import os
 
 class billy:
     
-    def __init__(self, x,y,a,name):
+    def __init__(self, x,y,a,name,W,H):
         self.x = x
         self.y = y
         self.a = a
         self.name = name
 
+        self.W = W
+        self.H = H
 
         self.maxR = 7
         self.dl = 0.01
@@ -17,6 +22,34 @@ class billy:
         self.stepy = 100
 
         self.pi_2 = math.pi*2
+
+        self.makarov =[]
+
+        self.shoot_frame = 0
+
+        self.max_shoot_frame = 8
+
+        self.shoot_speed = 0.5
+
+        self.makarov.append([])
+        path = os.path.join(sys.path[0],"pony\\weapon\\makarov\\stay")
+        files = next(os.walk(path))
+        onlyfiles = next(os.walk(path)) 
+        print(onlyfiles)
+        for i in range(len(onlyfiles[2])):
+            print(files[0]+"\\"+onlyfiles[2][i])
+            self.makarov[-1].append(pygame.image.load(files[0]+"\\"+onlyfiles[2][i]).convert_alpha())
+
+
+        self.makarov.append([])
+        path = os.path.join(sys.path[0],"pony\\weapon\\makarov\\shoot")
+        files = next(os.walk(path))
+        onlyfiles = next(os.walk(path)) 
+        print(onlyfiles)
+        for i in range(len(onlyfiles[2])):
+            print(files[0]+"\\"+onlyfiles[2][i])
+            self.makarov[-1].append(pygame.image.load(files[0]+"\\"+onlyfiles[2][i]).convert_alpha())
+
 
     def Rotate(self,a):
         self.a = self.a +a
@@ -44,6 +77,19 @@ class billy:
 
     def update(self):
         self.a = self.a % self.pi_2
+
+        if self.shoot_frame > 0:
+            self.shoot_frame += self.shoot_speed
+            if self.shoot_frame >= self.max_shoot_frame-1:
+                self.shoot_frame = 0
+
+    def draw(self,screen):
+        W,H = self.W,self.H
+        if self.shoot_frame == 0:
+            screen.blit(self.makarov[0][0],(screen.get_width()//2*1.2-self.makarov[0][0].get_width()//2,screen.get_height()-self.makarov[0][0].get_height()))     
+        if self.shoot_frame > 0:
+            screen.blit(self.makarov[1][int(self.shoot_frame-1)],(screen.get_width()//2*1.2-self.makarov[0][0].get_width()//2,screen.get_height()-self.makarov[0][0].get_height())) 
+
 
     def shoot(self,slaves,map):
         a = self.a
