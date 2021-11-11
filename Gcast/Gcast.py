@@ -15,7 +15,7 @@ from multiprocessing import Process
 
 import mazeG
 
-FPS = 20
+FPS = 60
 u = 0.7
 
 stepx = 100
@@ -106,6 +106,8 @@ def start():
     
 
     mazeG.main(height,width)
+
+    mazeG.maze = tuple(map(tuple, mazeG.maze))
 
     slaves = []
 
