@@ -8,6 +8,8 @@ from pygame import display
 import copy
 import threading
 
+from functools import lru_cache
+
 
 class rendering:
 
@@ -108,6 +110,7 @@ class rendering:
         self.width = width
         self.height = height
 
+    @lru_cache()
     def find_clothest_point(self,map,l,xp,yp,xc,yc,cos,sin,lc,lmin):
         
 
@@ -121,6 +124,7 @@ class rendering:
         if lc>lmin:
             return self.find_clothest_point(map,l+lc,xp,yp,xc+cos,yc+sin,cos/10,sin/10,lc/10,lmin)
 
+    @lru_cache()
     def find_clothest_gran(self,l,xp,yp,xc,yc,cos,sin,lc,lmin):
         
 
@@ -138,6 +142,7 @@ class rendering:
         if lc>lmin:
             return self.find_clothest_gran(l+lc,xp,yp,xc+cos,yc+sin,cos/10,sin/10,lc/10,lmin)
 
+    
     def enemy_ray_caster(self,wall_data,enemies,a0,a1,minR,maxR,x0,y0):
 
         enemy_render_data = []
@@ -174,7 +179,7 @@ class rendering:
         return enemy_render_data
 
 
-        
+    #@lru_cache()
     def ray_cast(self,map,a0,a1,minR,maxR,x0,y0):
         
         dl = self.dl
@@ -190,6 +195,7 @@ class rendering:
 
         mapCH = [[0 for _ in range(width)] for _ in range(height)]
         mapCV = [[0 for _ in range(width)] for _ in range(height)]
+
 
         render_data = []
 
@@ -380,6 +386,7 @@ class rendering:
             
             d+= 1
 
+        render_data = tuple(tuple(i) for i in render_data)
         return render_data
 
 
@@ -434,7 +441,8 @@ class rendering:
 
     def render(self,map,enemies,a0,a1,minR,maxR,x0,y0):
 
-        render_wall_data  = self.ray_cast(map,a0,a1,minR,maxR,x0,y0)
+        render_wall_data = [list(item) for item in self.ray_cast(map,a0,a1,minR,maxR,x0,y0)]
+
         self.draw_background()
 
         enemy_render_data = self.enemy_ray_caster(render_wall_data,enemies,a0,a1,minR,maxR,x0,y0)
