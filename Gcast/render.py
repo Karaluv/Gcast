@@ -179,8 +179,11 @@ class rendering:
         return enemy_render_data
 
 
-    #@lru_cache()
+    @lru_cache()
     def ray_cast(self,map,a0,a1,minR,maxR,x0,y0):
+
+        # тут создаешь как хочешь tuple размером (int(1/density)+1) строк и в каждой строке 6 элементов: все из них по умолчанию 0 
+        #в этой функции ты лишь записываешь и меняешь первые 5 из них l, t*w-d,mapCV[rY][rX],k,map[rY][rX]
         
         dl = self.dl
         pe = self.pe
@@ -192,6 +195,7 @@ class rendering:
         w = self.W
 
         history =[]
+        
 
         mapCH = [[0 for _ in range(width)] for _ in range(height)]
         mapCV = [[0 for _ in range(width)] for _ in range(height)]
@@ -238,11 +242,12 @@ class rendering:
             render_data.append([maxR,t*w-d,1,1,1])
             history.append([0,0,True])
 
-
+            
+            
             while l <maxR:
                 rX,rY = int(x+x0/stepx),int(y+y0/stepy)
 
-                
+                #этот if можешь закоментить если сложно
                 if ugol == 0:
                     if l>render_data[-2][0]+0.9:
 
@@ -321,6 +326,7 @@ class rendering:
 
                     history[-1]=[rX,rY,VM]
 
+                    #этот if можешь закоментить если сложно
                     if ugol == 0:
                         if len(render_data)>3:
                             if l<render_data[-2][0]-0.9 or history[-2][2] != VM:
@@ -387,6 +393,7 @@ class rendering:
             d+= 1
 
         render_data = tuple(tuple(i) for i in render_data)
+
         return render_data
 
 
@@ -441,15 +448,22 @@ class rendering:
 
     def render(self,map,enemies,a0,a1,minR,maxR,x0,y0):
 
+        
+
         render_wall_data = [list(item) for item in self.ray_cast(map,a0,a1,minR,maxR,x0,y0)]
 
+        # на это похуй
         self.draw_background()
 
         enemy_render_data = self.enemy_ray_caster(render_wall_data,enemies,a0,a1,minR,maxR,x0,y0)
-        render_wall_data = self.texturize(render_wall_data)
 
+        # в этой функции меняется 6й элемент массива - surface
+        render_wall_data = self.texturize(render_wall_data)
+        
+        # блок сортировки переделать под tuple с сортировкой строк по первому элементу в порядке убывания
         render_wall_data.sort(key=lambda item: item[0], reverse = True)
         enemy_render_data.sort(key=lambda item: item[0], reverse = True)
+
 
         res = self.draw_wall(a0,a1,render_wall_data, enemy_render_data)
 

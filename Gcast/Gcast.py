@@ -107,7 +107,7 @@ def start():
 
     mazeG.main(height,width)
 
-    mazeG.maze = tuple(map(tuple, mazeG.maze))
+    mazeG.maze = tuple(tuple(i) for i in mazeG.maze)
 
     slaves = []
 
@@ -147,6 +147,8 @@ def update():
     for i in range(len(slaves)):
         slaves[i].walk(map)
         enemies.append([slaves[i].x,slaves[i].y,slaves[i].type,slaves[i].frame])
+
+    enemies = tuple(tuple(i) for i in enemies)
 
     rend.render(map,enemies,a-u,a+u,0.15,7,bill.x,bill.y)
 
