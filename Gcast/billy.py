@@ -52,8 +52,6 @@ class billy:
 
         self.ammo = 8
 
-        self.max_ammo = 8
-
         self.speed = 1
         self.sens = 2000
 
@@ -78,7 +76,9 @@ class billy:
         onlyfiles = next(os.walk(path))
         # print(onlyfiles)
         for i in range(len(onlyfiles[2])):
+
             self.makarov[-1].append(pygame.image.load(files[0] + "\\(" + str(i + 1) + ").png").convert_alpha())
+
 
         self.makarov.append([])
         path = os.path.join(sys.path[0], "pony\\weapon\\makarov\\reload")
@@ -86,7 +86,9 @@ class billy:
         onlyfiles = next(os.walk(path))
         # print(onlyfiles)
         for i in range(len(onlyfiles[2])):
+
             self.makarov[-1].append(pygame.image.load(files[0] + "\\(" + str(i + 1) + ").png").convert_alpha())
+
 
     def Rotate(self, a):
         self.a = self.a + a
@@ -239,4 +241,5 @@ class billy:
             x = x + dcos
             y = y + dsin
         return slaves
+
 

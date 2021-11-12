@@ -101,11 +101,11 @@ class rendering:
 
         maxR = 7
         
-        self.sky = pygame.Surface((W,H//2-self.pe/maxR))
-        self.ground = pygame.Surface((W,H//2-self.pe/maxR))
+        self.sky = pygame.Surface((W,H//2-maxR/self.pe))
+        self.ground = pygame.Surface((W,H//2-maxR/self.pe))
 
-        self.gradientRect(self.sky,(153, 153, 102),(0,0,0),pygame.Rect(0,0,W,H//2-self.pe/maxR))
-        self.gradientRect(self.ground,(0,0,0),(135,62,35),pygame.Rect(0,0,W,H//2-self.pe/maxR))
+        self.gradientRect(self.sky,(153, 153, 102),(0,0,0),pygame.Rect(0,0,W,H//2-maxR/self.pe))
+        self.gradientRect(self.ground,(0,0,0),(135,62,35),pygame.Rect(0,0,W,H//2-maxR/self.pe))
 
         self.width = width
         self.height = height
@@ -143,14 +143,21 @@ class rendering:
             return self.find_clothest_gran(l+lc,xp,yp,xc+cos,yc+sin,cos/10,sin/10,lc/10,lmin)
 
     
-    def enemy_ray_caster(self,wall_data,enemies,cos0,sin0,cos1,sin1,minR,maxR,x0,y0):
+    def enemy_ray_caster(self,wall_data,enemies,a0,a1,minR,maxR,x0,y0):
 
         enemy_render_data = []
 
+
         density,pe,stepx ,stepy=self.density,self.pe,self.stepx,self.stepy
 
-        for i in range(0,len(enemies),4):
-            x,y = enemies[i+0], enemies[i+1]
+
+        density = self.density
+        pe = self.pe
+        stepx =self.stepx
+        stepy = self.stepy
+
+        for i in range(len(enemies)):
+            x,y = enemies[i][0], enemies[i][1]
             if abs(x - x0/stepx)<maxR:
                 if abs(y - y0/stepy)<maxR:
                     l_2 = (x-x0/stepx)**2+(y-y0/stepy)**2
@@ -166,15 +173,25 @@ class rendering:
                     w = k / density
                     if ch<0 and zn<0:
                         if wall_data[min(int(w),len(wall_data)-1)][0]>l:
-                            enemy_render_data.append([l+minR,w,enemies[i+2],enemies[i+3]])
+                            enemy_render_data.append([l+0.3,w,enemies[i][2],enemies[i][3]])
 
         return enemy_render_data
 
 
-    def ray_cast(self,map,cos,sin,cos1,sin1,minR,maxR,x0,y0):
+    @lru_cache()
+    def ray_cast(self,map,a0,a1,minR,maxR,x0,y0):
 
-
-        dl,pe,stepx,stepy,width,height,density,w = self.dl,self.pe,self.stepx,self.stepy,self.width, self.height,self.density,self.W
+        # тут создаешь как хочешь tuple размером (int(1/density)+1) строк и в каждой строке 6 элементов: все из них по умолчанию 0 
+        #в этой функции ты лишь записываешь и меняешь первые 5 из них l, t*w-d,mapCV[rY][rX],k,map[rY][rX]
+        
+        dl = self.dl
+        pe = self.pe
+        stepx = self.stepx
+        stepy= self.stepy
+        width = self.width
+        height = self.height
+        density = self.density
+        w = self.W
 
         history =[]
         
@@ -182,12 +199,15 @@ class rendering:
         mapCH = [[0 for _ in range(width)] for _ in range(height)]
         mapCV = [[0 for _ in range(width)] for _ in range(height)]
 
+
         render_data = []
 
         VM = False
 
-        dcos = (cos1 - cos)*density*dl
-        dsin = (sin1 - sin)*density*dl
+        cos = math.cos(a0)
+        sin  = math.sin(a0)
+        dcos = (math.cos(a1) - cos)*density*dl
+        dsin = (math.sin(a1) - sin)*density*dl
         sin = sin*dl
         cos = cos*dl
 
@@ -201,7 +221,7 @@ class rendering:
         x,y =0,0
 
         rX,rY = int(x+x0/stepx),int(y+y0/stepy)
-        
+        minR_ = minR
 
         while t < 1:
 
@@ -211,14 +231,14 @@ class rendering:
                 sc = 1
 
 
-            l = 0
+            l = minR
 
             x , y = 0,0
             
             
             xp,yp = rX,rY
 
-            render_data.append([maxR,t*w-d,1,0,1])
+            render_data.append([maxR,t*w-d,1,1,1])
             history.append([0,0,True])
 
             
@@ -228,14 +248,15 @@ class rendering:
 
                 #этот if можешь закоментить если сложно
                 if ugol == 0:
-                    if l>render_data[-2][0]+2*dl:
+                    if l>render_data[-2][0]+0.9:
 
 
-
-                        n = 2
+                        n = int(0.9/dl)+1
                         if l - n*dl*1.1>minR:
                             
-                            ugol,sc = 1,4
+                            ugol = 1
+
+                            sc =4
 
                             sin -= (ugol+1)*dsin
                             cos -=(ugol+1)*dcos
@@ -243,18 +264,16 @@ class rendering:
                             d -=(ugol+1)
                             t -= (ugol+1)*density
 
-                            for i in range(len(render_data)-ugol-1,len(render_data)):
-
-                                if history[i][2]:
-                                    mapCV[history[i][1]][history[i][0]] -= 1
-                                else:
-                                    mapCH[history[i][1]][history[i][0]] -= 1
-
                             del render_data[-(ugol+1):]
                             del history[-(ugol+1):]
 
+                            if len(history)>3:
+                                rX,rY,VM = history[-(3)][0],history[-(3)][1],history[-(3)][2]
 
-                            rX,rY,VM = history[-(1)][0],history[-(1)][1],history[-(1)][2]
+                            elif len(history)>2:
+                                rX,rY,VM = history[-(2)][0],history[-(2)][1],history[-(2)][2]
+                            else:
+                                rX,rY,VM = history[-(1)][0],history[-(1)][1],history[-(1)][2]
 
                             ugol +=1
                             break
@@ -265,20 +284,19 @@ class rendering:
                     xc,yc = x+x0/stepx,y+y0/stepy
                     xc,yc,l = self.find_clothest_point(map,l,xp,yp,xc,yc,cos/10/sc,sin/10/sc,dl/10/sc,dl/100/sc)
                     rY,rX = int(yc),int(xc)
-                    dx,dy = abs(rX - xc),abs(rY - yc) 
+                    dx = abs(rX - xc)
+                    dy = abs(rY - yc)
 
                     if yp != rY and xp != rX:
                         k = max(dy,dx)
                         xp,yp,l = self.find_clothest_gran(l,xp,yp,xc,yc,cos/10/sc,sin/10/sc,dl/10/sc,dl/100/sc)
-                        yp,xp = int(yp),int(xp)
-
-                    if map[rY][rX]==0 or map[yp][xp]>0:
-                        break
+                        yp = int(yp)
+                        xp = int(xp)
 
                     if yp >rY:
                         k = dx
                         VM = False
-                    
+
                     elif yp <rY:
                         k = 1-dx
                         VM = False
@@ -290,30 +308,35 @@ class rendering:
                     elif xp >rX:
                         k = 1-dy
                         VM = True
-                    else:
-                        k = 0
 
                     if not VM:
                         mapCH[rY][rX] += 1
-                        render_data[-1]=[l, t*w-d,mapCH[rY][rX],k,map[rY][rX]]
                     else:
                         mapCV[rY][rX] += 1
+
+
+
+                    if not VM:
+                        render_data[-1]=[l, t*w-d,mapCH[rY][rX],k,map[rY][rX]]
+                    else:
                         render_data[-1]=[l, t*w-d,mapCV[rY][rX],k,map[rY][rX]]
+                    
+
 
                     history[-1]=[rX,rY,VM]
 
-                    
+                    #этот if можешь закоментить если сложно
                     if ugol == 0:
                         if len(render_data)>3:
-                            if l<render_data[-2][0]-2*dl or history[-2][2] != VM:
+                            if l<render_data[-2][0]-0.9 or history[-2][2] != VM:
 
   
-                                n = 3
+                                n = int(0.9/dl)+1
                                 if l - n*dl*1.1>minR:
 
                                     ugol = min(int(dl/density),len(render_data)-2)
                                 
-                                    for i in range(len(render_data)-ugol-1,len(render_data)):
+                                    for i in range(len(render_data)-ugol,len(render_data)):
 
                                         if history[i][2]:
                                             mapCV[history[i][1]][history[i][0]] -= 1
@@ -331,14 +354,20 @@ class rendering:
                                     del render_data[-(ugol+1):]
                                     del history[-(ugol+1):]
 
+                                    if len(history)>3:
+                                        rX,rY,VM = history[-(3)][0],history[-(3)][1],history[-(3)][2]
 
-                                    rX,rY,VM = history[-(1)][0],history[-(1)][1],history[-(1)][2]
+                                    elif len(history)>2:
+                                        rX,rY,VM = history[-(2)][0],history[-(2)][1],history[-(2)][2]
+                                    else:
+                                        rX,rY,VM = history[-(1)][0],history[-(1)][1],history[-(1)][2]
 
                                     ugol +=2
 
                                     break
-                                
-                            
+
+                                if ugol >0:
+                                   ugol-=1
 
 
 
@@ -362,6 +391,7 @@ class rendering:
             
             d+= 1
 
+        render_data = tuple(tuple(i) for i in render_data)
 
         return render_data
 
@@ -369,14 +399,21 @@ class rendering:
 
 
 
-    def draw_wall(self,render_data,enemies):
-        
+    def draw_wall(self,a0,a1,render_data,enemies):
         sprites= self.sprites
 
-        W,H,pe,dw,density = self.W,self.H,self.pe,self.dw,self.density
+        W= self.W
+        H = self.H
+        pe = self.pe
+        dw = self.dw
 
-        i,w,j,i_max = 0,0,0,int(1 / density)
+        density = self.density
+
+        i = 0
+        w = 0
+        j = 0
         
+        i_max = int(1 / density)
         while i <= i_max:
             if j<len(enemies):
                 if render_data[i][0]<enemies[j][0]:
@@ -397,8 +434,8 @@ class rendering:
                     j += 1
 
             self.render_surface.blit(render_data[i][5],(render_data[i][1],int(H//2-pe/render_data[i][0])))
-            w +=dw
-            i +=1
+            w = w+dw
+            i = i+1
 
         return w-i-dw
 
@@ -406,18 +443,18 @@ class rendering:
         maxR = 7
         W,H = self.W,self.H
         self.render_surface.blit(self.sky,(0,0))
-        self.render_surface.blit(self.ground,(0,H//2+self.pe/maxR))
+        self.render_surface.blit(self.ground,(0,H//2+maxR/self.pe))
 
-    def render(self,map,enemies,cos0,sin0,cos1,sin1,minR,maxR,x0,y0):
+    def render(self,map,enemies,a0,a1,minR,maxR,x0,y0):
 
         
 
-        render_wall_data = self.ray_cast(map,cos0,sin0,cos1,sin1,minR,maxR,x0,y0)
+        render_wall_data = [list(item) for item in self.ray_cast(map,a0,a1,minR,maxR,x0,y0)]
 
         # на это похуй
         self.draw_background()
 
-        enemy_render_data = self.enemy_ray_caster(render_wall_data,enemies,cos0,sin0,cos1,sin1,minR,maxR,x0,y0)
+        enemy_render_data = self.enemy_ray_caster(render_wall_data,enemies,a0,a1,minR,maxR,x0,y0)
 
         # в этой функции меняется 6й элемент массива - surface
         render_wall_data = self.texturize(render_wall_data)
@@ -427,9 +464,7 @@ class rendering:
         enemy_render_data.sort(key=lambda item: item[0], reverse = True)
 
 
-        res = self.draw_wall(render_wall_data, enemy_render_data)
-
-        res = 618
+        res = self.draw_wall(a0,a1,render_wall_data, enemy_render_data)
 
         self.xs = res
      
