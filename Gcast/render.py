@@ -147,7 +147,7 @@ class rendering:
 
         enemy_render_data = []
 
-        density,pe,stepx ,stepy=self.pe,self.stepx,self.stepy,self.density
+        density,pe,stepx ,stepy=self.density,self.pe,self.stepx,self.stepy
 
         for i in range(0,len(enemies),4):
             x,y = enemies[i+0], enemies[i+1]
