@@ -299,4 +299,4 @@ def main(height_,width_):
 	# Print final maze
 	transform_maze(maze)
 	maze = border(maze)
-	printMaze(maze)
+	#printMaze(maze)
