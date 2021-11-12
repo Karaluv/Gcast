@@ -145,9 +145,9 @@ Ty = 0
 wh = (255, 255, 255)
 bl = (0, 0, 0)
 
-pygame.mixer.music.load(os.path.join(sys.path[0] + "\\pony\\music\\", "main_theme.mp3"))
-pygame.mixer.music.set_volume(0.2)
-pygame.mixer.music.play(-1)
+#pygame.mixer.music.load(os.path.join(sys.path[0] + "\\pony\\music\\", "main_theme.mp3"))
+#pygame.mixer.music.set_volume(0.2)
+#pygame.mixer.music.play(-1)
 
 screen = pygame.display.set_mode((W, H))
 
