@@ -135,26 +135,26 @@ def update():
     bill.update()
     
 
-    slave_data = []
+    slave_data = ()
     for i in range(len(slaves)):
-        slave_data.append([slaves[i].x,slaves[i].y,3])
+        slave_data += ((slaves[i].x,slaves[i].y,3))
     bill.check_fisting(slave_data)
 
     a = bill.a
 
 
-    enemies = []
+    enemies = ()
     for i in range(len(slaves)):
         slaves[i].walk(map)
-        enemies.append([slaves[i].x,slaves[i].y,slaves[i].type,slaves[i].frame])
+        enemies += ((slaves[i].x,slaves[i].y,slaves[i].type,slaves[i].frame))
 
-    enemies = tuple(tuple(i) for i in enemies)
 
-    rend.render(map,enemies,a-u,a+u,0.15,7,bill.x,bill.y)
+
+    rend.render(map,enemies,math.cos(a-u),math.sin(a-u),math.cos(a+u),math.sin(a+u),0.15,7,bill.x,bill.y)
 
 
     x = rend.xs
-    final_render = pygame.transform.smoothscale(render_zone,(int(W*render_zone.get_width()/x),int(H+40)))
+    final_render = pygame.transform.scale(render_zone,(int(W*render_zone.get_width()/x),int(H+40)))
     screen.blit(final_render,(math.sin(Tx)*10-10,math.cos(Ty)*18-20))
     draw_stuff()
 
