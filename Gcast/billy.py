@@ -103,11 +103,19 @@ class billy:
                         self.y = y_
                         self.x = x_
 
+
     def check_fisting(self, slaves):
         x, y = self.x / self.stepx, self.y / self.stepy
         # for i in range(len(slaves)):
         # if abs(slaves[i][0]-x)<0.3 and abs(slaves[i][1]-y)<0.3:
         # print(slaves[i][2])
+
+    def check_fisting(self,slaves):
+        x,y = self.x/self.stepx,self.y/self.stepy
+        for i in range(0,len(slaves),3):
+            if abs(slaves[i]-x)<0.3 and abs(slaves[i+1]-y)<0.3:
+                print(slaves[i+2])
+
 
     def update(self):
         self.a = self.a % self.pi_2
