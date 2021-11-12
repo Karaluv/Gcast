@@ -35,6 +35,7 @@ fps_text = font.render("FPS: ", True, (255, 255, 255))
 counter = 0
 
 
+
 def input(user_input):
     global finished
 
@@ -53,6 +54,7 @@ def input(user_input):
 
         if event.type == pygame.QUIT:
             finished = True
+
 
 
 def draw_stuff():
@@ -76,7 +78,13 @@ def start():
 
     rend = rendering(0.5, density, dl, render_zone, height + 2, width + 2)
 
-    # print("start")
+
+    print("start")
+    
+    bill = billy((width - 1) * 100 + 40, height * 100 + 40, 2 * math.pi / 2, "VAn", W, H, mazeG.maze)
+    if mazeG.maze[int(bill.y / 100)][int(bill.x / 100)] != 0:
+        bill = billy((width - 2) * 100 + 40, height * 100 + 40, 2 * math.pi / 2, "VAn", W, H, mazeG.maze)
+
 
     bill = billy((width - 1) * 100 + 40, height * 100 + 40, 2 * math.pi / 2, "VAn", W, H, mazeG.maze)
     if mazeG.maze[int(bill.y / 100)][int(bill.x / 100)] != 0:
@@ -124,6 +132,7 @@ def update():
 
 pygame.init()
 
+
 pygame.mouse.set_visible(False)
 infoObject = pygame.display.Info()
 W, H = infoObject.current_w, infoObject.current_h
@@ -170,5 +179,4 @@ while not finished:
     if counter == 10:
         fps_text = font.render("FPS: " + str(round(counter / (time.time() - start_time))), True, (255, 255, 255))
         counter = 0
-        start_time = time.time()
 

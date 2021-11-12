@@ -147,10 +147,9 @@ class rendering:
 
         enemy_render_data = []
 
-        cos0 = math.cos(a0)
-        cos1 = math.cos(a1)
-        sin0 = math.sin(a0)
-        sin1 = math.sin(a1)
+
+        density,pe,stepx ,stepy=self.density,self.pe,self.stepx,self.stepy
+
 
         density = self.density
         pe = self.pe
