@@ -135,9 +135,11 @@ pygame.init()
 pygame.mouse.set_visible(False)
 infoObject = pygame.display.Info()
 W, H = infoObject.current_w, infoObject.current_h
-render_zone = pygame.Surface(((W + 40) // 2, (H + 30) // 2))
+render_zone = pygame.Surface((700, 200))
 
-dw = W * 0.01 / (2 * u)
+render_w = 355
+render_h = 200
+
 fire = 0
 Tx = 0
 Ty = 0
@@ -145,9 +147,9 @@ Ty = 0
 wh = (255, 255, 255)
 bl = (0, 0, 0)
 
-#pygame.mixer.music.load(os.path.join(sys.path[0] + "\\pony\\music\\", "main_theme.mp3"))
-#pygame.mixer.music.set_volume(0.2)
-#pygame.mixer.music.play(-1)
+pygame.mixer.music.load(os.path.join(sys.path[0] + "\\pony\\music\\", "main_theme.mp3"))
+pygame.mixer.music.set_volume(0.2)
+pygame.mixer.music.play(-1)
 
 screen = pygame.display.set_mode((W, H))
 

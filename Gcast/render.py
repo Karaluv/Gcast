@@ -102,7 +102,7 @@ class rendering:
         self.sprites = tuple(tuple(i) for i in self.sprites)
         self.ston = tuple(tuple(i) for i in self.ston)
 
-        self.pe = 200
+        self.pe = 100
         self.stepx =100
         self.stepy = 100
 
@@ -110,11 +110,11 @@ class rendering:
 
         maxR = 7
         
-        self.sky = pygame.Surface((W,H//2-self.pe/maxR))
-        self.ground = pygame.Surface((W,H//2-self.pe/maxR))
+        self.sky = pygame.Surface((W,H//2-self.pe/maxR+1))
+        self.ground = pygame.Surface((W,H//2-self.pe/maxR+1))
 
-        self.gradientRect(self.sky,(153, 153, 102),(0,0,0),pygame.Rect(0,0,W,H//2-self.pe/maxR))
-        self.gradientRect(self.ground,(0,0,0),(135,62,35),pygame.Rect(0,0,W,H//2-self.pe/maxR))
+        self.gradientRect(self.sky,(153, 153, 102),(0,0,0),pygame.Rect(0,0,W,H//2-self.pe/maxR+1))
+        self.gradientRect(self.ground,(0,0,0),(135,62,35),pygame.Rect(0,0,W,H//2-self.pe/maxR+1))
 
         self.width = width
         self.height = height
@@ -179,7 +179,7 @@ class rendering:
 
         return enemy_render_data
 
-
+ 
     def ray_cast(self,map,cos,sin,cos1,sin1,minR,maxR,x0,y0):
 
 
@@ -410,7 +410,7 @@ class rendering:
         maxR = 7
         W,H = self.W,self.H
         self.render_surface.blit(self.sky,(0,0))
-        self.render_surface.blit(self.ground,(0,H//2+self.pe/maxR))
+        self.render_surface.blit(self.ground,(0,H//2+self.pe/maxR-1))
 
     def render(self,map,enemies,cos0,sin0,cos1,sin1,minR,maxR,x0,y0):
 
@@ -433,7 +433,6 @@ class rendering:
 
         res = self.draw_wall(render_wall_data, enemy_render_data)
 
-        res = 618
 
         self.xs = res
      
@@ -465,7 +464,7 @@ class rendering:
         for j in range(len(n)-1):
             n_.append(n[j+1]-n[j])
 
-
+        dark  = pygame.Surface((dw,H)).convert_alpha()
 
         for j in range(len(n_)):
 
@@ -483,15 +482,18 @@ class rendering:
 
             texture_buffer.blit(ston[render_data[end][4]-1][0],(0,0),(k1*width_,0,width_,height_))
 
+            
+            dark.fill((0, 0, 0, render_data[x][0]*255/7))
 
             for i in range(n_[j]):
                 h = int(2*pe/render_data[x][0])
+
+
                 if h>H:
                     texture_data = pygame.Surface((dw, H))
                     texture_buffer_ = texture_buffer.subsurface((0, ((h-H)//2/h)*height, width, H/h*height))
                     texture_data.blit(pygame.transform.scale(texture_buffer_,(round(dw*n_[j]),H)),(0,0),(round(dw*i),0,dw,H))
-                    dark = pygame.Surface(texture_data.get_size()).convert_alpha()
-                    dark.fill((0, 0, 0, render_data[x][0]*255/7))
+
                     texture_data.blit(dark,(0,0))
                     render_data[x][0] = 2*pe/H
                     render_data[x]= render_data[x]+[texture_data]
@@ -499,8 +501,7 @@ class rendering:
                     texture_data = pygame.Surface((dw, h))
                     texture_data.blit(pygame.transform.scale(texture_buffer,(round(dw*n_[j]),h)),(0,0),(round(dw*i),0,dw,h))
                 
-                    dark = pygame.Surface(texture_data.get_size()).convert_alpha()
-                    dark.fill((0, 0, 0, render_data[x][0]*255/7))
+
                     texture_data.blit(dark,(0,0))
                     render_data[x]= render_data[x]+[texture_data]
 

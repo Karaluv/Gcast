@@ -107,6 +107,8 @@ class billy:
 
 
 
+
+
     def check_fisting(self,slaves):
         x,y = self.x/self.stepx,self.y/self.stepy
         for i in range(0,len(slaves),3):
