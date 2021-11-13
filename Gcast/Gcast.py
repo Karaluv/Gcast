@@ -15,7 +15,7 @@ from multiprocessing import Process
 
 import mazeG
 
-FPS = 60
+FPS = 40
 u = 0.7
 
 stepx = 100

@@ -179,7 +179,7 @@ class rendering:
 
         return enemy_render_data
 
- 
+
     def ray_cast(self,map,cos,sin,cos1,sin1,minR,maxR,x0,y0):
 
 
@@ -401,6 +401,8 @@ class rendering:
                     j += 1
 
             self.render_surface.blit(render_data[i][5],(render_data[i][1],int(H//2-pe/render_data[i][0])))
+
+            #pygame.draw.rect(self.render_surface,(128,128,128),(render_data[i][1],int(H//2-pe/render_data[i][0]),int(dw),int(pe/render_data[i][0])))
             w +=dw
             i +=1
 
