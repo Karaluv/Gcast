@@ -109,7 +109,7 @@ def update_render():
 
 
 def redraw_all():
-    global Tx,Ty,W,H,start_time_r,counter_r,fps_text_r
+    global W,H,start_time_r,counter_r,fps_text_r
 
     counter_r += 1
 
@@ -120,7 +120,7 @@ def redraw_all():
 
     x = rend.xs
     final_render = pygame.transform.scale(render_zone,(int(W*render_zone.get_width()/x),int(H+40)))
-    screen.blit(final_render,(math.sin(Tx)*10-10,math.cos(Ty)*18-20))
+    screen.blit(final_render,(math.sin(bill.Tx)*15-15,math.cos(bill.Ty)*15-15))
     thread_draw_stuff = Thread(target = draw_stuff, args = ())
     thread_draw_stuff.start()
 
@@ -136,6 +136,8 @@ def update():
     global enemies
 
     bill.update()
+
+
     
 
     slave_data = ()
