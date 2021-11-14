@@ -11,7 +11,9 @@ from slave import slave
 from billy import billy
 import mazeG
 
-FPS = 40
+import threading
+
+FPS = 50
 u = 0.7
 
 stepx = 100
@@ -81,6 +83,9 @@ def start():
             slaves.append(slave(randint(0,2),x,y,100,100))
 
     rend = rendering(0.5,density,dl,render_zone,height+2,width+2)
+    rend.daemon = True
+    rend.start()
+    
 
     print("start")
     
@@ -90,10 +95,40 @@ def start():
 
     return  rend,bill,mazeG.maze,slaves
 
+
+def update_render(map,enemies,cos0,sin0,cos1,sin1,minR,maxR,x0,y0):
+    
+    global get
+
+    get =False
+
+    # сделай красивее
+
+    rend.map = map
+    rend.enemies = enemies
+
+    rend.cos0 = cos0
+    rend.sin0 = sin0
+    rend.cos1 = cos1
+    rend.sin1 = sin1
+
+    rend.x0 = x0
+    rend.y0 = y0
+
+    rend.minR = minR
+    rend.maxR = maxR
+
+
+
+    get = True
+
+
+
+
 def update():
     
 
-    global density,u,Tx,Ty,W,H
+    global density,u,Tx,Ty,W,H,get
 
     bill.update()
     
@@ -112,14 +147,19 @@ def update():
         enemies += ((slaves[i].x,slaves[i].y,slaves[i].type,slaves[i].frame))
 
 
-
-    rend.render(map,enemies,math.cos(a-u),math.sin(a-u),math.cos(a+u),math.sin(a+u),0.15,7,bill.x,bill.y)
+    if get == True:
+         t = threading.Thread(target=update_render, args=[map,enemies,math.cos(a-u),math.sin(a-u),math.cos(a+u),math.sin(a+u),0.15,7,bill.x,bill.y])
+         t.start()
 
 
     x = rend.xs
-    final_render = pygame.transform.scale(render_zone,(int(W*render_zone.get_width()/x),int(H+40)))
-    screen.blit(final_render,(math.sin(Tx)*10-10,math.cos(Ty)*18-20))
-    draw_stuff()
+
+    if rend.blit == False:
+        rend.blit = True
+        final_render = pygame.transform.scale(render_zone,(int(W*render_zone.get_width()/x),int(H+40)))
+        screen.blit(final_render,(math.sin(Tx)*10-10,math.cos(Ty)*18-20))
+        draw_stuff()
+        rend.blit = False
 
 
 
@@ -157,6 +197,9 @@ finished = False
 rend, bill, map, slaves = start()
 
 kw, ks, ka, kd, shift = False, False, False, False, False
+
+
+get = True
 
 import time
 

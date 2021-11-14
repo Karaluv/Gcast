@@ -8,10 +8,13 @@ from pygame import display
 import copy
 import threading
 
+
+
 from functools import lru_cache
 
 
-class rendering:
+
+class rendering(threading.Thread):
 
 
 
@@ -132,6 +135,35 @@ class rendering:
 
         self.width = width
         self.height = height
+
+        self.fps = 60
+
+        self.xs = 618
+
+        self.blit = False
+
+        threading.Thread.__init__(self)
+
+
+    def run(self):
+
+
+
+        self.write = True
+
+        import time
+
+        start_time = time.time()
+
+        counter = 0
+
+        time.sleep(0.5)
+
+        while 1:
+
+            self.render(self.map,self.enemies,self.cos0,self.sin0,self.cos1,self.sin1,self.minR,self.maxR,self.x0,self.y0)
+
+
 
     @lru_cache()
     def find_clothest_point(self,map,l,xp,yp,xc,yc,cos,sin,lc,lmin):
@@ -425,6 +457,8 @@ class rendering:
     def draw_background(self):
         maxR = 7
         W,H = self.W,self.H
+
+        
         self.render_surface.blit(self.sky,(0,0))
         self.render_surface.blit(self.ground,(0,H//2+self.pe/maxR-1))
 
@@ -435,7 +469,7 @@ class rendering:
         render_wall_data = self.ray_cast(map,cos0,sin0,cos1,sin1,minR,maxR,x0,y0)
 
         # на это похуй
-        self.draw_background()
+        
 
         enemy_render_data = self.enemy_ray_caster(render_wall_data,enemies,cos0,sin0,cos1,sin1,minR,maxR,x0,y0)
 
@@ -447,8 +481,12 @@ class rendering:
         enemy_render_data.sort(key=lambda item: item[0], reverse = True)
 
 
+        while self.blit:
+            pass
+        self.blit = True
+        self.draw_background()
         res = self.draw_wall(render_wall_data, enemy_render_data)
-
+        self.blit = False
 
         self.xs = res
      
@@ -522,5 +560,9 @@ class rendering:
                     render_data[x]= render_data[x]+[texture_data]
 
                 x = x+1
-
+        
         return render_data
+
+
+
+
