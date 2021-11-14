@@ -14,6 +14,7 @@ import mazeG
 import threading
 
 FPS = 30
+FPS = FPS +1
 u = 0.7
 
 stepx = 100
