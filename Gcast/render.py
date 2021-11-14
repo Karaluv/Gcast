@@ -18,7 +18,7 @@ class rendering(threading.Thread):
 
 
 
-    def __init__(self,u,density,dl,render_surface,height,width):
+    def __init__(self,u,density,dl,render_surface,height,width,update):
 
         self.render_surface = render_surface
         self.dl = dl
@@ -142,26 +142,25 @@ class rendering(threading.Thread):
 
         self.blit = False
 
+
+        self.update = update
+
         threading.Thread.__init__(self)
+
+
+        
 
 
     def run(self):
 
-
-
-        self.write = True
-
         import time
 
-        start_time = time.time()
-
-        counter = 0
 
         time.sleep(0.5)
 
         while 1:
 
-            self.render(self.map,self.enemies,self.cos0,self.sin0,self.cos1,self.sin1,self.minR,self.maxR,self.x0,self.y0)
+            self.render(self.update())
 
 
 
@@ -462,9 +461,9 @@ class rendering(threading.Thread):
         self.render_surface.blit(self.sky,(0,0))
         self.render_surface.blit(self.ground,(0,H//2+self.pe/maxR-1))
 
-    def render(self,map,enemies,cos0,sin0,cos1,sin1,minR,maxR,x0,y0):
+    def render(self,args):
 
-        
+        map,enemies,cos0,sin0,cos1,sin1,minR,maxR,x0,y0 = args
 
         render_wall_data = self.ray_cast(map,cos0,sin0,cos1,sin1,minR,maxR,x0,y0)
 

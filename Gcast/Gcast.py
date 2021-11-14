@@ -13,7 +13,7 @@ import mazeG
 
 import threading
 
-FPS = 50
+FPS = 30
 u = 0.7
 
 stepx = 100
@@ -82,9 +82,9 @@ def start():
         if mazeG.maze[int(y)][int(x)] == 0:
             slaves.append(slave(randint(0,2),x,y,100,100))
 
-    rend = rendering(0.5,density,dl,render_zone,height+2,width+2)
+    rend = rendering(0.5,density,dl,render_zone,height+2,width+2,update_render)
     rend.daemon = True
-    rend.start()
+    
     
 
     print("start")
@@ -96,32 +96,11 @@ def start():
     return  rend,bill,mazeG.maze,slaves
 
 
-def update_render(map,enemies,cos0,sin0,cos1,sin1,minR,maxR,x0,y0):
-    
-    global get
-
-    get =False
-
-    # сделай красивее
-
-    rend.map = map
-    rend.enemies = enemies
-
-    rend.cos0 = cos0
-    rend.sin0 = sin0
-    rend.cos1 = cos1
-    rend.sin1 = sin1
-
-    rend.x0 = x0
-    rend.y0 = y0
-
-    rend.minR = minR
-    rend.maxR = maxR
-
-
-
-    get = True
-
+def update_render():
+    global u,enemies,map
+    a = bill.a
+    x0,y0 =bill.x,bill.y
+    return map,enemies,math.cos(a-u),math.sin(a-u),math.cos(a+u),math.sin(a+u),0.15,7,bill.x,bill.y
 
 
 
@@ -129,6 +108,8 @@ def update():
     
 
     global density,u,Tx,Ty,W,H,get
+
+    global enemies
 
     bill.update()
     
@@ -147,10 +128,10 @@ def update():
         enemies += ((slaves[i].x,slaves[i].y,slaves[i].type,slaves[i].frame))
 
 
-    if get == True:
-         t = threading.Thread(target=update_render, args=[map,enemies,math.cos(a-u),math.sin(a-u),math.cos(a+u),math.sin(a+u),0.15,7,bill.x,bill.y])
-         t.start()
 
+    #rend.map,rend.enemies,rend.cos0,rend.sin0,rend.cos1,rend.sin1,rend.minR,rend.maxR,rend.x0,rend.y0=(map,enemies,math.cos(a-u),math.sin(a-u),math.cos(a+u),math.sin(a+u),0.15,7,bill.x,bill.y)
+
+    
 
     x = rend.xs
 
@@ -204,6 +185,8 @@ get = True
 import time
 
 start_time = time.time()
+
+rend.start()
 
 while not finished:
     clock.tick(FPS)
