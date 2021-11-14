@@ -48,6 +48,18 @@ class rendering:
             self.ston[-1].append(pygame.image.load(files[0]+"\\"+onlyfiles[2][i]).convert_alpha())
             self.ston[-1][-1] = pygame.transform.scale(self.ston[-1][-1],(200,200))
 
+
+
+        self.ston.append([])
+        path = os.path.join(sys.path[0],"pony\\wall\\flagblood")
+        files = next(os.walk(path))
+        onlyfiles = next(os.walk(path)) 
+        print(onlyfiles)
+        for i in range(len(onlyfiles[2])):
+            print(files[0]+"\\"+onlyfiles[2][i])
+            self.ston[-1].append(pygame.image.load(files[0]+"\\"+onlyfiles[2][i]).convert_alpha())
+            self.ston[-1][-1] = pygame.transform.scale(self.ston[-1][-1],(200,200))
+
         self.ston.append([])
         path = os.path.join(sys.path[0],"pony\\wall\\enter")
         files = next(os.walk(path))
@@ -96,6 +108,8 @@ class rendering:
         for i in range(len(onlyfiles[2])):
             print(files[0]+"\\"+onlyfiles[2][i])
             self.sprites[-1].append(pygame.image.load(files[0]+"\\"+onlyfiles[2][i]).convert_alpha())
+
+
 
 
         

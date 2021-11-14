@@ -5,14 +5,10 @@ import os
 import sys
 from pygame.locals import Color
 from pygame import display
-from render import rendering
 
+from render import rendering
 from slave import slave
 from billy import billy
-import multiprocessing
-
-from multiprocessing import Process
-
 import mazeG
 
 FPS = 40
