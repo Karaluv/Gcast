@@ -11,7 +11,7 @@ from slave import slave
 from billy import billy
 import mazeG
 
-import threading
+from threading import Thread
 
 FPS = 30
 FPS = FPS +1
@@ -30,6 +30,8 @@ width = 15
 pygame.font.init()
 font = pygame.font.Font(None, 30)
 fps_text = font.render("FPS: ", True, (255, 255, 255))
+
+fps_text_r = font.render("FPS: ", True, (255, 255, 255))
 
 counter = 0
 
@@ -61,9 +63,10 @@ def input(user_input):
                     
 
 def draw_stuff():
-    global fire
+    screen.blit(fps_text, (30, 30))
+    screen.blit(fps_text_r, (30, 60))
     bill.draw(screen)
-
+    pygame.display.flip()
 
 
 def start():
@@ -83,7 +86,7 @@ def start():
         if mazeG.maze[int(y)][int(x)] == 0:
             slaves.append(slave(randint(0,2),x,y,100,100))
 
-    rend = rendering(0.5,density,dl,render_zone,height+2,width+2,update_render)
+    rend = rendering(0.5,density,dl,render_zone,height+2,width+2,update_render,redraw_all)
     rend.daemon = True
     
     
@@ -103,6 +106,26 @@ def update_render():
     x0,y0 =bill.x,bill.y
     return map,enemies,math.cos(a-u),math.sin(a-u),math.cos(a+u),math.sin(a+u),0.15,7,bill.x,bill.y
 
+
+
+def redraw_all():
+    global Tx,Ty,W,H,start_time_r,counter_r,fps_text_r
+
+    counter_r += 1
+
+    if counter_r == 10:
+        fps_text_r = font.render("REND CORE FPS: " + str(round(counter_r / (time.time() - start_time_r))), True, (255, 255, 255))
+        counter_r = 0
+        start_time_r = time.time()
+
+    x = rend.xs
+    final_render = pygame.transform.scale(render_zone,(int(W*render_zone.get_width()/x),int(H+40)))
+    screen.blit(final_render,(math.sin(Tx)*10-10,math.cos(Ty)*18-20))
+    thread_draw_stuff = Thread(target = draw_stuff, args = ())
+    thread_draw_stuff.start()
+
+
+    
 
 
 def update():
@@ -134,14 +157,11 @@ def update():
 
     
 
-    x = rend.xs
+    
 
-    if rend.blit == False:
-        rend.blit = True
-        final_render = pygame.transform.scale(render_zone,(int(W*render_zone.get_width()/x),int(H+40)))
-        screen.blit(final_render,(math.sin(Tx)*10-10,math.cos(Ty)*18-20))
-        draw_stuff()
-        rend.blit = False
+
+
+
 
 
 
@@ -186,6 +206,8 @@ get = True
 import time
 
 start_time = time.time()
+start_time_r = time.time()
+counter_r = 0
 
 rend.start()
 
@@ -194,13 +216,12 @@ while not finished:
 
     input(pygame.event.get())
     update()
-    screen.blit(fps_text, (30, 30))
-    pygame.display.flip()
+
     # screen.fill(bl) - Это можно убрать
 
     counter += 1
 
     if counter == 10:
-        fps_text = font.render("FPS: " + str(round(counter / (time.time() - start_time))), True, (255, 255, 255))
+        fps_text = font.render("MAIN CORE FPS: " + str(round(counter / (time.time() - start_time))), True, (255, 255, 255))
         counter = 0
         start_time = time.time()

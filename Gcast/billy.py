@@ -176,10 +176,10 @@ class billy:
         W, H = self.W, self.H
 
         text = font.render("Ammo: " + str(self.ammo), True, (255, 255, 255))
-        screen.blit(text, (30, 60))
+        screen.blit(text, (30, 90))
 
         for i in range(self.ammo):
-            screen.blit(self.bullet, (30 + self.bullet.get_width()*i, 100))
+            screen.blit(self.bullet, (30 + self.bullet.get_width()*i, 130))
 
         if self.B_shoot:
             screen.blit(self.makarov[1][int(self.shoot_frame - 1)], (

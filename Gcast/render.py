@@ -18,7 +18,7 @@ class rendering(threading.Thread):
 
 
 
-    def __init__(self,u,density,dl,render_surface,height,width,update):
+    def __init__(self,u,density,dl,render_surface,height,width,update,redraw):
 
         self.render_surface = render_surface
         self.dl = dl
@@ -145,6 +145,8 @@ class rendering(threading.Thread):
 
         self.update = update
 
+        self.redraw = redraw
+
         threading.Thread.__init__(self)
 
 
@@ -161,7 +163,7 @@ class rendering(threading.Thread):
         while 1:
 
             self.render(self.update())
-
+            self.redraw()
 
 
     @lru_cache()
