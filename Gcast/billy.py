@@ -39,7 +39,7 @@ class billy:
 
         self.max_shoot_frame = 8
 
-        self.shoot_speed = 0.5
+        self.shoot_speed = 0.25
 
         self.B_shoot = False
         self.B_reload = False
@@ -48,7 +48,7 @@ class billy:
 
         self.max_reload_frame = 42
 
-        self.reload_speed = 0.5
+        self.reload_speed = 0.25
 
         self.ammo = 8
 

@@ -156,11 +156,15 @@ class rendering(threading.Thread):
     def run(self):
 
         import time
-
+        clock = pygame.time.Clock()
 
         time.sleep(0.5)
+        FPS = 30
 
+        FPS +=1
         while 1:
+
+            clock.tick(FPS)
 
             self.render(self.update())
             self.redraw()

@@ -211,6 +211,8 @@ start_time = time.time()
 start_time_r = time.time()
 counter_r = 0
 
+
+
 rend.start()
 
 while not finished:
