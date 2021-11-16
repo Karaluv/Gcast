@@ -39,7 +39,7 @@ class billy:
 
         self.max_shoot_frame = 8
 
-        self.shoot_speed = 0.25
+        self.shoot_speed = 0.5
 
         self.B_shoot = False
         self.B_reload = False
@@ -48,7 +48,7 @@ class billy:
 
         self.max_reload_frame = 42
 
-        self.reload_speed = 0.25
+        self.reload_speed = 0.5
 
         self.ammo = 8
 
@@ -139,7 +139,6 @@ class billy:
             if self.reload_frame >= self.max_reload_frame - 1:
                 self.reload_frame = 0
                 self.B_reload = False
-                pygame.mixer.Channel(1).pause()
                 self.ammo = self.max_ammo
         if self.kw:
             self.Move(0, 3 * self.speed)
