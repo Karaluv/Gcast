@@ -159,7 +159,7 @@ class rendering(threading.Thread):
         clock = pygame.time.Clock()
 
         time.sleep(0.5)
-        FPS = 30
+        FPS = 60
 
         FPS +=1
         while 1:
