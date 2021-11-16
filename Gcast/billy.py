@@ -39,7 +39,7 @@ class billy:
 
         self.max_shoot_frame = 8
 
-        self.shoot_speed = 0.8
+        self.shoot_speed = 0.5
 
         self.B_shoot = False
         self.B_reload = False
@@ -48,12 +48,15 @@ class billy:
 
         self.max_reload_frame = 42
 
-        self.reload_speed = 0.8
+        self.reload_speed = 0.5
 
         self.ammo = 8
 
         self.speed = 1
         self.sens = 2000
+
+        self.Tx = 0
+        self.Ty = 0
 
         self.kw = False
         self.ks = False
@@ -87,7 +90,8 @@ class billy:
         # print(onlyfiles)
         for i in range(len(onlyfiles[2])):
 
-            self.makarov[-1].append(pygame.image.load(files[0] + "\\(" + str(i + 1) + ").png").convert_alpha())
+            self.makarov[-1].append(pygame.image.load(files[0] + "\\ (" + str(i + 1) + ").png").convert_alpha())
+
 
 
     def Rotate(self, a):
@@ -106,6 +110,12 @@ class billy:
                     if self.map[int(y_ / 100 + 0.05)][int(x_ / 100 - 0.05)] == 0:
                         self.y = y_
                         self.x = x_
+
+
+        self.Ty +=0.2
+        self.Tx += 0.1
+
+
 
 
 
@@ -142,6 +152,8 @@ class billy:
         if self.kd:
             self.Move(3 * self.speed, 0)
 
+       
+
     def keyinput(self, event):
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_w:
@@ -176,16 +188,19 @@ class billy:
         W, H = self.W, self.H
 
         text = font.render("Ammo: " + str(self.ammo), True, (255, 255, 255))
-        screen.blit(text, (30, 60))
+        screen.blit(text, (30, 90))
 
         for i in range(self.ammo):
-            screen.blit(self.bullet, (30 + self.bullet.get_width()*i, 100))
+            screen.blit(self.bullet, (30 + self.bullet.get_width()*i, 130))
 
         if self.B_shoot:
             screen.blit(self.makarov[1][int(self.shoot_frame - 1)], (
                 screen.get_width() // 2 * 1.2 - self.makarov[0][0].get_width() // 2,
                 screen.get_height() - self.makarov[0][0].get_height()))
         elif self.B_reload:
+            if self.reload_frame == 7:
+                pygame.mixer.Channel(1).play(pygame.mixer.Sound(os.path.join(sys.path[0], "pony\\weapon\\makarov\\reload.mp3")))
+                pygame.mixer.Channel(1).set_volume(2)
             screen.blit(self.makarov[2][int(self.reload_frame - 1)], (
                 screen.get_width() // 2 * 1.2 - self.makarov[0][0].get_width() // 2,
                 screen.get_height() - self.makarov[0][0].get_height()))
@@ -197,8 +212,6 @@ class billy:
         self.reload_frame = 1
         self.B_reload = True
 
-        pygame.mixer.Channel(1).play(pygame.mixer.Sound(os.path.join(sys.path[0], "pony\\weapon\\makarov\\reload.mp3")))
-        pygame.mixer.Channel(1).set_volume(2)
 
     def shoot(self, slaves, map):
         a = self.a

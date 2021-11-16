@@ -33,24 +33,24 @@ def transform_maze(maze):
 	for i in range(0, height):
 		for j in range(0, width):
 			if (maze[i][j] == 'u'):
-				maze[i][j] = 3
+				maze[i][j] = 4
 			elif (maze[i][j] == 'c'):
 				maze[i][j] = 0
 			else:
-				maze[i][j] = random.randint(1,2)
+				maze[i][j] = random.randint(1,3)
 
 def border(maze):
 	border = build_matrix(height+4,width+4)
 	for i in range(0, height+2):
 		for j in range(0, width+2):
 			if j == 0:
-				border[i][j] = 4
+				border[i][j] = 5
 			if i == 0:
-				border[i][j] = 4
+				border[i][j] = 5
 			if j == width+1:
-				border[i][j] = 3
+				border[i][j] = 4
 			if i == height+1:
-				border[i][j] = 3
+				border[i][j] = 4
 			if (i-1) in range(height):
 				if (j-1) in range(width):
 					border[i][j] = maze[i-1][j-1]

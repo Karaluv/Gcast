@@ -8,14 +8,17 @@ from pygame import display
 import copy
 import threading
 
+
+
 from functools import lru_cache
 
 
-class rendering:
+
+class rendering(threading.Thread):
 
 
 
-    def __init__(self,u,density,dl,render_surface,height,width):
+    def __init__(self,u,density,dl,render_surface,height,width,update,redraw):
 
         self.render_surface = render_surface
         self.dl = dl
@@ -35,6 +38,8 @@ class rendering:
         for i in range(len(onlyfiles[2])):
             print(files[0]+"\\"+onlyfiles[2][i])
             self.ston[-1].append(pygame.image.load(files[0]+"\\"+onlyfiles[2][i]).convert_alpha())
+            self.ston[-1][-1] = pygame.transform.scale(self.ston[-1][-1],(200,200))
+
 
         self.ston.append([])
         path = os.path.join(sys.path[0],"pony\\wall\\flag")
@@ -44,6 +49,19 @@ class rendering:
         for i in range(len(onlyfiles[2])):
             print(files[0]+"\\"+onlyfiles[2][i])
             self.ston[-1].append(pygame.image.load(files[0]+"\\"+onlyfiles[2][i]).convert_alpha())
+            self.ston[-1][-1] = pygame.transform.scale(self.ston[-1][-1],(200,200))
+
+
+
+        self.ston.append([])
+        path = os.path.join(sys.path[0],"pony\\wall\\flagblood")
+        files = next(os.walk(path))
+        onlyfiles = next(os.walk(path)) 
+        print(onlyfiles)
+        for i in range(len(onlyfiles[2])):
+            print(files[0]+"\\"+onlyfiles[2][i])
+            self.ston[-1].append(pygame.image.load(files[0]+"\\"+onlyfiles[2][i]).convert_alpha())
+            self.ston[-1][-1] = pygame.transform.scale(self.ston[-1][-1],(200,200))
 
         self.ston.append([])
         path = os.path.join(sys.path[0],"pony\\wall\\enter")
@@ -53,6 +71,7 @@ class rendering:
         for i in range(len(onlyfiles[2])):
             print(files[0]+"\\"+onlyfiles[2][i])
             self.ston[-1].append(pygame.image.load(files[0]+"\\"+onlyfiles[2][i]).convert_alpha())
+            self.ston[-1][-1] = pygame.transform.scale(self.ston[-1][-1],(200,200))
 
         self.ston.append([])
         path = os.path.join(sys.path[0],"pony\\wall\\exit")
@@ -62,6 +81,7 @@ class rendering:
         for i in range(len(onlyfiles[2])):
             print(files[0]+"\\"+onlyfiles[2][i])
             self.ston[-1].append(pygame.image.load(files[0]+"\\"+onlyfiles[2][i]).convert_alpha())
+            self.ston[-1][-1] = pygame.transform.scale(self.ston[-1][-1],(200,200))
 
         self.sprites =[]
 
@@ -73,6 +93,7 @@ class rendering:
         for i in range(len(onlyfiles[2])):
             print(files[0]+"\\"+onlyfiles[2][i])
             self.sprites[-1].append(pygame.image.load(files[0]+"\\"+onlyfiles[2][i]).convert_alpha())
+
         self.sprites.append([])
         path = os.path.join(sys.path[0],"pony\\sprites\\slave2")
         files = next(os.walk(path))
@@ -93,7 +114,12 @@ class rendering:
 
 
 
-        self.pe = 200
+
+        
+        self.sprites = tuple(tuple(i) for i in self.sprites)
+        self.ston = tuple(tuple(i) for i in self.ston)
+
+        self.pe = 100
         self.stepx =100
         self.stepy = 100
 
@@ -101,23 +127,59 @@ class rendering:
 
         maxR = 7
         
-        self.sky = pygame.Surface((W,H//2-maxR/self.pe))
-        self.ground = pygame.Surface((W,H//2-maxR/self.pe))
 
-        self.gradientRect(self.sky,(153, 153, 102),(0,0,0),pygame.Rect(0,0,W,H//2-maxR/self.pe))
-        self.gradientRect(self.ground,(0,0,0),(135,62,35),pygame.Rect(0,0,W,H//2-maxR/self.pe))
+        self.sky = pygame.Surface((W,H//2-self.pe/maxR+1))
+        self.ground = pygame.Surface((W,H//2-self.pe/maxR+1))
+
+        self.gradientRect(self.sky,(153, 153, 102),(0,0,0),pygame.Rect(0,0,W,H//2-self.pe/maxR+1))
+        self.gradientRect(self.ground,(0,0,0),(135,62,35),pygame.Rect(0,0,W,H//2-self.pe/maxR+1))
+
 
         self.width = width
         self.height = height
+
+        self.fps = 60
+
+        self.xs = 618
+
+        self.blit = False
+
+
+        self.update = update
+
+        self.redraw = redraw
+
+        threading.Thread.__init__(self)
+
+
+        
+
+
+    def run(self):
+
+        import time
+        clock = pygame.time.Clock()
+
+        time.sleep(0.5)
+        FPS = 30
+
+        FPS +=1
+        while 1:
+
+            clock.tick(FPS)
+
+            self.render(self.update())
+            self.redraw()
+
 
     @lru_cache()
     def find_clothest_point(self,map,l,xp,yp,xc,yc,cos,sin,lc,lmin):
         
 
         while map[int(yc)][int(xc)]!=0:
-            l = l -lc
-            xc = xc - cos
-            yc = yc - sin
+            l -= lc
+            xc -= cos
+            yc -= sin
 
         if lc <= lmin:
             return xc+cos,yc+sin,l+lc
@@ -129,9 +191,9 @@ class rendering:
         
 
         while (not int(xc)==xp) or (not int(yc)==yp):
-            l = l -lc
-            xc = xc - cos
-            yc = yc - sin
+            l -= lc
+            xc -= cos
+            yc -= sin
 
         if lc <= lmin:
             return xc+10*cos,yc+10*sin,l+10*lc
@@ -225,15 +287,12 @@ class rendering:
 
         while t < 1:
 
-            if ugol != 0:
-                pass
-            else:
+            if ugol == 0:
                 sc = 1
 
 
-            l = minR
+            x , y, l= 0,0,minR
 
-            x , y = 0,0
             
             
             xp,yp = rX,rY
@@ -248,11 +307,14 @@ class rendering:
 
                 #этот if можешь закоментить если сложно
                 if ugol == 0:
-                    if l>render_data[-2][0]+0.9:
+
+                    if l>render_data[-2][0]+1:
 
 
-                        n = int(0.9/dl)+1
-                        if l - n*dl*1.1>minR:
+
+                        
+                        if l - 1>minR:
+
                             
                             ugol = 1
 
@@ -282,16 +344,20 @@ class rendering:
 
 
                     xc,yc = x+x0/stepx,y+y0/stepy
-                    xc,yc,l = self.find_clothest_point(map,l,xp,yp,xc,yc,cos/10/sc,sin/10/sc,dl/10/sc,dl/100/sc)
+                    xc,yc,l = self.find_clothest_point(map,l,xp,yp,xc,yc,cos/10/sc,sin/10/sc,dl/10/sc,dl/1000/sc)
                     rY,rX = int(yc),int(xc)
                     dx = abs(rX - xc)
                     dy = abs(rY - yc)
 
                     if yp != rY and xp != rX:
                         k = max(dy,dx)
-                        xp,yp,l = self.find_clothest_gran(l,xp,yp,xc,yc,cos/10/sc,sin/10/sc,dl/10/sc,dl/100/sc)
-                        yp = int(yp)
-                        xp = int(xp)
+
+                        xp,yp,l = self.find_clothest_gran(l,xp,yp,xc,yc,cos/10/sc,sin/10/sc,dl/10/sc,dl/1000/sc)
+                        yp,xp = int(yp),int(xp)
+
+                    if map[rY][rX]==0 or map[yp][xp]>0:
+                        break
+
 
                     if yp >rY:
                         k = dx
@@ -328,11 +394,13 @@ class rendering:
                     #этот if можешь закоментить если сложно
                     if ugol == 0:
                         if len(render_data)>3:
-                            if l<render_data[-2][0]-0.9 or history[-2][2] != VM:
+
+                            if l<render_data[-2][0]-1:
 
   
-                                n = int(0.9/dl)+1
-                                if l - n*dl*1.1>minR:
+                                
+                                if l - 1>minR:
+
 
                                     ugol = min(int(dl/density),len(render_data)-2)
                                 
@@ -340,7 +408,7 @@ class rendering:
 
                                         if history[i][2]:
                                             mapCV[history[i][1]][history[i][0]] -= 1
-                                        if not history[i][2]:
+                                        else:
                                             mapCH[history[i][1]][history[i][0]] -= 1
                                 
                                     sc = 4
@@ -362,7 +430,7 @@ class rendering:
                                     else:
                                         rX,rY,VM = history[-(1)][0],history[-(1)][1],history[-(1)][2]
 
-                                    ugol +=2
+                                    ugol +=1
 
                                     break
 
@@ -422,7 +490,7 @@ class rendering:
                     render_mask = pygame.mask.from_surface(render_image)
                     render_mask = render_mask.to_surface()
                     dark = pygame.Surface(render_image.get_size()).convert_alpha()
-                    dark.fill((0, 0, 0, enemies[j][0]*255/30))
+                    dark.fill((0, 0, 0, min(255,enemies[j][0]*255/7)))
                     render_image.blit(dark,(0,0))
 
                     render_image.blit(render_image, (0, 0), None, pygame.BLEND_RGBA_MULT)
@@ -434,25 +502,33 @@ class rendering:
                     j += 1
 
             self.render_surface.blit(render_data[i][5],(render_data[i][1],int(H//2-pe/render_data[i][0])))
-            w = w+dw
-            i = i+1
+
+
+            #pygame.draw.rect(self.render_surface,(128,128,128),(render_data[i][1],int(H//2-pe/render_data[i][0]),int(dw),int(pe/render_data[i][0])))
+            w +=dw
+            i +=1
+
 
         return w-i-dw
 
     def draw_background(self):
         maxR = 7
         W,H = self.W,self.H
-        self.render_surface.blit(self.sky,(0,0))
-        self.render_surface.blit(self.ground,(0,H//2+maxR/self.pe))
-
-    def render(self,map,enemies,a0,a1,minR,maxR,x0,y0):
 
         
+        self.render_surface.blit(self.sky,(0,0))
+
+        self.render_surface.blit(self.ground,(0,H//2+self.pe/maxR-1))
+
+    def render(self,args):
+
+
+        map,enemies,cos0,sin0,cos1,sin1,minR,maxR,x0,y0 = args
 
         render_wall_data = [list(item) for item in self.ray_cast(map,a0,a1,minR,maxR,x0,y0)]
 
         # на это похуй
-        self.draw_background()
+        
 
         enemy_render_data = self.enemy_ray_caster(render_wall_data,enemies,a0,a1,minR,maxR,x0,y0)
 
@@ -464,7 +540,14 @@ class rendering:
         enemy_render_data.sort(key=lambda item: item[0], reverse = True)
 
 
-        res = self.draw_wall(a0,a1,render_wall_data, enemy_render_data)
+
+        while self.blit:
+            pass
+        self.blit = True
+        self.draw_background()
+        res = self.draw_wall(render_wall_data, enemy_render_data)
+        self.blit = False
+
 
         self.xs = res
      
@@ -476,17 +559,16 @@ class rendering:
         window.blit( colour_rect, target_rect )      
     
     def texturize(self,render_data):
-        n = []
-        texture_data = []
-        n_=[]
+
+        width_,height_ = 200,200
+
+        n,n_ ,texture_data= [],[],[]
 
         ston = self.ston
-        dw = self.dw
-        pe = self.pe
-
-        w,H = self.W,self.H
+        pe,dw, w,H = self.pe,self.dw,self.W,self.H
 
         x = 0
+
 
         for i in range(len(render_data)):
             if render_data[i][2] == 1:
@@ -497,43 +579,51 @@ class rendering:
         for j in range(len(n)-1):
             n_.append(n[j+1]-n[j])
 
+        dark  = pygame.Surface((dw,H)).convert_alpha()
+
         for j in range(len(n_)):
-            k1 = 1
-            k2 = 0
 
-            for i in range(x,x+n_[j]):
-                k1 = min(k1,render_data[i][3])
-                k2 = max(k2,render_data[i][3])
+
+            end = x+n_[j]
             
-            if k2<k1:
-              k2,k1 = k1, k2
+            k1 = min(render_data[x:end], key=lambda c: c[3])[3]
+            k2 = max(render_data[x:end], key=lambda c: c[3])[3]
 
-            width,height = ston[render_data[i][4]-1][0].get_width(), ston[render_data[i][4]-1][0].get_height()
-            texture_buffer = pygame.Surface((width*(k2-k1) , height ))
-            texture_buffer.blit(ston[render_data[i][4]-1][0],(0,0),(k1*width,0,width,height))
+            end -= 1
 
-            width,height = texture_buffer.get_width(), texture_buffer.get_height()
+            width,height = width_*(k2-k1) , height_ 
+
+            texture_buffer = pygame.Surface((width , height ))
+
+            texture_buffer.blit(ston[render_data[end][4]-1][0],(0,0),(k1*width_,0,width_,height_))
+
+            
+            dark.fill((0, 0, 0, render_data[x][0]*255/7))
 
             for i in range(n_[j]):
                 h = int(2*pe/render_data[x][0])
+
+
                 if h>H:
                     texture_data = pygame.Surface((dw, H))
-                    texture_buffer_ = texture_buffer.subsurface((0, ((h-H)//2/h)*texture_buffer.get_height(), texture_buffer.get_width(), H/h*texture_buffer.get_height()))
+                    texture_buffer_ = texture_buffer.subsurface((0, ((h-H)//2/h)*height, width, H/h*height))
                     texture_data.blit(pygame.transform.scale(texture_buffer_,(round(dw*n_[j]),H)),(0,0),(round(dw*i),0,dw,H))
-                    dark = pygame.Surface(texture_data.get_size()).convert_alpha()
-                    dark.fill((0, 0, 0, render_data[x][0]*255/7))
+
                     texture_data.blit(dark,(0,0))
                     render_data[x][0] = 2*pe/H
                     render_data[x]= render_data[x]+[texture_data]
                 else:
-                    texture_data = pygame.Surface((dw, int(2*pe/render_data[x][0])))
+                    texture_data = pygame.Surface((dw, h))
                     texture_data.blit(pygame.transform.scale(texture_buffer,(round(dw*n_[j]),h)),(0,0),(round(dw*i),0,dw,h))
                 
-                    dark = pygame.Surface(texture_data.get_size()).convert_alpha()
-                    dark.fill((0, 0, 0, render_data[x][0]*255/7))
+
                     texture_data.blit(dark,(0,0))
                     render_data[x]= render_data[x]+[texture_data]
 
                 x = x+1
-
+        
         return render_data
+
+
+
+
