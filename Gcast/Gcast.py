@@ -10,6 +10,8 @@ from render import rendering
 from slave import slave
 from billy import billy
 import mazeG
+from buttons import button
+from menu import Menu
 
 from threading import Thread
 
@@ -54,7 +56,8 @@ def input(user_input):
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_q:
                 finished = True
-
+            if event.key == pygame.K_ESCAPE:
+                rend.pause()
 
         if event.type == pygame.QUIT:
             finished = True
@@ -87,7 +90,7 @@ def start():
             slaves.append(slave(randint(0,2),x,y,100,100))
 
     rend = rendering(0.5,density,dl,render_zone,height+2,width+2,update_render,redraw_all)
-    rend.daemon = True
+    #rend.daemon = True
     
     
 
@@ -172,7 +175,7 @@ pygame.init()
 
 
 
-pygame.mouse.set_visible(False)
+#pygame.mouse.set_visible(False)
 infoObject = pygame.display.Info()
 W, H = infoObject.current_w, infoObject.current_h
 render_zone = pygame.Surface((700, 200))
@@ -207,25 +210,75 @@ get = True
 
 import time
 
+
+def game_start():
+    global game_st
+    pygame.mouse.set_visible(False)
+    game_st = 1
+    rend.start()
+def game_reset_mode(paused):
+    if paused == False:
+        rend.__flag.set()
+    if paused == True:
+        rend.__flag.clear()
+    rend.resume()
+    return not paused
+
+
+
+buttons1 = [0]*1
+buttons2 = [0]*3
+s = pygame.Surface((100,40), pygame.SRCALPHA)
+
+s.fill((0,0,0))
+font = pygame.font.SysFont('arial', 20)
+textsurface = font.render('Singleplayer', False, (255, 255, 255))
+sizes = font.size('Singleplayer')
+s.blit(textsurface,(int((100 - sizes[0])/2),0))
+Wdisp, Hdisp = screen.get_size()
+
+def ups():
+    print("hoh")
+
+buttons1[0] = button(s, Wdisp, Hdisp, 0.4, 0.3, 0.2, 0.05, game_start)
+menu1 = Menu(buttons1, screen)
+
+
 start_time = time.time()
 start_time_r = time.time()
 counter_r = 0
+game_paused = False
+game_st = 0
 
 
 
-rend.start()
+#rend.start()
 
 while not finished:
+    
     clock.tick(FPS)
-
-    input(pygame.event.get())
-    update()
+    
+    if game_st == 1:
+        input(pygame.event.get())
+        update()
+    else:
+        menu1.draw_all()
+        menu1.check_all()
 
     # screen.fill(bl) - Это можно убрать
-
+    pygame.display.update()
     counter += 1
 
     if counter == 10:
         fps_text = font.render("MAIN CORE FPS: " + str(round(counter / (time.time() - start_time))), True, (255, 255, 255))
         counter = 0
         start_time = time.time()
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            finished = True
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                game_paused = game_reset_mode(game_paused)
+
+
+pygame.quit()
