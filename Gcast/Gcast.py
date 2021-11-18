@@ -264,9 +264,9 @@ while not finished:
     else:
         menu1.draw_all()
         menu1.check_all()
-
+        pygame.display.update()
     # screen.fill(bl) - Это можно убрать
-    pygame.display.update()
+    
     counter += 1
 
     if counter == 10:
