@@ -1,5 +1,3 @@
-
-   
 from random import randint
 import math
 import pygame
@@ -8,19 +6,21 @@ import os
 
 pygame.init()
 pygame.font.init()
-font = pygame.font.Font(None, 30)
+font = pygame.font.Font("pony\\hud\\font_elec.ttf", 40)
 
 infoObject = pygame.display.Info()
 W, H = infoObject.current_w, infoObject.current_h
 
 class billy:
-
     def __init__(self, x, y, a, name, W, H, map):
         self.map = map
         self.x = x
         self.y = y
         self.a = a
         self.name = name
+
+        self.hitmark_counter = 0
+        self.hp = 100
 
         self.W = W
         self.H = H
@@ -64,8 +64,19 @@ class billy:
         self.ks = False
         self.ka = False
         self.kd = False
-        self.bullet = pygame.image.load("pony\\bullet.png")
+
+        self.bullet = pygame.image.load("pony\\hud\\bullet.png")
         self.bullet.set_colorkey((0, 0, 0))
+
+        self.hp_bar = pygame.image.load("pony\\hud\\hp_bar.png")
+
+        self.ammo_bar = pygame.image.load("pony\\hud\\ammo_bar.png")
+
+        self.scope = pygame.image.load("pony\\hud\\scope.png")
+        self.scope = pygame.transform.rotozoom(self.scope, 0, 0.5)
+
+        self.hitmark = pygame.image.load("pony\\hud\\hitmark.png")
+        self.hitmark = pygame.transform.rotozoom(self.hitmark, 0, 0.1)
 
         self.makarov.append([])
         path = os.path.join(sys.path[0], "pony\\weapon\\makarov\\stay")
@@ -109,11 +120,8 @@ class billy:
                         self.x = x_
 
 
-        self.Ty +=0.2
+        self.Ty += 0.2
         self.Tx += 0.1
-
-
-
 
 
     def check_fisting(self,slaves):
@@ -184,11 +192,32 @@ class billy:
     def draw(self, screen):
         W, H = self.W, self.H
 
-        text = font.render("Ammo: " + str(self.ammo), True, (255, 255, 255))
-        screen.blit(text, (30, 90))
+        #text = font.render("Ammo: " + str(self.ammo), True, (255, 255, 255))
+        #screen.blit(text, (30, 90))
+        hp_bar_y = screen.get_height() - self.hp_bar.get_height()
+        screen.blit(self.hp_bar, (20, hp_bar_y))
+        text = font.render(str(round(self.hp)), True, (80, 80, 80))
+        text_red = font.render(str(round(self.hp)), True, (110, 30, 30))
+        text_x = 20 + (self.hp_bar.get_width() - text.get_width())/2
+        screen.blit(text, (text_x + 2, hp_bar_y + (self.hp_bar.get_height() - text.get_height())/2 + 2))
+        screen.blit(text_red, (text_x, hp_bar_y + (self.hp_bar.get_height() - text.get_height()) / 2))
 
-        for i in range(self.ammo):
-            screen.blit(self.bullet, (30 + self.bullet.get_width()*i, 130))
+
+        ammo_bar_y = screen.get_height() - self.ammo_bar.get_height()
+        screen.blit(self.ammo_bar, (25 + self.hp_bar.get_width(), ammo_bar_y))
+        text = font.render(str(round(self.ammo)), True, (80, 80, 80))
+        text_red = font.render(str(round(self.ammo)), True, (110, 30, 30))
+        text_x = 25 + self.hp_bar.get_width() + (self.ammo_bar.get_width() - text.get_width()) / 2
+        screen.blit(text, (text_x + 2, hp_bar_y + (self.ammo_bar.get_height() - text.get_height()) / 2 + 2))
+        screen.blit(text_red, (text_x, hp_bar_y + (self.ammo_bar.get_height() - text.get_height()) / 2))
+
+        screen.blit(self.scope, ((screen.get_width() - self.scope.get_width())/2, (screen.get_height() - self.scope.get_height())/2))
+        if self.hitmark_counter > 0:
+            screen.blit(self.hitmark, (
+            (screen.get_width() - self.scope.get_width()) / 2, (screen.get_height() - self.scope.get_height()) / 2))
+            self.hitmark_counter -= 1
+        #for i in range(self.ammo):
+        #    screen.blit(self.bullet, (30 + self.bullet.get_width()*i, 130))
 
         if self.B_shoot:
             screen.blit(self.makarov[1][int(self.shoot_frame - 1)], (
@@ -205,7 +234,9 @@ class billy:
             screen.blit(self.makarov[0][0], (screen.get_width() // 2 * 1.2 - self.makarov[0][0].get_width() // 2,
                                              screen.get_height() - self.makarov[0][0].get_height()))
 
+
     def reload(self):
+        self.ammo = 0
         self.reload_frame = 1
         self.B_reload = True
 
@@ -245,6 +276,7 @@ class billy:
                     if z_2 < 0.01:
                         find = True
                         del slaves[j]
+                        self.hitmark_counter = 15
                         break
 
             l = dl + l
