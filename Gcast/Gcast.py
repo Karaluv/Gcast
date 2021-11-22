@@ -193,12 +193,7 @@ infoObject = pygame.display.Info()
 W, H = infoObject.current_w, infoObject.current_h
 render_zone = pygame.Surface((700, 200))
 
-render_w = 355
-render_h = 200
 
-fire = 0
-Tx = 0
-Ty = 0
 
 wh = (255, 255, 255)
 bl = (0, 0, 0)
@@ -207,29 +202,64 @@ pygame.mixer.music.load(os.path.join(sys.path[0] + "\\pony\\music\\", "main_them
 pygame.mixer.music.set_volume(0.2)
 pygame.mixer.music.play(-1)
 
-screen = pygame.display.set_mode((W, H))
+screen = pygame.display.set_mode((W, H), pygame.SRCALPHA)
 
 pygame.display.update()
 clock = pygame.time.Clock()
 
 finished = False
 
-rend, bill, map, slaves = start()
 
-kw, ks, ka, kd, shift = False, False, False, False, False
 
 
 get = True
-
+kw, ks, ka, kd, shift = False, False, False, False, False
+rend = 0
+bill = 0
+map =0
+slaves =0
+render_w = 355
+render_h = 200
+Tx,Ty =0,0
 import time
 
 
 def game_start():
     global game_st,W,H
+    global rend,bill,slaves,map
+    global kw, ks, ka, kd, shift
+    global Tx,Ty
+
+    rend = 0
+    bill = 0
+    map =0
+    slaves =0
+    Tx = 0
+    Ty = 0
+    rend, bill, map, slaves = start()
+
+    kw, ks, ka, kd, shift = False, False, False, False, False
     pygame.mouse.set_visible(False)
     game_st = 1
-    rend.start()
+    if not rend.is_alive():
+        rend.start()
+    
+def game_finish():
+    global finished
+    finished = True
+    
+def game_resume():
+    global game_paused
+    game_paused = game_reset_mode(game_paused)
+def game_return():
+    global game_st
+    game_st = 0
+    rend.stop()
+    rend.join()
+    screen.fill(bl)
+    
 def game_reset_mode(paused):
+    global game_st
     if paused == False:
         game_st = 2
         pygame.mouse.set_visible(True)
@@ -238,27 +268,58 @@ def game_reset_mode(paused):
         game_st = 1
         pygame.mouse.set_visible(False)
         rend.resume()
-    pygame.mouse.set_pos((W//2,H//2))
+    #pygame.mouse.set_pos((W//2,H//2))
     return not paused
 
 
-
-buttons1 = [0]*1
-buttons2 = [0]*3
-s = pygame.Surface((100,40), pygame.SRCALPHA)
-
-s.fill((0,0,0))
-font = pygame.font.SysFont('arial', 20)
-textsurface = font.render('Singleplayer', False, (255, 255, 255))
-sizes = font.size('Singleplayer')
-s.blit(textsurface,(int((100 - sizes[0])/2),0))
 Wdisp, Hdisp = screen.get_size()
 
-def ups():
-    print("hoh")
+buttons1 = [0]*3
+buttons2 = [0]*3
 
-buttons1[0] = button(s, Wdisp, Hdisp, 0.4, 0.3, 0.2, 0.05, game_start)
+font1 = pygame.font.Font(os.path.join(sys.path[0] + "\\ttf\\", "MAGNETOB.ttf"), 40)
+textsurface = font1.render(' Singleplayer ', False, (255, 255, 255))
+textsurface.set_colorkey((0,0,0))
+s = pygame.Surface(textsurface.get_size(),pygame.SRCALPHA)
+s.blit(textsurface,(0,0))
+
+
+buttons1[0] = button(s, Wdisp, Hdisp, 0.375, 0.3, 0.25, 0.08, game_start)
+
+
+textsurface = font1.render(' Multiplayer ', False, (255, 255, 255))
+textsurface.set_colorkey((0,0,0))
+s = pygame.Surface(textsurface.get_size(),pygame.SRCALPHA)
+s.fill((0,0,0,0))
+s.blit(textsurface,(0,0))
+buttons1[1] = button(s, Wdisp, Hdisp, 0.375, 0.44, 0.25, 0.08, game_start)
+
+textsurface = font1.render(' Main menu ', False, (255, 255, 255))
+textsurface.set_colorkey((0,0,0))
+s = pygame.Surface(textsurface.get_size(),pygame.SRCALPHA)
+s.fill((0,0,0,0))
+s.blit(textsurface,(0,0))
+buttons2[1] = button(s, Wdisp, Hdisp, 0.375, 0.44, 0.25, 0.08, game_return)
+
+
+textsurface = font1.render('    Quit    ', False, (255, 255, 255))
+textsurface.set_colorkey((0,0,0))
+s = pygame.Surface(textsurface.get_size(),pygame.SRCALPHA)
+s.blit(textsurface,(0,0))
+
+buttons1[2] = button(s, Wdisp, Hdisp, 0.375, 0.58, 0.25, 0.08, game_finish)
+buttons2[2] = button(s, Wdisp, Hdisp, 0.375, 0.58, 0.25, 0.08, game_finish)
+
+
+textsurface = font1.render('Resume', False, (255, 255, 255))
+textsurface.set_colorkey((0,0,0))
+s = pygame.Surface(textsurface.get_size(),pygame.SRCALPHA)
+s.blit(textsurface,(0,0))
+
+buttons2[0] = button(s, Wdisp, Hdisp, 0.375, 0.3, 0.25, 0.08, game_resume)
+
 menu1 = Menu(buttons1, screen)
+menu2 = Menu(buttons2, screen)
 
 
 start_time = time.time()
@@ -266,8 +327,8 @@ start_time_r = time.time()
 counter_r = 0
 game_paused = False
 game_st = 0
-
-
+main_screen = pygame.image.load(os.path.join(sys.path[0] + "\\pony\\", "main_screen.png"))
+main_screen = pygame.transform.scale(main_screen, (Wdisp, Hdisp))
 
 #rend.start()
 
@@ -278,14 +339,21 @@ while not finished:
     if game_st == 1:
         input_game(pygame.event.get())
         update()
-    else:
+    if game_st == 0:
+        screen.blit(main_screen, (0,0))
         menu1.draw_all()
         menu1.check_all()
         input_menu(pygame.event.get())
         pygame.display.update()
+    if game_st == 2:
+        pygame.draw.rect(screen, (255,0,0), (int(Wdisp*0.375-0.1*Hdisp),0,int(0.25*Wdisp+0.2*Hdisp),Hdisp),0)
+        menu2.draw_all()
+        menu2.check_all()
+        input_menu(pygame.event.get())
+        pygame.display.update()
 
     
-    # screen.fill(bl) - Это можно убрать
+    #  - Это можно убрать
     
     counter += 1
 
