@@ -7,12 +7,14 @@ from pygame.locals import Color
 from pygame import display
 import copy
 import threading
-
+import ctypes
 
 
 from functools import lru_cache
 
+class StopThread(StopIteration): pass
 
+threading.SystemExit = SystemExit, StopThread
 
 class rendering(threading.Thread):
 
@@ -173,7 +175,7 @@ class rendering(threading.Thread):
 
             self.render(self.update())
             self.redraw()
-
+        print('thread killed')
 
     @lru_cache()
     def find_clothest_point(self,map,l,xp,yp,xc,yc,cos,sin,lc,lmin):
@@ -199,6 +201,8 @@ class rendering(threading.Thread):
     def stop(self):
         self.__flag.set() # Resume the thread from the suspended state, if it is already suspended
         self.__running.clear() # Set to False
+        print('thread killed')
+        return "ye"
 
     @lru_cache()
     def find_clothest_gran(self,l,xp,yp,xc,yc,cos,sin,lc,lmin):
@@ -583,7 +587,5 @@ class rendering(threading.Thread):
                 x = x+1
         
         return render_data
-
-
-
+    
 
