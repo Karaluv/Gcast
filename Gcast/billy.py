@@ -3,6 +3,7 @@ import math
 import pygame
 import sys
 import os
+import pygame
 
 pygame.init()
 pygame.font.init()
@@ -102,6 +103,19 @@ class billy:
         for i in range(len(onlyfiles[2])):
             self.makarov[-1].append(pygame.image.load(files[0] + "\\ (" + str(i + 1) + ").png").convert_alpha())
 
+        self.res = 20
+        self.minimap = pygame.Surface((len(self.map[0])*self.res + 200, len(self.map)*self.res + 200))
+        for i in range(len(self.map[0])):
+            for j in range(len(self.map)):
+                if self.map[i][j] != 0:
+                    pygame.draw.rect(self.minimap, (100, 100, 100), (i*self.res + 100, j*self.res + 100, self.res, self.res))
+
+
+        self.minimap_circle = pygame.image.load("pony\\hud\\minimap.png")
+
+
+
+
     def Rotate(self, a):
         self.a = self.a + a
         global move
@@ -190,6 +204,23 @@ class billy:
         return False
 
     def draw(self, screen):
+        minimap_small = pygame.Surface.copy(self.minimap.subsurface((self.y/100*self.res, self.x/100*self.res, 200, 200)))
+        minimap_small = pygame.transform.flip(minimap_small, False, True)
+        minimap_rotated = pygame.Surface.copy(pygame.transform.rotozoom(pygame.Surface.copy(minimap_small), self.a * 180/ math.pi, 1))
+        blit_coord = 200 * (1 - abs(math.sin(self.a)) - abs(math.cos(self.a)))/2
+
+        minimap_rotated.blit(self.minimap_circle, (-blit_coord, -blit_coord))
+        minimap_rotated.set_colorkey((0, 0, 0))
+        surface = pygame.Surface((200, 200))
+        surface.blit(minimap_rotated, (blit_coord, blit_coord))
+        surface.set_alpha(200)
+        surface.set_colorkey((0, 0, 0))
+
+        screen.blit(surface, (screen.get_width() - 200, 0))
+
+        pygame.draw.circle(screen, (255, 0, 0), (screen.get_width() - 100, 100), 5)
+        pygame.draw.circle(screen, (100, 100, 100), (screen.get_width() - 100, 100), 102, 4)
+
         W, H = self.W, self.H
 
         #text = font.render("Ammo: " + str(self.ammo), True, (255, 255, 255))
