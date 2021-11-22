@@ -125,7 +125,7 @@ class billy:
 
     def update(self):
         self.a = self.a % self.pi_2
-
+        
         self.Rotate((-W / 2 + pygame.mouse.get_pos()[0]) / self.sens)
         pygame.mouse.set_pos((W // 2, H // 2))
 

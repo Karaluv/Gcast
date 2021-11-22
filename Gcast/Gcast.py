@@ -39,11 +39,24 @@ counter = 0
 
 
 
+def input_menu(user_input):
+    global finished,game_paused
+
+    keys = pygame.key.get_pressed()
+
+    for event in user_input:
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_q:
+                finished = True
+            if event.key == pygame.K_ESCAPE:
+                game_paused = game_reset_mode(game_paused)
+
+        if event.type == pygame.QUIT:
+            finished = True
 
 
-
-def input(user_input):
-    global finished
+def input_game(user_input):
+    global finished,game_paused
 
     keys = pygame.key.get_pressed()
 
@@ -57,7 +70,7 @@ def input(user_input):
             if event.key == pygame.K_q:
                 finished = True
             if event.key == pygame.K_ESCAPE:
-                rend.pause()
+                game_paused = game_reset_mode(game_paused)
 
         if event.type == pygame.QUIT:
             finished = True
@@ -212,16 +225,20 @@ import time
 
 
 def game_start():
-    global game_st
+    global game_st,W,H
     pygame.mouse.set_visible(False)
     game_st = 1
     rend.start()
 def game_reset_mode(paused):
     if paused == False:
-        rend.__flag.set()
+        game_st = 2
+        pygame.mouse.set_visible(True)
+        rend.pause()
     if paused == True:
-        rend.__flag.clear()
-    rend.resume()
+        game_st = 1
+        pygame.mouse.set_visible(False)
+        rend.resume()
+    pygame.mouse.set_pos((W//2,H//2))
     return not paused
 
 
@@ -259,12 +276,15 @@ while not finished:
     clock.tick(FPS)
     
     if game_st == 1:
-        input(pygame.event.get())
+        input_game(pygame.event.get())
         update()
     else:
         menu1.draw_all()
         menu1.check_all()
+        input_menu(pygame.event.get())
         pygame.display.update()
+
+    
     # screen.fill(bl) - Это можно убрать
     
     counter += 1
@@ -273,12 +293,7 @@ while not finished:
         fps_text = font.render("MAIN CORE FPS: " + str(round(counter / (time.time() - start_time))), True, (255, 255, 255))
         counter = 0
         start_time = time.time()
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            finished = True
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_ESCAPE:
-                game_paused = game_reset_mode(game_paused)
+
 
 
 pygame.quit()
