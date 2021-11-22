@@ -346,7 +346,7 @@ while not finished:
         input_menu(pygame.event.get())
         pygame.display.update()
     if game_st == 2:
-        pygame.draw.rect(screen, (255,0,0), (int(Wdisp*0.375-0.1*Hdisp),0,int(0.25*Wdisp+0.2*Hdisp),Hdisp),0)
+        pygame.draw.rect(screen, (233,0,0), (int(Wdisp*0.375-0.1*Hdisp),0,int(0.25*Wdisp+0.2*Hdisp),Hdisp),0)
         menu2.draw_all()
         menu2.check_all()
         input_menu(pygame.event.get())
