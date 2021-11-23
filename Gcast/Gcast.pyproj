@@ -32,6 +32,9 @@
     <Compile Include="mazeG.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="menues.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="render.py">
       <SubType>Code</SubType>
     </Compile>

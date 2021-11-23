@@ -7,8 +7,6 @@ from pygame.locals import Color
 from pygame import display
 import copy
 import threading
-import ctypes
-
 
 from functools import lru_cache
 
@@ -250,7 +248,6 @@ class rendering(threading.Thread):
 
         return enemy_render_data
 
-
     def ray_cast(self,map,cos,sin,cos1,sin1,minR,maxR,x0,y0):
 
 
@@ -455,7 +452,7 @@ class rendering(threading.Thread):
         while i <= i_max:
             if j<len(enemies):
                 if render_data[i][0]<enemies[j][0]:
-                    render_image = pygame.transform.scale(sprites[enemies[j][2]][int(enemies[j][3])],(int(pe/enemies[j][0]),int(pe/enemies[j][0]*1.4)))
+                    render_image = pygame.transform.scale(sprites[enemies[j][2]][int(enemies[j][3])],(int(pe/enemies[j][0]*1.5),int(pe/enemies[j][0]*1.4)))
 
                     render_mask = pygame.mask.from_surface(render_image)
                     render_mask = render_mask.to_surface()
@@ -468,7 +465,7 @@ class rendering(threading.Thread):
                     render_image.blit(render_mask, (0, 0))
                     render_image.set_colorkey((0,0,0))
 
-                    self.render_surface.blit(render_image,(int(enemies[j][1]*(dw-1)-pe/enemies[j][0]/2),int(H//2-pe/enemies[j][0]*0.4)))
+                    self.render_surface.blit(render_image,(int(enemies[j][1]*(dw-1)-pe/enemies[j][0]/2*1.5),int(H//2-pe/enemies[j][0]*0.4)))
                     j += 1
 
             self.render_surface.blit(render_data[i][5],(render_data[i][1],int(H//2-pe/render_data[i][0])))
