@@ -242,10 +242,9 @@ game_st = 0
 while not finished:
     
     clock.tick(FPS)
-    input(pygame.event.get())
-    if game_st == 1:
-        
-        update()
+    
+
+
     if game_st == 0:
         screen.blit(main_screen, (0,0))
         menu1.draw_all()
@@ -256,7 +255,10 @@ while not finished:
         menu2.draw_all()
         menu2.check_all()
         pygame.display.update()
-
+    input(pygame.event.get())
+    if game_st == 1:
+        
+        update()
     counter += 1
 
     if counter == 10:
