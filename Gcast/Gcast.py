@@ -166,7 +166,9 @@ def update():
 
     enemies = ()
     for i in range(len(slaves)):
-        slaves[i].walk(map)
+        if slaves[i].walk(map, bill.x, bill.y):
+            bill.hp -=0.5
+
         enemies += ((slaves[i].x,slaves[i].y,slaves[i].type,slaves[i].frame))
 
 

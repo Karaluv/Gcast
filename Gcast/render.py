@@ -94,7 +94,7 @@ class rendering(threading.Thread):
         print(onlyfiles)
         for i in range(len(onlyfiles[2])):
             print(files[0]+"\\"+onlyfiles[2][i])
-            self.sprites[-1].append(pygame.image.load(files[0]+"\\"+onlyfiles[2][i]).convert_alpha())
+            self.sprites[-1].append(pygame.image.load(files[0]+"\\"+"  ("+str(i+1)+").png").convert_alpha())
 
         self.sprites.append([])
         path = os.path.join(sys.path[0],"pony\\sprites\\slave2")
@@ -103,8 +103,8 @@ class rendering(threading.Thread):
         print(onlyfiles)
         for i in range(len(onlyfiles[2])):
             print(files[0]+"\\"+onlyfiles[2][i])
-            self.sprites[-1].append(pygame.image.load(files[0]+"\\"+onlyfiles[2][i]).convert_alpha())
-
+            self.sprites[-1].append(pygame.image.load(files[0]+"\\"+"  ("+str(i+1)+").png").convert_alpha())
+            
         self.sprites.append([])
         path = os.path.join(sys.path[0],"pony\\sprites\\slave3")
         files = next(os.walk(path))
@@ -112,8 +112,7 @@ class rendering(threading.Thread):
         print(onlyfiles)
         for i in range(len(onlyfiles[2])):
             print(files[0]+"\\"+onlyfiles[2][i])
-            self.sprites[-1].append(pygame.image.load(files[0]+"\\"+onlyfiles[2][i]).convert_alpha())
-
+            self.sprites[-1].append(pygame.image.load(files[0]+"\\"+"  ("+str(i+1)+").png").convert_alpha())
 
 
 
@@ -456,7 +455,7 @@ class rendering(threading.Thread):
             if j<len(enemies):
                 if render_data[i][0]<enemies[j][0]:
                     render_image = pygame.transform.scale(sprites[enemies[j][2]][int(enemies[j][3])],(int(pe/enemies[j][0]),int(pe/enemies[j][0]*1.4)))
-
+                    self.render_surface.blit(render_image,(int(enemies[j][1]*(dw-1)-pe/enemies[j][0]/2),int(H//2-pe/enemies[j][0]*0.4)))
                     render_mask = pygame.mask.from_surface(render_image)
                     render_mask = render_mask.to_surface()
                     dark = pygame.Surface(render_image.get_size()).convert_alpha()
