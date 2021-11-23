@@ -120,7 +120,7 @@ def redraw_all():
 
     x = rend.xs
     final_render = pygame.transform.scale(render_zone,(int(W*render_zone.get_width()/x),int(H+40)))
-    screen.blit(final_render,(math.sin(bill.Tx)*15-15,math.cos(bill.Ty)*15-20))
+    screen.blit(final_render,(math.sin(bill.Tx)*15-20,math.cos(bill.Ty)*15-20))
     thread_draw_stuff = Thread(target = draw_stuff, args = ())
     thread_draw_stuff.start()
 

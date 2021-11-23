@@ -84,10 +84,10 @@ class slave:
         self.x,self.y = x_,y_
         while not go:
 
-            if map[int(y_+0.1)][int(x_+0.1)] == 0:
-                if map[int(y_-0.1)][int(x_-0.1)] == 0:
-                    if map[int(y_-0.1)][int(x_+0.1)] == 0:
-                        if map[int(y_+0.1)][int(x_-0.1)] == 0:
+            if map[int(y_+0.25)][int(x_+0.25)] == 0:
+                if map[int(y_-0.25)][int(x_-0.25)] == 0:
+                    if map[int(y_-0.25)][int(x_+0.25)] == 0:
+                        if map[int(y_+0.25)][int(x_-0.25)] == 0:
                             self.x,self.y = x_,y_
                             go = True
             if not go:
