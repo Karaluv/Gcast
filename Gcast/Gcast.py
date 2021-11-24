@@ -89,7 +89,8 @@ def start():
         if mazeG.maze[int(y)][int(x)] == 0:
             slaves.append(slave(randint(0,2),x,y,100,100))
 
-    rend = rendering(0.5,density,dl,render_zone,height+2,width+2,update_render,redraw_all)
+    rend = rendering(0.5,density,dl,render_zone,height+2,width+2,update_render,redraw_all,1)
+
 
     print("start")
     
@@ -104,7 +105,7 @@ def update_render():
     global u,enemies,map
     a = bill.a
     x0,y0 =bill.x,bill.y
-    return map,enemies,math.cos(a-u),math.sin(a-u),math.cos(a+u),math.sin(a+u),0.15,7,bill.x,bill.y
+    return map,enemies,math.cos(a-u),math.sin(a-u),math.cos(a+u),math.sin(a+u),0.15,7,bill.x,bill.y,bill.z
 
 
 

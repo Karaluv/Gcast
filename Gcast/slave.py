@@ -100,3 +100,8 @@ class slave:
 
         self.rotation = a
         return hit
+
+    def hitted(self,z,l,a,z0,y0):
+        #get position of bullet, if it got on weak point,like head
+        pass
+        

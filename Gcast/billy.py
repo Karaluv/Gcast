@@ -32,6 +32,8 @@ class billy:
         self.stepx = 100
         self.stepy = 100
 
+        self.z = 1
+
         self.pi_2 = math.pi * 2
 
         self.makarov = []
@@ -56,7 +58,7 @@ class billy:
         self.max_ammo = 8
 
         self.speed = 1
-        self.sens = 2000
+        self.sens = 1000
 
         self.Tx = 0
         self.Ty = 0
@@ -65,6 +67,7 @@ class billy:
         self.ks = False
         self.ka = False
         self.kd = False
+
 
         self.bullet = pygame.image.load("pony\\hud\\bullet.png")
         self.bullet.set_colorkey((0, 0, 0))
@@ -149,6 +152,10 @@ class billy:
         self.a = self.a % self.pi_2
         
         self.Rotate((-W / 2 + pygame.mouse.get_pos()[0]) / self.sens)
+        
+        self.z -= (-H / 2 + pygame.mouse.get_pos()[1]) / self.sens
+        self.z = min(self.z,1.5)
+        self.z = max(self.z,0.5)
         pygame.mouse.set_pos((W // 2, H // 2))
 
         if self.shoot_frame > 0:
@@ -171,6 +178,7 @@ class billy:
         if self.kd:
             self.Move(3 * self.speed, 0)
 
+
        
 
     def keyinput(self, event):
@@ -183,6 +191,7 @@ class billy:
                 self.ka = True
             if event.key == pygame.K_d:
                 self.kd = True
+
             if event.key == pygame.K_r and self.ammo < self.max_ammo:
                 self.reload()
 
@@ -304,8 +313,9 @@ class billy:
                 for j in range(len(slaves)):
                     z_2 = (slaves[j].x - x) ** 2 + (slaves[j].y - y) ** 2
 
-                    if z_2 < 0.01:
+                    if z_2 < 0.25:
                         find = True
+                        slaves[j].hitted(self.z,l,self.a,self.x,self.y)
                         del slaves[j]
                         self.hitmark_counter = 15
                         break
