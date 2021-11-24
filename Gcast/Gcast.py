@@ -33,12 +33,19 @@ width = 15
 
 pygame.font.init()
 font = pygame.font.Font(None, 30)
+font1 = pygame.font.Font(os.path.join(sys.path[0] + "\\ttf\\", "MAGNETOB.ttf"), 40)
 fps_text = font.render("FPS: ", True, (255, 255, 255))
 
 fps_text_r = font.render("FPS: ", True, (255, 255, 255))
 
 counter = 0
 
+def textsurf(text):
+    textsurface = font1.render(text, False, (255, 255, 255))
+    textsurface.set_colorkey((0, 0, 0))
+    s = pygame.Surface(textsurface.get_size(), pygame.SRCALPHA)
+    s.blit(textsurface, (0, 0))
+    return s
 
 
 def input_menu(user_input):
@@ -288,78 +295,54 @@ Wdisp, Hdisp = screen.get_size()
 buttons1 = [0]*3
 buttons2 = [0]*3
 
-font1 = pygame.font.Font(os.path.join(sys.path[0] + "\\ttf\\", "MAGNETOB.ttf"), 40)
-textsurface = font1.render(' Singleplayer ', False, (255, 255, 255))
-textsurface.set_colorkey((0,0,0))
-s = pygame.Surface(textsurface.get_size(),pygame.SRCALPHA)
-s.blit(textsurface,(0,0))
 
-
+s = textsurf(' Singleplayer ')
 buttons1[0] = button(s, Wdisp, Hdisp, 0.375, 0.3, 0.25, 0.08, game_start)
 
-
-textsurface = font1.render(' Multiplayer ', False, (255, 255, 255))
-textsurface.set_colorkey((0,0,0))
-s = pygame.Surface(textsurface.get_size(),pygame.SRCALPHA)
-s.fill((0,0,0,0))
-s.blit(textsurface,(0,0))
+s = textsurf(' Multiplayer ')
 buttons1[1] = button(s, Wdisp, Hdisp, 0.375, 0.44, 0.25, 0.08, open_multiplayer_menu1)
 
-textsurface = font1.render(' Main menu ', False, (255, 255, 255))
-textsurface.set_colorkey((0,0,0))
-s = pygame.Surface(textsurface.get_size(),pygame.SRCALPHA)
-s.fill((0,0,0,0))
-s.blit(textsurface,(0,0))
+s = textsurf(' Main menu ')
 buttons2[1] = button(s, Wdisp, Hdisp, 0.375, 0.44, 0.25, 0.08, game_return)
 
-
-textsurface = font1.render('    Quit    ', False, (255, 255, 255))
-textsurface.set_colorkey((0,0,0))
-s = pygame.Surface(textsurface.get_size(),pygame.SRCALPHA)
-s.blit(textsurface,(0,0))
-
+s = textsurf('    Quit    ')
 buttons1[2] = button(s, Wdisp, Hdisp, 0.375, 0.58, 0.25, 0.08, game_finish)
 buttons2[2] = button(s, Wdisp, Hdisp, 0.375, 0.58, 0.25, 0.08, game_finish)
 
-
-textsurface = font1.render('Resume', False, (255, 255, 255))
-textsurface.set_colorkey((0,0,0))
-s = pygame.Surface(textsurface.get_size(),pygame.SRCALPHA)
-s.blit(textsurface,(0,0))
-
+s = textsurf('Resume')
 buttons2[0] = button(s, Wdisp, Hdisp, 0.375, 0.3, 0.25, 0.08, game_resume)
 
 menu1 = Menu(buttons1, screen)
 menu2 = Menu(buttons2, screen)
 
 # Меню где выбираем, создаем сервер или присоединяемся
-buttons3 = [0]*2
+buttons3 = [0]*3
+def create_server_menu():
+    global game_st
+    game_st = 4
+s = textsurf('Create server')
+buttons3[0] = button(s, Wdisp, Hdisp, 0.375, 0.3, 0.25, 0.08, create_server_menu)
 
-textsurface = font1.render('Create server', False, (255, 255, 255))
-textsurface.set_colorkey((0,0,0))
-s = pygame.Surface(textsurface.get_size(),pygame.SRCALPHA)
-s.blit(textsurface,(0,0))
-buttons3[0] = button(s, Wdisp, Hdisp, 0.375, 0.3, 0.25, 0.08, game_start)
-
-textsurface = font1.render('Join server', False, (255, 255, 255))
-textsurface.set_colorkey((0,0,0))
-s = pygame.Surface(textsurface.get_size(),pygame.SRCALPHA)
-s.blit(textsurface,(0,0))
+s = textsurf('Join server')
 buttons3[1] = button(s, Wdisp, Hdisp, 0.375, 0.44, 0.25, 0.08, game_start)
 
-input = inputfield(Wdisp, Hdisp, 0.375, 0.58, 0.25, 0.08)
+def back_to_menu():
+    global game_st
+    game_st = 0
+s = textsurf('   Back   ')
+buttons3[2] = button(s, Wdisp, Hdisp, 0.375, 0.58, 0.25, 0.08, back_to_menu)
 
-textsurface = font1.render('NO BUTTON', False, (255, 255, 255))
-textsurface.set_colorkey((0,0,0))
-s = pygame.Surface(textsurface.get_size(),pygame.SRCALPHA)
-s.blit(textsurface,(0,0))
-text = just_text(s, Wdisp, Hdisp, 0.375, 0.72, 0.25, 0.08)
-menu3 = Menu(buttons3, screen, [input], [text])
-
+menu3 = Menu(buttons3, screen)
 
 
 # Меню где создаем сервер(пока нету)
-
+buttons4 = [0]*2
+input = inputfield(Wdisp, Hdisp, 0.375, 0.30, 0.25, 0.08, 'Enter port')
+s = textsurf('Create server')
+buttons4[0] = button(s, Wdisp, Hdisp, 0.375, 0.44, 0.25, 0.08, game_start)
+s = textsurf('    Back    ')
+buttons4[1] = button(s, Wdisp, Hdisp, 0.375, 0.58, 0.25, 0.08, back_to_menu)
+menu4 = Menu(buttons4, screen, [input])
 
 start_time = time.time()
 start_time_r = time.time()
@@ -394,6 +377,12 @@ while not finished:
         screen.blit(main_screen, (0, 0))
         menu3.draw_all()
         menu3.check_all()
+        input_menu(pygame.event.get())
+        pygame.display.update()
+    if game_st == 4:
+        screen.blit(main_screen, (0, 0))
+        menu4.draw_all()
+        menu4.check_all()
         input_menu(pygame.event.get())
         pygame.display.update()
     

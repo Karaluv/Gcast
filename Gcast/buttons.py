@@ -3,6 +3,13 @@ import sys
 import math
 
 font1 = pygame.font.Font("ttf\\MAGNETOB.ttf", 40)
+def textsurf(text):
+    textsurface = font1.render(text, False, (255, 255, 255))
+    textsurface.set_colorkey((0, 0, 0))
+    s = pygame.Surface(textsurface.get_size(), pygame.SRCALPHA)
+    s.blit(textsurface, (0, 0))
+    return s
+
 
 class button():
     def __init__(self, image, W, H, x, y, w, h, f):
@@ -18,20 +25,26 @@ class button():
         self.presence = 0
 
 class inputfield():
-    def __init__(self, W, H, x, y, w, h):
+    def __init__(self, W, H, x, y, w, h, backtext):
         self.W = W
         self.H = H
         self.x = int(x * W)
         self.y = int(y * H)
         self.w = int(w * W)
         self.h = int(h * H)
+        self.backtext = backtext
         self.text = ""
         self.active = False
 
     def draw(self, screen):
-        textsurface = font1.render(self.text, False, (255, 255, 255))
-        textsurface.set_colorkey((0, 0, 0))
-        screen.blit(textsurface, (self.x, self.y))
+        if len(self.text)>0:
+            textsurface = font1.render(self.text, False, (255, 255, 255))
+            textsurface.set_colorkey((0, 0, 0))
+            screen.blit(textsurface, (self.x, self.y))
+        else:
+            textsurface = font1.render(self.backtext, False, (155, 155, 155))
+            textsurface.set_colorkey((0, 0, 0))
+            screen.blit(textsurface, (self.x, self.y))
 
         pygame.draw.line(screen, (255, 255, 0), (self.x, self.y), (self.x + self.w, self.y), 3)
         pygame.draw.line(screen, (255, 255, 0), (self.x, self.y + self.h - 1),
