@@ -12,6 +12,7 @@ from billy import billy
 import mazeG
 from buttons import button
 from buttons import inputfield
+from buttons import just_text
 from menu import Menu
 
 from threading import Thread
@@ -346,8 +347,14 @@ s = pygame.Surface(textsurface.get_size(),pygame.SRCALPHA)
 s.blit(textsurface,(0,0))
 buttons3[1] = button(s, Wdisp, Hdisp, 0.375, 0.44, 0.25, 0.08, game_start)
 
-input = inputfield(Wdisp, Hdisp, 0.375, 0.58, 0.25, 0.08,)
-menu3 = Menu(buttons3, screen, [input])
+input = inputfield(Wdisp, Hdisp, 0.375, 0.58, 0.25, 0.08)
+
+textsurface = font1.render('NO BUTTON', False, (255, 255, 255))
+textsurface.set_colorkey((0,0,0))
+s = pygame.Surface(textsurface.get_size(),pygame.SRCALPHA)
+s.blit(textsurface,(0,0))
+text = just_text(s, Wdisp, Hdisp, 0.375, 0.72, 0.25, 0.08)
+menu3 = Menu(buttons3, screen, [input], [text])
 
 
 
