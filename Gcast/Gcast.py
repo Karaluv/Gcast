@@ -11,6 +11,7 @@ from slave import slave
 from billy import billy
 import mazeG
 from buttons import button
+from buttons import inputfield
 from menu import Menu
 
 from threading import Thread
@@ -75,9 +76,6 @@ def input_game(user_input):
         if event.type == pygame.QUIT:
             finished = True
 
-
-                    
-
 def draw_stuff():
     screen.blit(fps_text, (30, 30))
     screen.blit(fps_text_r, (30, 60))
@@ -105,7 +103,6 @@ def start():
     rend = rendering(0.5,density,dl,render_zone,height+2,width+2,update_render,redraw_all)
     #rend.daemon = True
     
-    
 
     print("start")
     
@@ -121,7 +118,6 @@ def update_render():
     a = bill.a
     x0,y0 =bill.x,bill.y
     return map,enemies,math.cos(a-u),math.sin(a-u),math.cos(a+u),math.sin(a+u),0.15,7,bill.x,bill.y
-
 
 
 def redraw_all():
@@ -140,8 +136,6 @@ def redraw_all():
     thread_draw_stuff = Thread(target = draw_stuff, args = ())
     thread_draw_stuff.start()
 
-
-    
 
 
 def update():
@@ -173,20 +167,8 @@ def update():
 
     #rend.map,rend.enemies,rend.cos0,rend.sin0,rend.cos1,rend.sin1,rend.minR,rend.maxR,rend.x0,rend.y0=(map,enemies,math.cos(a-u),math.sin(a-u),math.cos(a+u),math.sin(a+u),0.15,7,bill.x,bill.y)
 
-    
-
-    
-
-
-
-
-
-
-
 
 pygame.init()
-
-
 
 #pygame.mouse.set_visible(False)
 infoObject = pygame.display.Info()
@@ -209,9 +191,6 @@ clock = pygame.time.Clock()
 
 finished = False
 
-
-
-
 get = True
 kw, ks, ka, kd, shift = False, False, False, False, False
 rend = 0
@@ -229,7 +208,9 @@ def game_start():
     global rend,bill,slaves,map
     global kw, ks, ka, kd, shift
     global Tx,Ty
+    global multiplayer
 
+    multiplayer = False
     rend = 0
     bill = 0
     map =0
@@ -243,6 +224,31 @@ def game_start():
     game_st = 1
     if not rend.is_alive():
         rend.start()
+
+
+def multiplayer_start():
+    global game_st, W, H
+    global rend, bill, slaves, map
+    global kw, ks, ka, kd, shift
+    global Tx, Ty
+    global multiplayer
+
+    multiplayer = True
+    rend = 0
+    bill = 0
+    map = 0
+    slaves = 0
+    Tx = 0
+    Ty = 0
+    rend, bill, map = start()
+
+
+    kw, ks, ka, kd, shift = False, False, False, False, False
+    pygame.mouse.set_visible(False)
+    game_st = 1
+    if not rend.is_alive():
+        rend.start()
+
     
 def game_finish():
     global finished
@@ -271,6 +277,10 @@ def game_reset_mode(paused):
     #pygame.mouse.set_pos((W//2,H//2))
     return not paused
 
+def open_multiplayer_menu1():
+    global game_st
+    game_st = 3
+
 
 Wdisp, Hdisp = screen.get_size()
 
@@ -292,7 +302,7 @@ textsurface.set_colorkey((0,0,0))
 s = pygame.Surface(textsurface.get_size(),pygame.SRCALPHA)
 s.fill((0,0,0,0))
 s.blit(textsurface,(0,0))
-buttons1[1] = button(s, Wdisp, Hdisp, 0.375, 0.44, 0.25, 0.08, game_start)
+buttons1[1] = button(s, Wdisp, Hdisp, 0.375, 0.44, 0.25, 0.08, open_multiplayer_menu1)
 
 textsurface = font1.render(' Main menu ', False, (255, 255, 255))
 textsurface.set_colorkey((0,0,0))
@@ -320,6 +330,28 @@ buttons2[0] = button(s, Wdisp, Hdisp, 0.375, 0.3, 0.25, 0.08, game_resume)
 
 menu1 = Menu(buttons1, screen)
 menu2 = Menu(buttons2, screen)
+
+# Меню где выбираем, создаем сервер или присоединяемся
+buttons3 = [0]*2
+
+textsurface = font1.render('Create server', False, (255, 255, 255))
+textsurface.set_colorkey((0,0,0))
+s = pygame.Surface(textsurface.get_size(),pygame.SRCALPHA)
+s.blit(textsurface,(0,0))
+buttons3[0] = button(s, Wdisp, Hdisp, 0.375, 0.3, 0.25, 0.08, game_start)
+
+textsurface = font1.render('Join server', False, (255, 255, 255))
+textsurface.set_colorkey((0,0,0))
+s = pygame.Surface(textsurface.get_size(),pygame.SRCALPHA)
+s.blit(textsurface,(0,0))
+buttons3[1] = button(s, Wdisp, Hdisp, 0.375, 0.44, 0.25, 0.08, game_start)
+
+input = inputfield(Wdisp, Hdisp, 0.375, 0.58, 0.25, 0.08,)
+menu3 = Menu(buttons3, screen, [input])
+
+
+
+# Меню где создаем сервер(пока нету)
 
 
 start_time = time.time()
@@ -351,9 +383,12 @@ while not finished:
         menu2.check_all()
         input_menu(pygame.event.get())
         pygame.display.update()
-
-    
-    #  - Это можно убрать
+    if game_st == 3:
+        screen.blit(main_screen, (0, 0))
+        menu3.draw_all()
+        menu3.check_all()
+        input_menu(pygame.event.get())
+        pygame.display.update()
     
     counter += 1
 
@@ -361,7 +396,5 @@ while not finished:
         fps_text = font.render("MAIN CORE FPS: " + str(round(counter / (time.time() - start_time))), True, (255, 255, 255))
         counter = 0
         start_time = time.time()
-
-
 
 pygame.quit()
