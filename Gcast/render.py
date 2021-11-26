@@ -8,12 +8,13 @@ from pygame import display
 import copy
 import threading
 
+from numba import jit, cuda
 from functools import lru_cache
 
 class StopThread(StopIteration): pass
 
 threading.SystemExit = SystemExit, StopThread
-
+ 
 class rendering(threading.Thread):
 
 
@@ -111,6 +112,13 @@ class rendering(threading.Thread):
         for i in range(len(onlyfiles[2])):
             print(files[0]+"\\"+onlyfiles[2][i])
             self.sprites[-1].append(pygame.image.load(files[0]+"\\"+"  ("+str(i+1)+").png").convert_alpha())
+
+        path = os.path.join(sys.path[0],"pony\\floor")
+        files = next(os.walk(path))
+        onlyfiles = next(os.walk(path)) 
+        print(onlyfiles)
+
+        self.floor = pygame.image.load(files[0]+"\\"+onlyfiles[2][0])
 
 
 
@@ -219,7 +227,7 @@ class rendering(threading.Thread):
         if lc>lmin:
             return self.find_clothest_gran(l+lc,xp,yp,xc+cos,yc+sin,cos/10,sin/10,lc/10,lmin)
 
-    
+    @cuda.jit
     def enemy_ray_caster(self,wall_data,enemies,cos0,sin0,cos1,sin1,minR,maxR,x0,y0):
 
         enemy_render_data = []
@@ -496,7 +504,8 @@ class rendering(threading.Thread):
         self.gradientRect(self.sky,(153, 153, 102),(0,0,0),pygame.Rect(0,0,W,H//2+H//2*(elevation-1)-self.pe/maxR+1))
         self.gradientRect(self.ground,(0,0,0),(135,62,35),pygame.Rect(0,0,W,H//2-H//2*(elevation-1)-self.pe/maxR+1))
 
-        self.render_surface.fill((0,0,0))
+        self.render_surface.fill((0,0,0)) 
+
         self.render_surface.blit(self.sky,(0,0))
         self.render_surface.blit(self.ground,(0,H//2+H//2*(elevation-1)+self.pe/maxR-1))
 
