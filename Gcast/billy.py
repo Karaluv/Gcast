@@ -114,8 +114,6 @@ class billy:
         self.minimap_circle = pygame.image.load("pony\\hud\\minimap.png")
 
 
-
-
     def Rotate(self, a):
         self.a = self.a + a
         global move
