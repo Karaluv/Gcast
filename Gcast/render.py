@@ -8,17 +8,18 @@ from pygame import display
 import copy
 import threading
 
+from numba import jit, cuda
 from functools import lru_cache
 
 class StopThread(StopIteration): pass
 
 threading.SystemExit = SystemExit, StopThread
-
+ 
 class rendering(threading.Thread):
 
 
 
-    def __init__(self,u,density,dl,render_surface,height,width,update,redraw):
+    def __init__(self,u,density,dl,render_surface,height,width,update,redraw,elevation):
 
         self.render_surface = render_surface
         self.dl = dl
@@ -29,7 +30,7 @@ class rendering(threading.Thread):
         self.dw = W*density
 
         self.ston =[]
-
+        self.elevation = elevation
         self.ston.append([])
         path = os.path.join(sys.path[0],"pony\\wall\\cia")
         files = next(os.walk(path))
@@ -111,6 +112,13 @@ class rendering(threading.Thread):
         for i in range(len(onlyfiles[2])):
             print(files[0]+"\\"+onlyfiles[2][i])
             self.sprites[-1].append(pygame.image.load(files[0]+"\\"+"  ("+str(i+1)+").png").convert_alpha())
+
+        #path = os.path.join(sys.path[0],"pony\\floor")
+        #files = next(os.walk(path))
+        #onlyfiles = next(os.walk(path)) 
+        #print(onlyfiles)
+
+        #self.floor = pygame.image.load(files[0]+"\\"+onlyfiles[2][0])
 
 
 
@@ -219,7 +227,6 @@ class rendering(threading.Thread):
         if lc>lmin:
             return self.find_clothest_gran(l+lc,xp,yp,xc+cos,yc+sin,cos/10,sin/10,lc/10,lmin)
 
-    
     def enemy_ray_caster(self,wall_data,enemies,cos0,sin0,cos1,sin1,minR,maxR,x0,y0):
 
         enemy_render_data = []
@@ -440,7 +447,7 @@ class rendering(threading.Thread):
 
 
 
-    def draw_wall(self,render_data,enemies):
+    def draw_wall(self,render_data,enemies,elevation):
         
         sprites= self.sprites
 
@@ -474,11 +481,11 @@ class rendering(threading.Thread):
                     inv.set_colorkey((255,255,255))
 
 
-                    self.render_surface.blit(inv,(int(enemies[j][1]*(dw-1)-pe/enemies[j][0]/2*1.5),int(H//2-pe/enemies[j][0]*0.4)))
-                    self.render_surface.blit(render_image,(int(enemies[j][1]*(dw-1)-pe/enemies[j][0]/2*1.5),int(H//2-pe/enemies[j][0]*0.4)))
+                    self.render_surface.blit(inv,(int(enemies[j][1]*(dw-1)-pe/enemies[j][0]/2*1.5),int(H//2*elevation-pe/enemies[j][0]*0.4)))
+                    self.render_surface.blit(render_image,(int(enemies[j][1]*(dw-1)-pe/enemies[j][0]/2*1.5),int(H//2*elevation-pe/enemies[j][0]*0.4)))
                     j += 1
 
-            self.render_surface.blit(render_data[i][5],(render_data[i][1],int(H//2-pe/render_data[i][0])))
+            self.render_surface.blit(render_data[i][5],(render_data[i][1],int(H//2*elevation-pe/render_data[i][0])))
 
             #pygame.draw.rect(self.render_surface,(128,128,128),(render_data[i][1],int(H//2-pe/render_data[i][0]),int(dw),int(pe/render_data[i][0])))
             w +=dw
@@ -486,17 +493,24 @@ class rendering(threading.Thread):
 
         return w-i-dw
 
-    def draw_background(self):
+    def draw_background(self,elevation):
         maxR = 7
         W,H = self.W,self.H
 
-        
+        self.sky = pygame.Surface((W,H//2+H//2*(elevation-1)-self.pe/maxR+1))
+        self.ground = pygame.Surface((W,H//2-H//2*(elevation-1)-self.pe/maxR+1))
+
+        self.gradientRect(self.sky,(153, 153, 102),(0,0,0),pygame.Rect(0,0,W,H//2+H//2*(elevation-1)-self.pe/maxR+1))
+        self.gradientRect(self.ground,(0,0,0),(135,62,35),pygame.Rect(0,0,W,H//2-H//2*(elevation-1)-self.pe/maxR+1))
+
+        self.render_surface.fill((0,0,0)) 
+
         self.render_surface.blit(self.sky,(0,0))
-        self.render_surface.blit(self.ground,(0,H//2+self.pe/maxR-1))
+        self.render_surface.blit(self.ground,(0,H//2+H//2*(elevation-1)+self.pe/maxR-1))
 
     def render(self,args):
 
-        map,enemies,cos0,sin0,cos1,sin1,minR,maxR,x0,y0 = args
+        map,enemies,cos0,sin0,cos1,sin1,minR,maxR,x0,y0,elevation = args
 
         render_wall_data = self.ray_cast(map,cos0,sin0,cos1,sin1,minR,maxR,x0,y0)
 
@@ -516,8 +530,8 @@ class rendering(threading.Thread):
         while self.blit:
             pass
         self.blit = True
-        self.draw_background()
-        res = self.draw_wall(render_wall_data, enemy_render_data)
+        self.draw_background(elevation)
+        res = self.draw_wall(render_wall_data, enemy_render_data,elevation)
         self.blit = False
 
         self.xs = res
@@ -536,9 +550,11 @@ class rendering(threading.Thread):
         n,n_ ,texture_data= [],[],[]
 
         ston = self.ston
-        pe,dw, w,H = self.pe,self.dw,self.W,self.H
+        pe,dw, w,H = self.pe,self.dw,self.W,self.H*1.5
 
         x = 0
+
+
 
 
         for i in range(len(render_data)):
@@ -594,5 +610,3 @@ class rendering(threading.Thread):
                 x = x+1
         
         return render_data
-    
-

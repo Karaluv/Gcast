@@ -57,7 +57,7 @@ class billy:
 
         self.speed = 1
         self.sens = 2000
-
+        self.z = 1
         self.Tx = 0
         self.Ty = 0
 
@@ -147,6 +147,10 @@ class billy:
         self.a = self.a % self.pi_2
         
         self.Rotate((-W / 2 + pygame.mouse.get_pos()[0]) / self.sens)
+        
+        self.z -= (-H / 2 + pygame.mouse.get_pos()[1]) / self.sens
+        self.z = min(self.z,1.5)
+        self.z = max(self.z,0.5)
         pygame.mouse.set_pos((W // 2, H // 2))
 
         if self.shoot_frame > 0:
