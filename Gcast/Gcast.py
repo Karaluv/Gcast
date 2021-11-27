@@ -3,6 +3,8 @@ import math
 from random import randint
 import os
 import sys
+import cv2
+import moviepy.editor as mp
 from pygame.locals import Color
 from pygame import display
 
@@ -190,11 +192,36 @@ render_zone = pygame.Surface((700, 200))
 wh = (255, 255, 255)
 bl = (0, 0, 0)
 
-#movie = pygame.movie.Movie(os.path.join(sys.path[0] + "\\pony\\video\\", "Intro_video.mp4"))
-#mrect = pygame.Rect(0,0,W,H)
-#movie.set_display(screen, mrect.move(W, H))
-#movie.set_volume(10)
-#movie.play()
+#clip = mp.VideoFileClip(os.path.join(sys.path[0] + "\\pony\\video\\", "Intro_video.mp4"))  Преобразует разрешение видео под размеры экрана
+#clip_resized = clip.resize(height=H) 
+#clip_resized.write_videofile(os.path.join(sys.path[0] + "\\pony\\video\\", "Intro_video_resized.mp4"))
+
+cap = cv2.VideoCapture(os.path.join(sys.path[0] + "\\pony\\video\\", "Intro_video_resized.mp4"))
+success, img = cap.read()
+print (type(img))
+#img = pygame.transform.smoothscale(img, (W, H))
+shape = img.shape[1::-1]
+wn = pygame.display.set_mode((W,H))
+clock = pygame.time.Clock()
+    
+pygame.mixer.music.load(os.path.join(sys.path[0] + "\\pony\\music\\", "Intro_sound.mp3"))
+pygame.mixer.music.set_volume(1)
+pygame.mixer.music.play(1)
+
+while success:
+    clock.tick(24)
+    success, img = cap.read()
+    if (img is None):
+        break
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            success = False
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                success = False
+    wn.blit(pygame.image.frombuffer(img.tobytes(), shape, "BGR"), (0, 0))
+    pygame.display.update()
+
 
 pygame.mixer.music.load(os.path.join(sys.path[0] + "\\pony\\music\\", "main_theme.mp3"))
 pygame.mixer.music.set_volume(0.2)
