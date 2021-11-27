@@ -1,4 +1,7 @@
 import math
+import pygame
+import os
+import sys
 from random import randint
 
 
@@ -67,6 +70,13 @@ class slave:
                 c = randint(0,1)
                 if c==1:
                     hit = True
+                    #pygame.mixer.music.load(os.path.join(sys.path[0] + "\\pony\\music\\", "enemy_shoot.mp3"))
+                    if self.type == 1 or self.type == 2:
+                        pygame.mixer.Channel(2).play(pygame.mixer.Sound(os.path.join(sys.path[0], "pony\\music\\enemy3_shoot.mp3")))
+                        pygame.mixer.Channel(2).set_volume(1)
+                    if self.type == 0:
+                        pygame.mixer.Channel(2).play(pygame.mixer.Sound(os.path.join(sys.path[0], "pony\\music\\enemy2_shoot.mp3")))
+                        pygame.mixer.Channel(2).set_volume(1)
                     
         else:
             vx = math.cos(a)*self.v
