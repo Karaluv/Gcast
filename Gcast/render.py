@@ -8,7 +8,7 @@ from pygame import display
 import copy
 import threading
 
-from numba import jit, cuda
+#from numba import jit, cuda
 from functools import lru_cache
 
 class StopThread(StopIteration): pass

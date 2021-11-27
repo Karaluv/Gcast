@@ -1,4 +1,4 @@
-﻿import pygame
+import pygame
 import math
 from random import randint
 import os
@@ -189,6 +189,12 @@ render_zone = pygame.Surface((700, 200))
 
 wh = (255, 255, 255)
 bl = (0, 0, 0)
+
+#movie = pygame.movie.Movie(os.path.join(sys.path[0] + "\\pony\\video\\", "Intro_video.mp4"))
+#mrect = pygame.Rect(0,0,W,H)
+#movie.set_display(screen, mrect.move(W, H))
+#movie.set_volume(10)
+#movie.play()
 
 pygame.mixer.music.load(os.path.join(sys.path[0] + "\\pony\\music\\", "main_theme.mp3"))
 pygame.mixer.music.set_volume(0.2)
