@@ -19,6 +19,7 @@ class slave:
         self.shooting = False
         self.r0 = 2
         self.targetting_time = 30
+        self.lifes = 1
         see = True
         if type == 0:
             self.maxFrame  = 16
@@ -33,14 +34,34 @@ class slave:
             self.speed_animation = 0.2
             self.shootingframe = 9
 
-
-        self.frame = randint(0,self.maxFrame) 
+        self.start_frame = 0
+        self.frame = randint(0,self.maxFrame)
+        
+    def death(self):
+        if self.lifes == 0:
+            self.v = 0
+            if self.type == 0:
+                self.start_frame = 17
+                self.maxFrame = 21 
+            if self.type == 1:
+                self.start_frame = 18
+                self.maxFrame = 25
+            if self.type == 2:
+                self.start_frame = 14
+                self.maxFrame = 30
+            self.frame = self.start_frame
+            self.lifes = -1
+            self.maxFrame += 1
+            return False
+        elif self.frame >= self.maxFrame - self.speed_animation*2 and self.lifes < 0:
+            return True
+            
 
     def walk(self, map, x0, y0):
 
         self.frame+=self.speed_animation
-        if self.frame >= self.maxFrame-1:
-            self.frame =0
+        if self.frame >= self.maxFrame - self.speed_animation:
+            self.frame = self.start_frame
 
         a = self.rotation
         see = True
@@ -57,7 +78,7 @@ class slave:
         r = math.sqrt((x0-self.x)*(x0-self.x) + (y0-self.y)*(y0-self.y))
             
 
-        if see:
+        if see and self.lifes != -1:
             if self.frame < self.shootingframe-1:
                 vx = self.v*(x0-self.x)/r+randint(0,100)/100
                 vy = self.v*(y0-self.y)/r+randint(0,100)/100

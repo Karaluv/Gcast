@@ -141,8 +141,8 @@ def redraw_all():
         start_time_r = time.time()
 
     x = rend.xs
-    final_render = pygame.transform.scale(render_zone,(int(W*render_zone.get_width()/x),int(H+40)))
-    screen.blit(final_render,(math.sin(bill.Tx)*15-15,math.cos(bill.Ty)*15-20))
+    final_render = pygame.transform.scale(render_zone,(int(W*render_zone.get_width()/x),int(H)))
+    screen.blit(final_render,(math.sin(bill.Tx)*0-0,math.cos(bill.Ty)*0-0))
     thread_draw_stuff = Thread(target = draw_stuff, args = ())
     thread_draw_stuff.start()
 
@@ -170,11 +170,14 @@ def update():
 
 
     enemies = ()
+    l = 0
     for i in range(len(slaves)):
-        if slaves[i].walk(map, bill.x, bill.y):
+        if slaves[i - l].walk(map, bill.x, bill.y):
             bill.hp -=0.5
-        enemies += ((slaves[i].x,slaves[i].y,slaves[i].type,slaves[i].frame))
-
+        enemies += ((slaves[i - l].x,slaves[i - l].y,slaves[i - l].type,slaves[i - l].frame))
+        if (slaves[i - l].death()):
+            del(slaves[i - l])
+            l += 1
 
 
     #rend.map,rend.enemies,rend.cos0,rend.sin0,rend.cos1,rend.sin1,rend.minR,rend.maxR,rend.x0,rend.y0=(map,enemies,math.cos(a-u),math.sin(a-u),math.cos(a+u),math.sin(a+u),0.15,7,bill.x,bill.y)
