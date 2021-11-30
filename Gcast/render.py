@@ -235,6 +235,7 @@ class rendering(threading.Thread):
         x,y =0,0
 
         rX,rY = int(x+x0/stepx),int(y+y0/stepy)
+
         d_max= int(1/density)+1
 
         while d < d_max:
@@ -310,6 +311,7 @@ class rendering(threading.Thread):
                     else:
                         k = 0
 
+
                     if not VM:
                         mapCH[rY][rX] += 1
                         render_data[-1]=[l, d*dW,mapCH[rY][rX],k,map[rY][rX]]
@@ -357,7 +359,7 @@ class rendering(threading.Thread):
 
             cos += dcos
             sin += dsin
-        
+
             d+= 1
 
         return render_data
@@ -401,6 +403,7 @@ class rendering(threading.Thread):
                     j += 1
 
             self.render_surface.blit(render_data[i][5],(render_data[i][1],int(H//2*elevation-pe/render_data[i][0])))
+
 
 
     #def which draws background
@@ -508,6 +511,7 @@ class rendering(threading.Thread):
                 else:
                     texture_data = pygame.Surface((dW, h))
                     texture_data.blit(pygame.transform.scale(texture_buffer,(round(dW*n_[j]),h)),(0,0),(round(dW*i),0,dW,h))
+
                     texture_data.blit(dark,(0,0))
                     render_data[x]= render_data[x]+[texture_data]
 

@@ -306,9 +306,10 @@ class billy:
                 for j in range(len(slaves)):
                     z_2 = (slaves[j].x - x) ** 2 + (slaves[j].y - y) ** 2
 
-                    if z_2 < 0.01:
+                    if z_2 < 0.01 and slaves[j].lifes != -1:
                         find = True
-                        del slaves[j]
+#                         del slaves[j]
+                        slaves[j].lifes -= 1
                         self.hitmark_counter = 15
                         break
 
