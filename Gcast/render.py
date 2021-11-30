@@ -85,6 +85,7 @@ class rendering(threading.Thread):
         self.stepx =100
         self.stepy = 100
         maxR = 7
+        self.xs = (int(1/density)+1)*self.dW
         
         #multi threading block
         self.update = update
@@ -356,18 +357,19 @@ class rendering(threading.Thread):
 
             cos += dcos
             sin += dsin
-
-            t += density            
+        
             d+= 1
 
         return render_data
 
-
-
-
-
+    #draws walls, enemy on surface
     def draw_wall(self,render_data,enemies,elevation):
-        
+        '''
+        render_data - wall textures and thir position
+        enemies - position of enemies
+        elevation - y position of the whole render
+        '''
+
         sprites= self.sprites
 
         W,H,pe,dW,density = self.W,self.H,self.pe,self.dW,self.density
@@ -400,10 +402,6 @@ class rendering(threading.Thread):
 
             self.render_surface.blit(render_data[i][5],(render_data[i][1],int(H//2*elevation-pe/render_data[i][0])))
 
-            
-           
-
-        return dW*(i_max-1)
 
     #def which draws background
     def draw_background(self,elevation,maxR):
@@ -445,10 +443,8 @@ class rendering(threading.Thread):
 
         self.blit = True
         self.draw_background(elevation,maxR)
-        res = self.draw_wall(render_wall_data, enemy_render_data,elevation)
+        self.draw_wall(render_wall_data, enemy_render_data,elevation)
         self.blit = False
-
-        self.xs = res
     
     #creates background images 
     def gradientRect( self,window, left_colour, right_colour, target_rect ):
