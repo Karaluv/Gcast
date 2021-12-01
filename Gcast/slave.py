@@ -132,7 +132,7 @@ class slave:
 
         stepx = self.stepx
         stepy = self.stepy
-        if r > 0.5:
+        if r > 1.5:
             x_ = x + vx/stepx
             y_ = y + vy/stepy
         else:

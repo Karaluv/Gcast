@@ -7,6 +7,8 @@ import cv2
 import moviepy.editor as mp
 from pygame.locals import Color
 from pygame import display
+import time
+from threading import Thread
 
 from render import rendering
 from slave import slave
@@ -17,44 +19,53 @@ from buttons import inputfield
 from buttons import just_text
 from menu import Menu
 
-from threading import Thread
 
+
+#parameters for the program
+#target core fps
 FPS = 30
 FPS = FPS +1
+#field of view
 u = 0.7
-
+#sizing numbers
 stepx = 100
 stepy = 100
 pe = 100
-
+#render quality
 dl = 0.3
 density = 0.009
-
+#maze size
 height = 15
 width = 15
 
+#init some stuff for printing out stats
 pygame.font.init()
 font = pygame.font.Font(None, 30)
 font1 = pygame.font.Font(os.path.join(sys.path[0] + "\\ttf\\", "MAGNETOB.ttf"), 40)
 fps_text = font.render("FPS: ", True, (255, 255, 255))
-
 fps_text_r = font.render("FPS: ", True, (255, 255, 255))
-
+#FPS core timer
 counter = 0
 
+#def for creating text
 def textsurf(text):
+    '''
+    text - text string
+    '''
     textsurface = font1.render(text, False, (255, 255, 255))
     textsurface.set_colorkey((0, 0, 0))
     s = pygame.Surface(textsurface.get_size(), pygame.SRCALPHA)
     s.blit(textsurface, (0, 0))
     return s
 
-
+#def for user input in menues
 def input_menu(user_input):
+    '''
+    user_input - pygame ivents
+    '''
+    #varibales which sets which menu is opened
     global finished,game_paused
-
     keys = pygame.key.get_pressed()
-
     for event in user_input:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_q:
@@ -65,14 +76,14 @@ def input_menu(user_input):
         if event.type == pygame.QUIT:
             finished = True
 
-
+#def for user input in menues
 def input_game(user_input):
+    '''
+    user_input - pygame ivents
+    '''
+    #varibales which sets which menu is opened
     global finished,game_paused
-
     keys = pygame.key.get_pressed()
-
-    global kw, ks, kd, ka, shift, fire
-
     for event in user_input:
         if bill.keyinput(event):
             global slaves
@@ -86,60 +97,53 @@ def input_game(user_input):
         if event.type == pygame.QUIT:
             finished = True
 
+#def which redraws some on sreen images
 def draw_stuff():
     screen.blit(fps_text, (30, 30))
     screen.blit(fps_text_r, (30, 60))
     bill.draw(screen)
     pygame.display.flip()
 
-
+#def that starts gameplay and inits all stuff
 def start():
-
-
+    #loads global variables
     global pe,height,width,W,H,density,dl
-    
-
+    #creates maze
     mazeG.main(height,width)
-
     mazeG.maze = tuple(tuple(i) for i in mazeG.maze)
-
+    #spawns slaves
     slaves = []
-
     for i in range(height*width//2):
-        x,y = randint(2,height)+0.5,randint(2,width)+0.5
+        x,y = randint(3,height-1)+0.5,randint(3,width-1)+0.5
         if mazeG.maze[int(y)][int(x)] == 0:
             slaves.append(slave(randint(0,2),x,y,100,100))
-
+    #inits render core
     rend = rendering(0.5,density,dl,render_zone,height+2,width+2,update_render,redraw_all,1)
-    #rend.daemon = True
-    
-
-    print("start")
-    
+    #creates bill
     bill = billy((width - 1) * 100 + 40, height * 100 + 40, 2 * math.pi / 2, "VAn", W, H, mazeG.maze)
     if mazeG.maze[int(bill.y / 100)][int(bill.x / 100)] != 0:
-        bill = billy((width - 2) * 100 + 40, height * 100 + 40, 2 * math.pi / 2, "VAn", W, H, mazeG.maze)
-
+        bill = billy((width - 2) * 100 + 40, height * 100 + 40, 3 * math.pi / 2, "VAn", W, H, mazeG.maze)
+    #returns new variables
     return  rend,bill,mazeG.maze,slaves
 
-
+#def which is called by render core and updates render data
 def update_render():
     global u,enemies,map
     a = bill.a
     x0,y0 =bill.x,bill.y
     return map,enemies,math.cos(a-u),math.sin(a-u),math.cos(a+u),math.sin(a+u),0.15,7,bill.x,bill.y,bill.z
 
-
+#def which draws stuff too
 def redraw_all():
+    #takes global variables
     global W,H,start_time_r,counter_r,fps_text_r
-
+    #prints out fps
     counter_r += 1
-
     if counter_r == 10:
         fps_text_r = font.render("REND CORE FPS: " + str(round(counter_r / (time.time() - start_time_r))), True, (255, 255, 255))
         counter_r = 0
         start_time_r = time.time()
-
+    #blits rendered image
     x = rend.xs
     final_render = pygame.transform.scale(render_zone,(int(W*render_zone.get_width()/x),int(H)))
     screen.blit(final_render,(math.sin(bill.Tx)*0-0,math.cos(bill.Ty)*0-0))
@@ -147,28 +151,19 @@ def redraw_all():
     thread_draw_stuff.start()
 
 
-
+#def which updates parametrs of enemies and all other stuff by every tick of main core
 def update():
-    
-
+    #loads global variables
     global density,u,Tx,Ty,W,H,get
-
-    global enemies
-
+    global enemies,bill
+    #updtae bill
     bill.update(slaves)
-
-
-    
-
+    #update enemy data
     slave_data = ()
     for i in range(len(slaves)):
         slave_data += ((slaves[i].x,slaves[i].y,3))
-    bill.check_fisting(slave_data)
 
-    a = bill.a
-
-
-
+    #check if slaves shoot at main hero
     enemies = ()
     l = 0
     for i in range(len(slaves)):
@@ -179,38 +174,31 @@ def update():
             del(slaves[i - l])
             l += 1
 
-
-    #rend.map,rend.enemies,rend.cos0,rend.sin0,rend.cos1,rend.sin1,rend.minR,rend.maxR,rend.x0,rend.y0=(map,enemies,math.cos(a-u),math.sin(a-u),math.cos(a+u),math.sin(a+u),0.15,7,bill.x,bill.y)
-
-
+#starts out game and inits parametrs
 pygame.init()
 
-#pygame.mouse.set_visible(False)
 infoObject = pygame.display.Info()
 W, H = infoObject.current_w, infoObject.current_h
 render_zone = pygame.Surface((700, 200))
 
-
-
+#sets white and black
 wh = (255, 255, 255)
 bl = (0, 0, 0)
 
-#clip = mp.VideoFileClip(os.path.join(sys.path[0] + "\\pony\\video\\", "Intro_video.mp4"))  Преобразует разрешение видео под размеры экрана
-#clip_resized = clip.resize(height=H) 
-#clip_resized.write_videofile(os.path.join(sys.path[0] + "\\pony\\video\\", "Intro_video_resized.mp4"))
-
+#loads video for intro
 cap = cv2.VideoCapture(os.path.join(sys.path[0] + "\\pony\\video\\", "Intro_video_resized.mp4"))
 success, img = cap.read()
 print (type(img))
-#img = pygame.transform.smoothscale(img, (W, H))
 shape = img.shape[1::-1]
 wn = pygame.display.set_mode((W,H))
 clock = pygame.time.Clock()
-    
+  
+#plays intro sound
 pygame.mixer.music.load(os.path.join(sys.path[0] + "\\pony\\music\\", "Intro_sound.mp3"))
 pygame.mixer.music.set_volume(1)
 pygame.mixer.music.play(1)
 
+#plays intro
 while success:
     clock.tick(24)
     success, img = cap.read()
@@ -226,19 +214,19 @@ while success:
     pygame.display.update()
 
 
+#sets ingame music
 pygame.mixer.music.load(os.path.join(sys.path[0] + "\\pony\\music\\", "main_theme.mp3"))
 pygame.mixer.music.set_volume(0.2)
 pygame.mixer.music.play(-1)
 
+#resets creen and pygame
 screen = pygame.display.set_mode((W, H), pygame.SRCALPHA)
-
 pygame.display.update()
+#for timer data
 clock = pygame.time.Clock()
 
+#sets ingame varibles again
 finished = False
-
-get = True
-kw, ks, ka, kd, shift = False, False, False, False, False
 rend = 0
 bill = 0
 map =0
@@ -246,13 +234,11 @@ slaves =0
 render_w = 355
 render_h = 200
 Tx,Ty =0,0
-import time
 
-
+#def for buttons
 def game_start():
     global game_st,W,H
     global rend,bill,slaves,map
-    global kw, ks, ka, kd, shift
     global Tx,Ty
     global multiplayer
 
@@ -265,7 +251,6 @@ def game_start():
     Ty = 0
     rend, bill, map, slaves = start()
 
-    kw, ks, ka, kd, shift = False, False, False, False, False
     pygame.mouse.set_visible(False)
     game_st = 1
     if not rend.is_alive():
@@ -275,7 +260,6 @@ def game_start():
 def multiplayer_start():
     global game_st, W, H
     global rend, bill, slaves, map
-    global kw, ks, ka, kd, shift
     global Tx, Ty
     global multiplayer
 
@@ -288,8 +272,6 @@ def multiplayer_start():
     Ty = 0
     rend, bill, map = start()
 
-
-    kw, ks, ka, kd, shift = False, False, False, False, False
     pygame.mouse.set_visible(False)
     game_st = 1
     if not rend.is_alive():
@@ -320,40 +302,35 @@ def game_reset_mode(paused):
         game_st = 1
         pygame.mouse.set_visible(False)
         rend.resume()
-    #pygame.mouse.set_pos((W//2,H//2))
     return not paused
 
 def open_multiplayer_menu1():
     global game_st
     game_st = 3
 
-
+#gets display size
 Wdisp, Hdisp = screen.get_size()
-
+#creates arrays of buttons
 buttons1 = [0]*3
 buttons2 = [0]*3
 
-
+#sets buttons for menues
 s = textsurf(' Singleplayer ')
 buttons1[0] = button(s, Wdisp, Hdisp, 0.375, 0.3, 0.25, 0.08, game_start)
-
 s = textsurf(' Multiplayer ')
 buttons1[1] = button(s, Wdisp, Hdisp, 0.375, 0.44, 0.25, 0.08, open_multiplayer_menu1)
-
 s = textsurf(' Main menu ')
 buttons2[1] = button(s, Wdisp, Hdisp, 0.375, 0.44, 0.25, 0.08, game_return)
-
 s = textsurf('    Quit    ')
 buttons1[2] = button(s, Wdisp, Hdisp, 0.375, 0.58, 0.25, 0.08, game_finish)
 buttons2[2] = button(s, Wdisp, Hdisp, 0.375, 0.58, 0.25, 0.08, game_finish)
-
 s = textsurf('Resume')
 buttons2[0] = button(s, Wdisp, Hdisp, 0.375, 0.3, 0.25, 0.08, game_resume)
-
+#sets menues
 menu1 = Menu(buttons1, screen)
 menu2 = Menu(buttons2, screen)
 
-# Меню где выбираем, создаем сервер или присоединяемся
+#Меню где выбираем, создаем сервер или присоединяемся
 buttons3 = [0]*3
 def create_server_menu():
     global game_st
@@ -390,12 +367,11 @@ game_st = 0
 main_screen = pygame.image.load(os.path.join(sys.path[0] + "\\pony\\", "main_screen.png"))
 main_screen = pygame.transform.scale(main_screen, (Wdisp, Hdisp))
 
-#rend.start()
 
+#main core loop
 while not finished:
-    
     clock.tick(FPS)
-    
+    #checks which of menues is opened
     if game_st == 1:
         input_game(pygame.event.get())
         update()
@@ -424,8 +400,8 @@ while not finished:
         input_menu(pygame.event.get())
         pygame.display.update()
     
+    #fps counter
     counter += 1
-
     if counter == 10:
         fps_text = font.render("MAIN CORE FPS: " + str(round(counter / (time.time() - start_time))), True, (255, 255, 255))
         counter = 0
