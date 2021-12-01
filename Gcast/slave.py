@@ -19,8 +19,8 @@ class slave:
         self.shooting = False
         self.r0 = 2
         self.targetting_time = 30
-        self.lifes = 1
-        see = True
+        self.lifes = 2
+        self.see = True
         if type == 0:
             self.maxFrame  = 16
             self.speed_animation = 0.2
@@ -37,18 +37,42 @@ class slave:
         self.start_frame = 0
         self.frame = randint(0,self.maxFrame)
         
-    def death(self):
+    def death(self, x0, y0):
         if self.lifes == 0:
             self.v = 0
+            x0 /= 100
+            y0 /= 100
+            r = math.sqrt((x0-self.x)*(x0-self.x) + (y0-self.y)*(y0-self.y))
             if self.type == 0:
                 self.start_frame = 17
-                self.maxFrame = 21 
+                self.maxFrame = 21
+                pygame.mixer.Channel(3).play(pygame.mixer.Sound(os.path.join(sys.path[0], "pony\\music\\slave_1_death_sound.mp3")))
+                if r < 2:
+                    pygame.mixer.Channel(3).set_volume(1)
+                elif r < 4:
+                    pygame.mixer.Channel(3).set_volume(0.6)
+                else:
+                    pygame.mixer.Channel(3).set_volume(0.3)
             if self.type == 1:
                 self.start_frame = 18
                 self.maxFrame = 25
+                pygame.mixer.Channel(4).play(pygame.mixer.Sound(os.path.join(sys.path[0], "pony\\music\\slave_2_death_sound.mp3")))
+                if r < 2:
+                    pygame.mixer.Channel(4).set_volume(1.5)
+                elif r < 4:
+                    pygame.mixer.Channel(4).set_volume(0.9)
+                else:
+                    pygame.mixer.Channel(4).set_volume(0.5)
             if self.type == 2:
                 self.start_frame = 14
                 self.maxFrame = 30
+                pygame.mixer.Channel(5).play(pygame.mixer.Sound(os.path.join(sys.path[0], "pony\\music\\slave_3_death_sound.mp3")))
+                if r < 2:
+                    pygame.mixer.Channel(5).set_volume(1)
+                elif r < 4:
+                    pygame.mixer.Channel(5).set_volume(0.6)
+                else:
+                    pygame.mixer.Channel(5).set_volume(0.3)
             self.frame = self.start_frame
             self.lifes = -1
             self.maxFrame += 1
@@ -64,7 +88,7 @@ class slave:
             self.frame = self.start_frame
 
         a = self.rotation
-        see = True
+        self.see = True
         
         x0 = x0/100
         y0 = y0/100
@@ -74,11 +98,11 @@ class slave:
         for i in range(30):
             
             if(map[int(dy*i+self.y)][int(dx*i+self.x)] != 0):
-                see = False
+                self.see = False
         r = math.sqrt((x0-self.x)*(x0-self.x) + (y0-self.y)*(y0-self.y))
             
 
-        if see and self.lifes != -1:
+        if self.see and self.lifes != -1:
             if self.frame < self.shootingframe-1:
                 vx = self.v*(x0-self.x)/r+randint(0,100)/100
                 vy = self.v*(y0-self.y)/r+randint(0,100)/100
@@ -108,9 +132,12 @@ class slave:
 
         stepx = self.stepx
         stepy = self.stepy
-
-        x_ = x + vx/stepx
-        y_ = y + vy/stepy
+        if r > 0.5:
+            x_ = x + vx/stepx
+            y_ = y + vy/stepy
+        else:
+            x_ = x
+            y_ = y
         go = False
         self.x,self.y = x_,y_
         while not go:
