@@ -199,7 +199,7 @@ class rendering(threading.Thread):
                     w = k / density
                     if ch<0 and zn<0:
                         if wall_data[min(int(w),len(wall_data)-1)][0]>l:
-                            enemy_render_data.append([l+minR,w,enemies[i+2],enemies[i+3]])
+                            enemy_render_data.append([l+0.5,w,enemies[i+2],enemies[i+3]])
 
         return enemy_render_data
 
@@ -398,8 +398,8 @@ class rendering(threading.Thread):
                     render_image.set_colorkey((0,0,0))
                     inv.set_colorkey((255,255,255))
 
-                    self.render_surface.blit(inv,(int(enemies[j][1]*dW-pe/enemies[j][0]/2*1.5),int(H//2*elevation-pe/enemies[j][0]*0.4)))
-                    self.render_surface.blit(render_image,(int(enemies[j][1]*dW-pe/enemies[j][0]/2*1.5),int(H//2*elevation-pe/enemies[j][0]*0.4)))
+                    self.render_surface.blit(inv,(int(enemies[j][1]*dW-pe/enemies[j][0]/2),int(H//2*elevation-pe/enemies[j][0]*0.4)))
+                    self.render_surface.blit(render_image,(int(enemies[j][1]*dW-pe/enemies[j][0]/2),int(H//2*elevation-pe/enemies[j][0]*0.4)))
                     j += 1
 
             self.render_surface.blit(render_data[i][5],(render_data[i][1],int(H//2*elevation-pe/render_data[i][0])))

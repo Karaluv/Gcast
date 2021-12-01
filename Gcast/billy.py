@@ -119,7 +119,7 @@ class billy:
         global move
         move = True
 
-    def Move(self, l, n):
+    def Move(self, l, n, slaves):
         a = self.a
         x_ = self.x - l * math.sin(math.pi - a) + n * math.cos(a)
         y_ = self.y - l * math.cos(math.pi - a) + n * math.sin(a)
@@ -128,8 +128,13 @@ class billy:
             if self.map[int(y_ / 100 - 0.05)][int(x_ / 100 - 0.05)] == 0:
                 if self.map[int(y_ / 100 - 0.05)][int(x_ / 100 + 0.05)] == 0:
                     if self.map[int(y_ / 100 + 0.05)][int(x_ / 100 - 0.05)] == 0:
-                        self.y = y_
-                        self.x = x_
+                        logic = 1
+                        for i in range(len(slaves)):
+                            if math.sqrt((slaves[i].x-x_/100)**2 + (slaves[i].y-y_/100)**2) <= 0.5 and slaves[i].lifes >= 1:
+                                logic = 0
+                        if logic == 1:
+                            self.y = y_
+                            self.x = x_
 
 
         self.Ty += 0.2
@@ -143,7 +148,7 @@ class billy:
                 print(slaves[i+2])
 
 
-    def update(self):
+    def update(self, slaves):
         self.a = self.a % self.pi_2
         
         self.Rotate((-W / 2 + pygame.mouse.get_pos()[0]) / self.sens)
@@ -165,13 +170,13 @@ class billy:
                 self.B_reload = False
                 self.ammo = self.max_ammo
         if self.kw:
-            self.Move(0, 3 * self.speed)
+            self.Move(0, 3 * self.speed, slaves)
         if self.ks:
-            self.Move(0, -3 * self.speed)
+            self.Move(0, -3 * self.speed, slaves)
         if self.ka:
-            self.Move(-3 * self.speed, 0)
+            self.Move(-3 * self.speed, 0, slaves)
         if self.kd:
-            self.Move(3 * self.speed, 0)
+            self.Move(3 * self.speed, 0, slaves)
 
        
 
@@ -296,7 +301,7 @@ class billy:
         self.B_shoot = True
         if self.ammo == 0:
             self.reload()
-
+        
         while not find and l < maxR:
 
             if map[int(y)][int(x)] > 0:
@@ -304,12 +309,14 @@ class billy:
                 break
             else:
                 for j in range(len(slaves)):
+                    r = math.sqrt((slaves[j].x-self.x/100)**2 + (slaves[j].y-self.y/100)**2)
                     z_2 = (slaves[j].x - x) ** 2 + (slaves[j].y - y) ** 2
 
-                    if z_2 < 0.01 and slaves[j].lifes != -1:
+                    if z_2 < 0.01 and slaves[j].lifes != -1 and (-self.z - 0.9/r) < -1 and (self.z - 0.3/r) < 1:
                         find = True
-#                         del slaves[j]
                         slaves[j].lifes -= 1
+                        if (self.z - 0.1/r) > 1:
+                            slaves[j].lifes -= 1
                         self.hitmark_counter = 15
                         break
 
