@@ -17,8 +17,6 @@ threading.SystemExit = SystemExit, StopThread
  
 class rendering(threading.Thread):
 
-
-
     def __init__(self,u,density,dl,render_surface,height,width,update,redraw,elevation):
 
         #block which defines variables for class
@@ -87,6 +85,7 @@ class rendering(threading.Thread):
         self.stepx =100
         self.stepy = 100
         maxR = 7
+        self.xs = (int(1/density)+1)*self.dW
         
         #multi threading block
         self.update = update
@@ -203,37 +202,40 @@ class rendering(threading.Thread):
 
         return enemy_render_data
 
+    #one of the main def, sends rays and gets every single column of pixels position
     def ray_cast(self,map,cos,sin,cos1,sin1,minR,maxR,x0,y0):
-
+        '''
+        map - world map
+        cos,sin - strting position of the ray
+        cos1,sin1 - final position of the ray
+        minR - minimum field of view
+        maxR - maximum render distance
+        x0,y0 - player position
+        '''
 
         dl,pe,stepx,stepy,width,height,density,w,dW = self.dl,self.pe,self.stepx,self.stepy,self.width, self.height,self.density,self.W,self.dW
 
         history =[]
-        
+        render_data = []
 
         mapCH = [[0 for _ in range(width)] for _ in range(height)]
         mapCV = [[0 for _ in range(width)] for _ in range(height)]
-
-        render_data = []
-
-        VM = False
 
         dcos = (cos1 - cos)*density*dl
         dsin = (sin1 - sin)*density*dl
         sin = sin*dl
         cos = cos*dl
+        
+        VM = False
 
-        t = 0
         k = 1
         d = 0
-
         ugol = 1
-
         sc = 4
         x,y =0,0
 
         rX,rY = int(x+x0/stepx),int(y+y0/stepy)
-        
+
         d_max= int(1/density)+1
 
         while d < d_max:
@@ -248,8 +250,6 @@ class rendering(threading.Thread):
             render_data.append([maxR,d*dW,1,0,1])
             history.append([0,0,True])
 
-            
-            
             while l <maxR:
                 rX,rY = int(x+x0/stepx),int(y+y0/stepy)
 
@@ -282,7 +282,6 @@ class rendering(threading.Thread):
                             break
                     
                 if map[rY][rX]>0:
-
 
                     xc,yc = x+x0/stepx,y+y0/stepy
                     xc,yc,l = self.find_clothest_point(map,l,xp,yp,xc,yc,cos/10/sc,sin/10/sc,dl/10/sc,dl/1000/sc)
@@ -361,17 +360,18 @@ class rendering(threading.Thread):
             cos += dcos
             sin += dsin
 
-            t += density            
             d+= 1
 
         return render_data
 
-
-
-
-
+    #draws walls, enemy on surface
     def draw_wall(self,render_data,enemies,elevation):
-        
+        '''
+        render_data - wall textures and thir position
+        enemies - position of enemies
+        elevation - y position of the whole render
+        '''
+
         sprites= self.sprites
 
         W,H,pe,dW,density = self.W,self.H,self.pe,self.dW,self.density
@@ -404,13 +404,13 @@ class rendering(threading.Thread):
 
             self.render_surface.blit(render_data[i][5],(render_data[i][1],int(H//2*elevation-pe/render_data[i][0])))
 
-            
-           
 
-        return dW*(i_max-1)
 
-    def draw_background(self,elevation):
-        maxR = 7
+    #def which draws background
+    def draw_background(self,elevation,maxR):
+        '''
+        elevation - parametr which shows y angle
+        '''
         W,H = self.W,self.H
 
         self.sky = pygame.Surface((W,H//2+H//2*(elevation-1)-self.pe/maxR+1))
@@ -424,7 +424,11 @@ class rendering(threading.Thread):
         self.render_surface.blit(self.sky,(0,0))
         self.render_surface.blit(self.ground,(0,H//2+H//2*(elevation-1)+self.pe/maxR-1))
 
+    #function that calls some other to create image
     def render(self,args):
+        '''
+        args - banch of arguments
+        '''
 
         map,enemies,cos0,sin0,cos1,sin1,minR,maxR,x0,y0,elevation = args
 
@@ -441,12 +445,11 @@ class rendering(threading.Thread):
             pass
 
         self.blit = True
-        self.draw_background(elevation)
-        res = self.draw_wall(render_wall_data, enemy_render_data,elevation)
+        self.draw_background(elevation,maxR)
+        self.draw_wall(render_wall_data, enemy_render_data,elevation)
         self.blit = False
-
-        self.xs = res
-     
+    
+    #creates background images 
     def gradientRect( self,window, left_colour, right_colour, target_rect ):
         colour_rect = pygame.Surface( ( 2, 2 ) )                          
         pygame.draw.line( colour_rect, left_colour,  ( 0,0 ), ( 1,0 ) )            
@@ -454,7 +457,11 @@ class rendering(threading.Thread):
         colour_rect = pygame.transform.smoothscale( colour_rect, ( target_rect.width, target_rect.height ) ) 
         window.blit( colour_rect, target_rect )      
     
+    #converts wall data to textures for rendering
     def texturize(self,render_data):
+        '''
+        render_data - wall position and some stuff data
+        '''
 
         width_,height_ = 200,200
 
@@ -477,8 +484,6 @@ class rendering(threading.Thread):
         dark  = pygame.Surface((dW,H)).convert_alpha()
 
         for j in range(len(n_)):
-
-
             end = x+n_[j]
             
             k1 = min(render_data[x:end], key=lambda c: c[3])[3]
@@ -487,12 +492,8 @@ class rendering(threading.Thread):
             end -= 1
 
             width,height = width_*(k2-k1) , height_ 
-
             texture_buffer = pygame.Surface((width , height ))
-
             texture_buffer.blit(ston[render_data[end][4]-1][0],(0,0),(k1*width_,0,width_,height_))
-
-            
             dark.fill((0, 0, 0, render_data[x][0]*255/7))
 
             for i in range(n_[j]):
@@ -510,7 +511,6 @@ class rendering(threading.Thread):
                 else:
                     texture_data = pygame.Surface((dW, h))
                     texture_data.blit(pygame.transform.scale(texture_buffer,(round(dW*n_[j]),h)),(0,0),(round(dW*i),0,dW,h))
-                
 
                     texture_data.blit(dark,(0,0))
                     render_data[x]= render_data[x]+[texture_data]
