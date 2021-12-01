@@ -337,7 +337,7 @@ class rendering(threading.Thread):
                                     sin -= ugol*dsin
                                     cos -=ugol*dcos
                                     d -= ugol
-                                    t -= ugol*density
+                                    
                                 
                                     del render_data[-ugol:]
                                     del history[-ugol:]
