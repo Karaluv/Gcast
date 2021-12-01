@@ -188,7 +188,6 @@ bl = (0, 0, 0)
 #loads video for intro
 cap = cv2.VideoCapture(os.path.join(sys.path[0] + "\\pony\\video\\", "Intro_video_resized.mp4"))
 success, img = cap.read()
-print (type(img))
 shape = img.shape[1::-1]
 wn = pygame.display.set_mode((W,H))
 clock = pygame.time.Clock()
@@ -399,7 +398,38 @@ while not finished:
         menu4.check_all()
         input_menu(pygame.event.get())
         pygame.display.update()
-    
+    if ((game_st != 0) and (bill.y < 150)):
+            #loads video for intro
+            cap = cv2.VideoCapture(os.path.join(sys.path[0] + "\\pony\\video\\", "Ending_video_resized.mp4"))
+            success, img = cap.read()
+            shape = img.shape[1::-1]
+            wn = pygame.display.set_mode((W,H))
+            clock = pygame.time.Clock()
+              
+            #plays intro sound
+            pygame.mixer.music.load(os.path.join(sys.path[0] + "\\pony\\music\\", "Ending_sound.mp3"))
+            pygame.mixer.music.set_volume(1)
+            pygame.mixer.music.play(1)
+
+            game_return()
+            #plays intro
+            while success:
+                clock.tick(24)
+                success, img = cap.read()
+                if (img is None):
+                    break
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        success = False
+                    elif event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_ESCAPE:
+                            success = False
+                wn.blit(pygame.image.frombuffer(img.tobytes(), shape, "BGR"), (0, 0))
+                pygame.display.update()
+            pygame.mouse.set_visible(True)
+            pygame.mixer.music.load(os.path.join(sys.path[0] + "\\pony\\music\\", "main_theme.mp3"))
+            pygame.mixer.music.set_volume(0.2)
+            pygame.mixer.music.play(-1)
     #fps counter
     counter += 1
     if counter == 10:

@@ -135,8 +135,7 @@ class billy:
                         if logic == 1:
                             self.y = y_
                             self.x = x_
-
-
+        
         self.Ty += 0.2
         self.Tx += 0.1
 

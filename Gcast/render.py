@@ -265,7 +265,7 @@ class rendering(threading.Thread):
                             cos -=(ugol+1)*dcos
 
                             d -=(ugol+1)
-                            t -= (ugol+1)*density
+                            
 
                             for i in range(len(render_data)-ugol-1,len(render_data)):
 
