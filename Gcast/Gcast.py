@@ -155,7 +155,7 @@ def update():
 
     global enemies
 
-    bill.update()
+    bill.update(slaves)
 
 
     
@@ -175,7 +175,7 @@ def update():
         if slaves[i - l].walk(map, bill.x, bill.y):
             bill.hp -=0.5
         enemies += ((slaves[i - l].x,slaves[i - l].y,slaves[i - l].type,slaves[i - l].frame))
-        if (slaves[i - l].death()):
+        if (slaves[i - l].death(bill.x, bill.y)):
             del(slaves[i - l])
             l += 1
 
