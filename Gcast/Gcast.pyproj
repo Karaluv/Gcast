@@ -11,7 +11,7 @@
     <OutputPath>.</OutputPath>
     <Name>Gcast</Name>
     <RootNamespace>Gcast</RootNamespace>
-    <InterpreterId>MSBuild|env1|$(MSBuildProjectFullPath)</InterpreterId>
+    <InterpreterId>MSBuild|env2|$(MSBuildProjectFullPath)</InterpreterId>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -46,6 +46,15 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Interpreter Include="..\..\Desktop\Артур\prj\pythonProject1\venv\include\site\python3.9\env2\">
+      <Id>env2</Id>
+      <Version>3.9</Version>
+      <Description>env2 (Python 3.9 (64-bit))</Description>
+      <InterpreterPath>Scripts\python.exe</InterpreterPath>
+      <WindowsInterpreterPath>Scripts\pythonw.exe</WindowsInterpreterPath>
+      <PathEnvironmentVariable>PYTHONPATH</PathEnvironmentVariable>
+      <Architecture>X64</Architecture>
+    </Interpreter>
     <Interpreter Include="env1\">
       <Id>env1</Id>
       <Version>3.7</Version>

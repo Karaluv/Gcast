@@ -506,7 +506,7 @@ class rendering(threading.Thread):
                 if h>H:
                     texture_data = pygame.Surface((dW, H))
                     texture_buffer_ = texture_buffer.subsurface((0, ((h-H)//2/h)*height, width, H/h*height))
-                    texture_data.blit(pygame.transform.scale(texture_buffer_,(round(dW*n_[j]),H)),(0,0),(round(dW*i),0,dW,H))
+                    texture_data.blit(pygame.transform.scale(texture_buffer_,(round(dW*n_[j]),round(H))),(0,0),(round(dW*i),0,round(dW),round(H)))
 
                     texture_data.blit(dark,(0,0))
                     render_data[x][0] = 2*pe/H
