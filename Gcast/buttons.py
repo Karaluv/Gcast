@@ -4,6 +4,9 @@ import math
 
 font1 = pygame.font.Font("ttf\\MAGNETOB.ttf", 40)
 def textsurf(text):
+    """
+    функция создает surface с указанным текстом text
+    """
     textsurface = font1.render(text, False, (255, 255, 255))
     textsurface.set_colorkey((0, 0, 0))
     s = pygame.Surface(textsurface.get_size(), pygame.SRCALPHA)
@@ -11,8 +14,9 @@ def textsurf(text):
     return s
 
 
-class button():
+class button:
     def __init__(self, image, W, H, x, y, w, h, f):
+
         self.W = W
         self.H = H
         self.x = int(x*W)
