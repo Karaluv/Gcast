@@ -210,7 +210,7 @@ while success:
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 success = False
-    wn.blit(pygame.transform.sclae(pygame.image.frombuffer(img.tobytes(), shape, "BGR"), (Wdisp, Hdisp)),(0,0))
+    wn.blit(pygame.transform.scale(pygame.image.frombuffer(img.tobytes(), shape, "BGR"), (Wdisp, Hdisp)),(0,0))
     pygame.display.update()
 
 
