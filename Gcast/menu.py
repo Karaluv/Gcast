@@ -8,6 +8,8 @@ class Menu:
         self.inputfields = inputfields
         self.buttons = buttons
         self.surface = surface
+
+        self.inputfields_text = []
         
     
     def check_all(self):
@@ -24,7 +26,9 @@ class Menu:
                 else:
                     button.presence = 0
 
+            self.inputfields_text = []
             for inputfield in self.inputfields:
+                    self.inputfields_text.append(inputfield.text)
                     pos = pygame.mouse.get_pos()
                     if (
                             inputfield.x < pos[0] < (inputfield.x + inputfield.w) and
@@ -40,6 +44,7 @@ class Menu:
                                 inputfield.text = inputfield.text[0:-1]
                             else:
                                 inputfield.text += event.unicode
+        return self.inputfields_text
 
     
     def draw_all(self):

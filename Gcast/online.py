@@ -5,6 +5,7 @@ class Server:
         self.sock = socket.socket()
         self.sock.bind(('', port))
         self.sock.listen(maxplayers)
+
         self.conn, self.addr = self.sock.accept()
 
     def send_data(self, data):

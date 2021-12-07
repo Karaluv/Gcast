@@ -1,4 +1,5 @@
 from random import randint
+import random
 import math
 import pygame
 import sys
@@ -250,6 +251,8 @@ class billy:
 
     def is_shoot(self):
         if self.WEAPONS[self.CURRENT_WEAPON].shooting and self.WEAPONS[self.CURRENT_WEAPON].frame_counter == self.WEAPONS[self.CURRENT_WEAPON].fire_length:
+            #self.z += 0.05  # РАЗКОММЕНТИТЬ ДЛЯ ОТДАЧИ
+            #self.a += (random.random() - 0.5)/10
             return True
         else:
             return False
@@ -330,7 +333,6 @@ class billy:
         if self.kd:
             self.Move(3 * self.speed, 0, slaves)
 
-       
 
     def keyinput(self, event):
         if event.type == pygame.KEYDOWN:

@@ -19,7 +19,8 @@ from buttons import inputfield
 from buttons import just_text
 from menu import Menu
 
-
+from online import Server
+from online import Client
 
 #parameters for the program
 #target core fps
@@ -145,7 +146,7 @@ def redraw_all():
     #blits rendered image
     x = rend.xs
     final_render = pygame.transform.scale(render_zone,(int(W*render_zone.get_width()/x),int(H)))
-    screen.blit(final_render,(math.sin(bill.Tx)*0-0,math.cos(bill.Ty)*0-0))
+    screen.blit(final_render,(math.sin(bill.x)*0-0,math.cos(bill.Ty)*0-0))
     thread_draw_stuff = Thread(target = draw_stuff, args = ())
     thread_draw_stuff.start()
 
@@ -256,11 +257,16 @@ def game_start():
         rend.start()
 
 
-def multiplayer_start():
+def multiplayer_start_create():
+    global server_info
     global game_st, W, H
     global rend, bill, slaves, map
     global Tx, Ty
     global multiplayer
+    global server
+
+    server = Server(2, int(server_info[0]))
+    print(server_info[0])
 
     multiplayer = True
     rend = 0
@@ -270,6 +276,33 @@ def multiplayer_start():
     Tx = 0
     Ty = 0
     rend, bill, map = start()
+    slaves = []
+
+    pygame.mouse.set_visible(False)
+    game_st = 1
+    if not rend.is_alive():
+        rend.start()
+
+def multiplayer_start_join():
+    global server_info
+    global game_st, W, H
+    global rend, bill, slaves, map
+    global Tx, Ty
+    global multiplayer
+    global server
+
+    client = Client(server_info[1], int(server_info[0]))
+    print(server_info[1], int(server_info))
+
+    multiplayer = True
+    rend = 0
+    bill = 0
+    map = 0
+    slaves = 0
+    Tx = 0
+    Ty = 0
+    rend, bill, map = start()
+    slaves = []
 
     pygame.mouse.set_visible(False)
     game_st = 1
@@ -334,11 +367,18 @@ buttons3 = [0]*3
 def create_server_menu():
     global game_st
     game_st = 4
+
+def join_server_menu():
+    global game_st
+    game_st = 5
+
 s = textsurf('Create server')
 buttons3[0] = button(s, Wdisp, Hdisp, 0.375, 0.3, 0.25, 0.08, create_server_menu)
 
 s = textsurf('Join server')
-buttons3[1] = button(s, Wdisp, Hdisp, 0.375, 0.44, 0.25, 0.08, game_start)
+buttons3[1] = button(s, Wdisp, Hdisp, 0.375, 0.44, 0.25, 0.08, join_server_menu)
+
+
 
 def back_to_menu():
     global game_st
@@ -353,10 +393,23 @@ menu3 = Menu(buttons3, screen)
 buttons4 = [0]*2
 input = inputfield(Wdisp, Hdisp, 0.375, 0.30, 0.25, 0.08, 'Enter port')
 s = textsurf('Create server')
-buttons4[0] = button(s, Wdisp, Hdisp, 0.375, 0.44, 0.25, 0.08, game_start)
+buttons4[0] = button(s, Wdisp, Hdisp, 0.375, 0.44, 0.25, 0.08, multiplayer_start_create)
 s = textsurf('    Back    ')
 buttons4[1] = button(s, Wdisp, Hdisp, 0.375, 0.58, 0.25, 0.08, back_to_menu)
 menu4 = Menu(buttons4, screen, [input])
+
+
+# Меню где подключаемся к серверу
+buttons5 = [0]*2
+input1 = inputfield(Wdisp, Hdisp, 0.375, 0.30, 0.25, 0.08, 'Enter port')
+input2 = inputfield(Wdisp, Hdisp, 0.375, 0.44, 0.25, 0.08, 'Enter ip')
+s = textsurf('Join server')
+buttons5[0] = button(s, Wdisp, Hdisp, 0.375, 0.58, 0.25, 0.08, multiplayer_start_join)
+s = textsurf('    Back    ')
+buttons5[1] = button(s, Wdisp, Hdisp, 0.375, 0.72, 0.25, 0.08, back_to_menu)
+menu5 = Menu(buttons5, screen, [input1, input2])
+
+
 
 start_time = time.time()
 start_time_r = time.time()
@@ -397,7 +450,13 @@ while not finished:
     if game_st == 4:
         screen.blit(main_screen, (0, 0))
         menu4.draw_all()
-        menu4.check_all()
+        server_info = menu4.check_all()
+        input_menu(pygame.event.get())
+        pygame.display.update()
+    if game_st == 5:
+        screen.blit(main_screen, (0, 0))
+        menu5.draw_all()
+        server_info = menu5.check_all()
         input_menu(pygame.event.get())
         pygame.display.update()
     if game_st == 1 and bill.y < 150:
