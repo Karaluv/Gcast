@@ -13,12 +13,18 @@ infoObject = pygame.display.Info()
 W, H = infoObject.current_w, infoObject.current_h
 
 class gun:
-    def __init__(self, auto, maxammo, fire, idle, reload, reload_sound, fire_sound):
+    def __init__(self, auto, maxammo, fire, idle, reload, reload_sound, fire_sound, screen_x, screen_y, scale, frame_time):
+        self.screen_x = screen_x
+        self.screen_y = screen_y
+
+        self.sleeve_posx = screen_x
+        self.sleeve_posy = screen_y
+
         self.auto = auto
         self.maxammo = maxammo
         self.ammo = maxammo
-        self.frame_time = 3
-        self.scale = 3
+        self.frame_time = frame_time
+        self.scale = scale
 
         self.sleeve = []
         self.sleeve.append(pygame.image.load("pony\\weapon\\sleeve0.png"))
@@ -57,8 +63,9 @@ class gun:
         self.reloading = False
         self.shooting = False
 
+        self.last_frames = False
+
     def input(self, event):
-        what_return = False
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_r and self.frame_counter == 0 and self.ammo != self.maxammo:
                 self.reloading = True
@@ -66,55 +73,74 @@ class gun:
                 self.counter = 0
                 pygame.mixer.Channel(1).play(pygame.mixer.Sound(self.reload_sound))
                 pygame.mixer.Channel(1).set_volume(2)
-        if event.type == pygame.MOUSEBUTTONDOWN and self.frame_counter == 0 and self.ammo > 0:
+        if event.type == pygame.MOUSEBUTTONDOWN and self.frame_counter == 0 and self.ammo > 0 and not self.last_frames:
             self.sleeve_x = self.sleeve_y = 0
             self.shooting = True
-            what_return = True
-            self.ammo -= 1
             self.frame_counter = self.fire_length
             self.counter = 0
-            pygame.mixer.Channel(1).play(pygame.mixer.Sound(self.fire_sound))
-            pygame.mixer.Channel(1).set_volume(2)
-        return what_return
+        if event.type == pygame.MOUSEBUTTONUP and self.auto:
+            self.shooting = False
+            self.last_frames = True
+
 
     def update(self):
         self.counter += 1
 
-        if self.ammo == 0 and not self.reloading and self.frame_counter == 0:
+        if self.ammo == 0 and not self.reloading and self.frame_counter == 0: # Если кончились патроны
             self.reloading = True
             self.frame_counter = self.reload_length
             self.counter = 0
             pygame.mixer.Channel(1).play(pygame.mixer.Sound(self.reload_sound))
             pygame.mixer.Channel(1).set_volume(2)
 
-        if self.frame_counter > 0 and self.reloading:
+        if self.frame_counter > 0 and self.reloading: # Если в процессе перезарядки
             if self.counter % self.frame_time == 0:
                 self.frame_counter -= 1
 
             if self.frame_counter == 0:
                 self.ammo = self.maxammo
 
-        if self.frame_counter > 0 and self.shooting:
+        if self.frame_counter > 0 and (self.shooting or self.last_frames): # Если в процессе стрельбы
             if self.counter % self.frame_time == 0:
                 self.frame_counter -= 1
 
-        if self.frame_counter == 0:
-            self.shooting = False
+        if self.frame_counter == self.fire_length and self.shooting and self.counter == 1: # Только что выстрелили
+            self.ammo -= 1
+            pygame.mixer.Channel(1).play(pygame.mixer.Sound(self.fire_sound))
+            pygame.mixer.Channel(1).set_volume(2)
+
+
+        if not self.shooting and not self.reloading and self.auto and not self.last_frames:
+            self.frame_counter = 0
+
+        if self.frame_counter == 0: # Анимация чего-либо закончилась
+            if self.shooting and not self.auto:
+                self.shooting = False
+            if self.shooting and self.auto and self.ammo > 0:
+                self.frame_counter = self.fire_length
+                self.counter = 0
+                self.sleeve_x = self.sleeve_y = 0
+
+            if self.shooting and self.auto and self.ammo == 0:
+                self.shooting = False
+
+            self.last_frames = False
             self.reloading = False
 
+
     def draw(self, screen, Tx, Ty):
-        screen_pos = (screen.get_width() - 400 + round(math.sin(Tx)*20), screen.get_height() - 200 + round(math.cos(Ty)*20))
-        if self.frame_counter > 0 and self.shooting:
+        screen_pos = (round(screen.get_width()*self.screen_x + math.sin(Tx)*20), round(screen.get_height()*self.screen_y + math.cos(Ty)*20))
+        if self.frame_counter > 0 and (self.shooting or self.last_frames):
             screen.blit(self.fire_texture[self.fire_length - self.frame_counter], screen_pos)
         elif self.frame_counter > 0 and self.reloading:
             screen.blit(self.reload_texture[self.reload_length - self.frame_counter], screen_pos)
         else:
             screen.blit(self.idle_texture, screen_pos)
 
-        if self.shooting:
+        if self.shooting or self.last_frames:
             self.sleeve_x += 25
             self.sleeve_y -= 10
-            screen.blit(self.sleeve[self.frame_counter%3], (screen_pos[0] + self.sleeve_x, screen_pos[1] + self.sleeve_y))
+            screen.blit(self.sleeve[self.frame_counter%3], (round(self.sleeve_posx * screen.get_width() + self.sleeve_x), round(self.sleeve_posy * screen.get_height() + self.sleeve_y)))
 
 
 class billy:
@@ -181,6 +207,7 @@ class billy:
         self.hitmark = pygame.image.load("pony\\hud\\hitmark.png")
         self.hitmark = pygame.transform.rotozoom(self.hitmark, 0, 0.1)
 
+        # GLOCK
         idle = pygame.image.load("pony\\weapon\\glock\\idle.png")
         shoot = []
         for i in range(4):
@@ -190,7 +217,26 @@ class billy:
             reload.append(pygame.image.load("pony\\weapon\\glock\\reload" + str(i) + ".png"))
         reload_sound = pygame.mixer.Sound("pony\\weapon\\makarov\\reload.mp3")
         shoot_sound = pygame.mixer.Sound("pony\\weapon\\makarov\\shoot.mp3")
-        self.glock = gun(False, 18, shoot, idle, reload, reload_sound, shoot_sound)
+        self.glock = gun(False, 18, shoot, idle, reload, reload_sound, shoot_sound, 0.6, 0.75, 3, 3)
+
+
+        # MAKAROV
+        idle = pygame.image.load("pony\\weapon\\pm\\idle.png")
+        shoot1 = []
+        for i in range(1, 5):
+            shoot1.append(pygame.image.load("pony\\weapon\\pm\\f" + str(i) + ".png"))
+        reload1 = []
+        for i in range(1, 21):
+            reload1.append(pygame.image.load("pony\\weapon\\pm\\r" + str(i) + ".png"))
+        reload_sound = pygame.mixer.Sound("pony\\weapon\\makarov\\reload.mp3")
+        shoot_sound = pygame.mixer.Sound("pony\\weapon\\makarov\\shoot.mp3")
+        self.pm = gun(False, 8, shoot1, idle, reload1, reload_sound, shoot_sound, 0.3, 0.1, 1, 2)
+        self.pm.sleeve_posx = 0.82
+        self.pm.sleeve_posy = 0.67
+
+
+        self.WEAPONS = [self.pm, self.glock]
+        self.CURRENT_WEAPON = 0
 
 
         # Создание миникарты
@@ -202,6 +248,11 @@ class billy:
                     pygame.draw.rect(self.minimap, (100, 100, 100), (i*self.res + 100, j*self.res + 100, self.res, self.res))
         self.minimap_circle = pygame.image.load("pony\\hud\\minimap.png")
 
+    def is_shoot(self):
+        if self.WEAPONS[self.CURRENT_WEAPON].shooting and self.WEAPONS[self.CURRENT_WEAPON].frame_counter == self.WEAPONS[self.CURRENT_WEAPON].fire_length:
+            return True
+        else:
+            return False
 
     def Rotate(self, a):
         self.a = self.a + a
@@ -268,7 +319,7 @@ class billy:
         self.z = max(self.z,0.5)
         pygame.mouse.set_pos((W // 2, H // 2))
 
-        self.glock.update()
+        self.WEAPONS[self.CURRENT_WEAPON].update()
 
         if self.kw:
             self.Move(0, 3 * self.speed, slaves)
@@ -291,6 +342,18 @@ class billy:
                 self.ka = True
             if event.key == pygame.K_d:
                 self.kd = True
+            if event.key == pygame.K_1:
+                if len(self.WEAPONS) > 0:
+                    self.CURRENT_WEAPON = 0
+            if event.key == pygame.K_2:
+                if len(self.WEAPONS) > 1:
+                    self.CURRENT_WEAPON = 1
+            if event.key == pygame.K_3:
+                if len(self.WEAPONS) > 2:
+                    self.CURRENT_WEAPON = 2
+            if event.key == pygame.K_4:
+                if len(self.WEAPONS) > 3:
+                    self.CURRENT_WEAPON = 3
 
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_w:
@@ -302,10 +365,11 @@ class billy:
             if event.key == pygame.K_d:
                 self.kd = False
 
-        return self.glock.input(event)
+        self.WEAPONS[self.CURRENT_WEAPON].input(event)
 
 
     def draw(self, screen):
+
         minimap_small = pygame.Surface.copy(self.minimap.subsurface((self.y/100*self.res, self.x/100*self.res, 200, 200)))
         minimap_small = pygame.transform.flip(minimap_small, False, True)
         minimap_rotated = pygame.Surface.copy(pygame.transform.rotozoom(pygame.Surface.copy(minimap_small), self.a * 180/ math.pi, 1))
@@ -338,8 +402,8 @@ class billy:
 
         ammo_bar_y = screen.get_height() - self.ammo_bar.get_height()
         screen.blit(self.ammo_bar, (25 + self.hp_bar.get_width(), ammo_bar_y))
-        text = font.render(str(round(self.glock.ammo)), True, (80, 80, 80))
-        text_red = font.render(str(round(self.glock.ammo)), True, (110, 30, 30))
+        text = font.render(str(round(self.WEAPONS[self.CURRENT_WEAPON].ammo)), True, (80, 80, 80))
+        text_red = font.render(str(round(self.WEAPONS[self.CURRENT_WEAPON].ammo)), True, (110, 30, 30))
         text_x = 25 + self.hp_bar.get_width() + (self.ammo_bar.get_width() - text.get_width()) / 2
         screen.blit(text, (text_x + 2, hp_bar_y + (self.ammo_bar.get_height() - text.get_height()) / 2 + 2))
         screen.blit(text_red, (text_x, hp_bar_y + (self.ammo_bar.get_height() - text.get_height()) / 2))
@@ -352,7 +416,7 @@ class billy:
         #for i in range(self.ammo):
         #    screen.blit(self.bullet, (30 + self.bullet.get_width()*i, 130))
 
-        self.glock.draw(screen, self.Tx, self.Ty)
+        self.WEAPONS[self.CURRENT_WEAPON].draw(screen, self.Tx, self.Ty)
 
     def shoot(self, slaves, map):
         a = self.a

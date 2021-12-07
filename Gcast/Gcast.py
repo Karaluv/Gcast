@@ -84,10 +84,9 @@ def input_game(user_input):
     #varibales which sets which menu is opened
     global finished,game_paused
     keys = pygame.key.get_pressed()
+
     for event in user_input:
-        if bill.keyinput(event):
-            global slaves
-            slaves = bill.shoot(slaves, map)
+        bill.keyinput(event)
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_q:
                 finished = True
@@ -374,6 +373,8 @@ while not finished:
     #checks which of menues is opened
     if game_st == 1:
         input_game(pygame.event.get())
+        if bill.is_shoot():
+            slaves = bill.shoot(slaves, map)
         update()
     if game_st == 0:
         screen.blit(main_screen, (0,0))
