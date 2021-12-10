@@ -424,19 +424,22 @@ def back_to_menu():
 
 
 s = textsurf('   Back   ')
-buttons3[2] = button(s, Wdisp, Hdisp, 0.375, 0.58, 0.25, 0.08, back_to_menu)
+buttons3[2] = button(s, Wdisp, Hdisp, 0.375, 0.58, 
+                     0.25, 0.08, back_to_menu)
 
 menu3 = Menu(buttons3, screen)
 
 
 # Меню где создаем сервер(пока нету)
 buttons4 = [0]*2
-input = inputfield(Wdisp, Hdisp, 0.375, 0.30, 0.25, 0.08, 'Enter port')
+input = inputfield(Wdisp, Hdisp, 0.375, 0.30, 
+                   0.25, 0.08, 'Enter port')
 s = textsurf('Create server')
 buttons4[0] = button(s, Wdisp, Hdisp, 0.375, 0.44, 0.25,
                      0.08, multiplayer_start_create)
 s = textsurf('    Back    ')
-buttons4[1] = button(s, Wdisp, Hdisp, 0.375, 0.58, 0.25, 0.08, back_to_menu)
+buttons4[1] = button(s, Wdisp, Hdisp, 0.375, 0.58, 
+                     0.25, 0.08, back_to_menu)
 menu4 = Menu(buttons4, screen, [input])
 
 
@@ -448,7 +451,8 @@ s = textsurf('Join server')
 buttons5[0] = button(s, Wdisp, Hdisp, 0.375, 0.58,
                      0.25, 0.08, multiplayer_start_join)
 s = textsurf('    Back    ')
-buttons5[1] = button(s, Wdisp, Hdisp, 0.375, 0.72, 0.25, 0.08, back_to_menu)
+buttons5[1] = button(s, Wdisp, Hdisp, 0.375, 0.72, 
+                     0.25, 0.08, back_to_menu)
 menu5 = Menu(buttons5, screen, [input1, input2])
 
 
