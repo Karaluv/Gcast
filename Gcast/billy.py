@@ -8,7 +8,7 @@ import pygame
 
 pygame.init()
 pygame.font.init()
-font = pygame.font.Font("pony\\hud\\font_elec.ttf", 40)
+font = pygame.font.Font(sys.path[0]+"\\pony\\hud\\font_elec.ttf", 40)
 
 infoObject = pygame.display.Info()
 W, H = infoObject.current_w, infoObject.current_h
@@ -28,9 +28,9 @@ class gun:
         self.scale = scale
 
         self.sleeve = []
-        self.sleeve.append(pygame.image.load("pony\\weapon\\sleeve0.png"))
-        self.sleeve.append(pygame.image.load("pony\\weapon\\sleeve1.png"))
-        self.sleeve.append(pygame.image.load("pony\\weapon\\sleeve2.png"))
+        self.sleeve.append(pygame.image.load(sys.path[0]+"\\pony\\weapon\\sleeve0.png"))
+        self.sleeve.append(pygame.image.load(sys.path[0]+"\\pony\\weapon\\sleeve1.png"))
+        self.sleeve.append(pygame.image.load(sys.path[0]+"\\pony\\weapon\\sleeve2.png"))
 
         self.sleeve_x = 0
         self.sleeve_y = 0
@@ -195,42 +195,42 @@ class billy:
         self.kd = False
 
         # Загрузка текстурок для худа и прочего
-        self.bullet = pygame.image.load("pony\\hud\\bullet.png")
+        self.bullet = pygame.image.load(sys.path[0]+"\\pony\\hud\\bullet.png")
         self.bullet.set_colorkey((0, 0, 0))
 
-        self.hp_bar = pygame.image.load("pony\\hud\\hp_bar.png")
+        self.hp_bar = pygame.image.load(sys.path[0]+"\\pony\\hud\\hp_bar.png")
 
-        self.ammo_bar = pygame.image.load("pony\\hud\\ammo_bar.png")
+        self.ammo_bar = pygame.image.load(sys.path[0]+"\\pony\\hud\\ammo_bar.png")
 
-        self.scope = pygame.image.load("pony\\hud\\scope.png")
+        self.scope = pygame.image.load(sys.path[0]+"\\pony\\hud\\scope.png")
         self.scope = pygame.transform.rotozoom(self.scope, 0, 0.5)
 
-        self.hitmark = pygame.image.load("pony\\hud\\hitmark.png")
+        self.hitmark = pygame.image.load(sys.path[0]+"\\pony\\hud\\hitmark.png")
         self.hitmark = pygame.transform.rotozoom(self.hitmark, 0, 0.1)
 
         # GLOCK
-        idle = pygame.image.load("pony\\weapon\\glock\\idle.png")
+        idle = pygame.image.load(sys.path[0]+"\\pony\\weapon\\glock\\idle.png")
         shoot = []
         for i in range(4):
-            shoot.append(pygame.image.load("pony\\weapon\\glock\\shoot" + str(i) + ".png"))
+            shoot.append(pygame.image.load(sys.path[0]+"\\pony\\weapon\\glock\\shoot" + str(i) + ".png"))
         reload = []
         for i in range(8):
-            reload.append(pygame.image.load("pony\\weapon\\glock\\reload" + str(i) + ".png"))
-        reload_sound = pygame.mixer.Sound("pony\\weapon\\makarov\\reload.mp3")
-        shoot_sound = pygame.mixer.Sound("pony\\weapon\\makarov\\shoot.mp3")
+            reload.append(pygame.image.load(sys.path[0]+"\\pony\\weapon\\glock\\reload" + str(i) + ".png"))
+        reload_sound = pygame.mixer.Sound(sys.path[0]+"\\pony\\weapon\\makarov\\reload.mp3")
+        shoot_sound = pygame.mixer.Sound(sys.path[0]+"\\pony\\weapon\\makarov\\shoot.mp3")
         self.glock = gun(False, 18, shoot, idle, reload, reload_sound, shoot_sound, 0.6, 0.75, 3, 3)
 
 
         # MAKAROV
-        idle = pygame.image.load("pony\\weapon\\pm\\idle.png")
+        idle = pygame.image.load(sys.path[0]+"\\pony\\weapon\\pm\\idle.png")
         shoot1 = []
         for i in range(1, 5):
-            shoot1.append(pygame.image.load("pony\\weapon\\pm\\f" + str(i) + ".png"))
+            shoot1.append(pygame.image.load(sys.path[0]+"\\pony\\weapon\\pm\\f" + str(i) + ".png"))
         reload1 = []
         for i in range(1, 21):
-            reload1.append(pygame.image.load("pony\\weapon\\pm\\r" + str(i) + ".png"))
-        reload_sound = pygame.mixer.Sound("pony\\weapon\\makarov\\reload.mp3")
-        shoot_sound = pygame.mixer.Sound("pony\\weapon\\makarov\\shoot.mp3")
+            reload1.append(pygame.image.load(sys.path[0]+"\\pony\\weapon\\pm\\r" + str(i) + ".png"))
+        reload_sound = pygame.mixer.Sound(sys.path[0]+"\\pony\\weapon\\makarov\\reload.mp3")
+        shoot_sound = pygame.mixer.Sound(sys.path[0]+"\\pony\\weapon\\makarov\\shoot.mp3")
         self.pm = gun(False, 8, shoot1, idle, reload1, reload_sound, shoot_sound, 0.3, 0.1, 1, 2)
         self.pm.sleeve_posx = 0.82
         self.pm.sleeve_posy = 0.67
@@ -247,7 +247,7 @@ class billy:
             for j in range(len(self.map)):
                 if self.map[i][j] != 0:
                     pygame.draw.rect(self.minimap, (100, 100, 100), (i*self.res + 100, j*self.res + 100, self.res, self.res))
-        self.minimap_circle = pygame.image.load("pony\\hud\\minimap.png")
+        self.minimap_circle = pygame.image.load(sys.path[0]+"\\pony\\hud\\minimap.png")
 
     def is_shoot(self):
         if self.WEAPONS[self.CURRENT_WEAPON].shooting and self.WEAPONS[self.CURRENT_WEAPON].frame_counter == self.WEAPONS[self.CURRENT_WEAPON].fire_length:
@@ -286,20 +286,6 @@ class billy:
                 self.y = y_
             elif self.map[old_tile_coords[0]][new_tile_coords[1]] == 0:
                 self.x = x_
-
-        """
-        if self.map[int(y_ / 100 + 0.05)][int(x_ / 100 + 0.05)] == 0:
-            if self.map[int(y_ / 100 - 0.05)][int(x_ / 100 - 0.05)] == 0:
-                if self.map[int(y_ / 100 - 0.05)][int(x_ / 100 + 0.05)] == 0:
-                    if self.map[int(y_ / 100 + 0.05)][int(x_ / 100 - 0.05)] == 0:
-                        logic = 1
-                        for i in range(len(slaves)):
-                            if math.sqrt((slaves[i].x-x_/100)**2 + (slaves[i].y-y_/100)**2) <= 0.8 and slaves[i].lifes >= 1:
-                                logic = 0
-                        if logic == 1:
-                            self.y = y_
-                            self.x = x_
-        """
         
         self.Ty += 0.2
         self.Tx += 0.1

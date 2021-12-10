@@ -2,7 +2,9 @@ import pygame
 import sys
 import math
 
-font1 = pygame.font.Font("ttf\\MAGNETOB.ttf", 40)
+font1 = pygame.font.Font(sys.path[0]+"\\ttf\\MAGNETOB.ttf", 40)
+
+
 def textsurf(text):
     """
     функция создает surface с указанным текстом text
@@ -28,6 +30,7 @@ class button:
         self.click = 0
         self.presence = 0
 
+
 class inputfield():
     def __init__(self, W, H, x, y, w, h, backtext):
         self.W = W
@@ -41,7 +44,7 @@ class inputfield():
         self.active = False
 
     def draw(self, screen):
-        if len(self.text)>0:
+        if len(self.text) > 0:
             textsurface = font1.render(self.text, False, (255, 255, 255))
             textsurface.set_colorkey((0, 0, 0))
             screen.blit(textsurface, (self.x, self.y))
@@ -50,7 +53,8 @@ class inputfield():
             textsurface.set_colorkey((0, 0, 0))
             screen.blit(textsurface, (self.x, self.y))
 
-        pygame.draw.line(screen, (255, 255, 0), (self.x, self.y), (self.x + self.w, self.y), 3)
+        pygame.draw.line(screen, (255, 255, 0), (self.x, self.y),
+                         (self.x + self.w, self.y), 3)
         pygame.draw.line(screen, (255, 255, 0), (self.x, self.y + self.h - 1),
                          (self.x + self.w, self.y + self.h - 1), 3)
         pygame.draw.arc(screen, (255, 255, 0), (self.x - self.h / 2, self.y, self.h, self.h),
@@ -59,14 +63,17 @@ class inputfield():
                         3 * math.pi / 2, math.pi / 2, 3)
         #             pygame.draw.rect(screen, (0,0,0), (self.x, self.y+1, self.w, self.h-2), 0, 0)
         if self.active == 1:
-            pygame.draw.line(screen, (255, 255, 0), (self.x, self.y), (self.x + self.w, self.y), 5)
+            pygame.draw.line(screen, (255, 255, 0),
+                             (self.x, self.y), (self.x + self.w, self.y), 5)
             pygame.draw.line(screen, (255, 255, 0), (self.x, self.y + self.h - 1),
                              (self.x + self.w, self.y + self.h - 1), 5)
             pygame.draw.arc(screen, (255, 255, 0), (self.x - self.h / 2, self.y, self.h, self.h),
                             math.pi / 2, math.pi * 1.5, 5)
             pygame.draw.arc(screen, (255, 255, 0),
-                            (self.x + self.w - self.h / 2, self.y, self.h, self.h), 3 * math.pi / 2,
+                            (self.x + self.w - self.h / 2, self.y,
+                             self.h, self.h), 3 * math.pi / 2,
                             math.pi / 2, 5)
+
 
 class just_text():
     def __init__(self, image, W, H, x, y, w, h):
@@ -77,10 +84,12 @@ class just_text():
         self.w = int(w*W)
         self.h = int(h*H)
         self.image = pygame.transform.smoothscale(image, (self.w, self.h))
+
     def draw(self, screen):
         screen.blit(self.image, (self.x, self.y))
 
-        pygame.draw.line(screen, (255, 255, 0), (self.x, self.y), (self.x + self.w, self.y), 3)
+        pygame.draw.line(screen, (255, 255, 0), (self.x, self.y),
+                         (self.x + self.w, self.y), 3)
         pygame.draw.line(screen, (255, 255, 0), (self.x, self.y + self.h - 1),
                          (self.x + self.w, self.y + self.h - 1), 3)
         pygame.draw.arc(screen, (255, 255, 0), (self.x - self.h / 2, self.y, self.h, self.h),

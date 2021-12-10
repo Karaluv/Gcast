@@ -18,7 +18,15 @@ threading.SystemExit = SystemExit, StopThread
 class rendering(threading.Thread):
 
     def __init__(self,u,density,dl,render_surface,height,width,update,redraw,elevation):
-
+        '''
+        u - field of view 
+        density - 1/X_axis_resolutin
+        render_surface - surface were to draw stuff
+        dl - resolution by z_axis
+        height,width - size of the maze
+        update,redraw - delegate functions from the Gcast to achive multithreading
+        elevation - y axis camera movement
+        '''
         #block which defines variables for class
         self.render_surface = render_surface
         self.dl = dl
