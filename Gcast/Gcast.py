@@ -46,8 +46,9 @@ fps_text_r = font.render("FPS: ", True, (255, 255, 255))
 # FPS core timer
 counter = 0
 
-
 # def for creating text
+
+
 def textsurf(text):
     '''
     text - text string
@@ -58,8 +59,9 @@ def textsurf(text):
     s.blit(textsurface, (0, 0))
     return s
 
-
 # def for user input in menues
+
+
 def input_menu(user_input):
     '''
     user_input - pygame ivents
@@ -77,8 +79,9 @@ def input_menu(user_input):
         if event.type == pygame.QUIT:
             finished = True
 
-
 # def for user input in menues
+
+
 def input_game(user_input):
     '''
     user_input - pygame ivents
@@ -98,16 +101,18 @@ def input_game(user_input):
         if event.type == pygame.QUIT:
             finished = True
 
-
 # def which redraws some on sreen images
+
+
 def draw_stuff():
     screen.blit(fps_text, (30, 30))
     screen.blit(fps_text_r, (30, 60))
     bill.draw(screen)
     pygame.display.flip()
 
-
 # def that starts gameplay and inits all stuff
+
+
 def start():
     # loads global variables
     global pe, height, width, W, H, density, dl
@@ -132,14 +137,18 @@ def start():
     # returns new variables
     return rend, bill, mazeG.maze, slaves
 
-
 # def which is called by render core and updates render data
-def update_render():
-    global u, enemies, World_Map
-    return World_Map, enemies, math.cos(bill.a-u), math.sin(bill.a-u), math.cos(bill.a+u), math.sin(bill.a+u), 0.15, 7, bill.x, bill.y, bill.z
 
+
+def update_render():
+    global u, enemies, map
+    a = bill.a
+    x0, y0 = bill.x, bill.y
+    return map, enemies, math.cos(a-u), math.sin(a-u), math.cos(a+u), math.sin(a+u), 0.15, 7, bill.x, bill.y, bill.z
 
 # def which draws stuff too
+
+
 def redraw_all():
     # takes global variables
     global W, H, start_time_r, counter_r, fps_text_r
@@ -175,7 +184,7 @@ def update():
     enemies = ()
     l = 0
     for i in range(len(slaves)):
-        if slaves[i - l].walk(World_Map, bill.x, bill.y):
+        if slaves[i - l].walk(map, bill.x, bill.y):
             bill.hp -= 0.5
         enemies += ((slaves[i - l].x, slaves[i - l].y,
                     slaves[i - l].type, slaves[i - l].frame))
@@ -243,7 +252,7 @@ clock = pygame.time.Clock()
 finished = False
 rend = 0
 bill = 0
-World_Map = 0
+map = 0
 slaves = 0
 render_w = 355
 render_h = 200
@@ -254,18 +263,18 @@ Tx, Ty = 0, 0
 
 def game_start():
     global game_st, W, H
-    global rend, bill, slaves, World_Map
+    global rend, bill, slaves, map
     global Tx, Ty
     global multiplayer
 
     multiplayer = False
     rend = 0
     bill = 0
-    World_Map = 0
+    map = 0
     slaves = 0
     Tx = 0
     Ty = 0
-    rend, bill, World_Map, slaves = start()
+    rend, bill, map, slaves = start()
 
     pygame.mouse.set_visible(False)
     game_st = 1
@@ -276,7 +285,7 @@ def game_start():
 def multiplayer_start_create():
     global server_info
     global game_st, W, H
-    global rend, bill, slaves, World_Map
+    global rend, bill, slaves, map
     global Tx, Ty
     global multiplayer
     global server
@@ -287,11 +296,11 @@ def multiplayer_start_create():
     multiplayer = True
     rend = 0
     bill = 0
-    World_Map = 0
+    map = 0
     slaves = 0
     Tx = 0
     Ty = 0
-    rend, bill, World_Map = start()
+    rend, bill, map = start()
     slaves = []
 
     pygame.mouse.set_visible(False)
@@ -303,7 +312,7 @@ def multiplayer_start_create():
 def multiplayer_start_join():
     global server_info
     global game_st, W, H
-    global rend, bill, slaves, World_Map
+    global rend, bill, slaves, map
     global Tx, Ty
     global multiplayer
     global server
@@ -314,11 +323,11 @@ def multiplayer_start_join():
     multiplayer = True
     rend = 0
     bill = 0
-    World_Map = 0
+    map = 0
     slaves = 0
     Tx = 0
     Ty = 0
-    rend, bill, World_Map = start()
+    rend, bill, map = start()
     slaves = []
 
     pygame.mouse.set_visible(False)
@@ -415,22 +424,19 @@ def back_to_menu():
 
 
 s = textsurf('   Back   ')
-buttons3[2] = button(s, Wdisp, Hdisp, 0.375, 0.58,
-                     0.25, 0.08, back_to_menu)
+buttons3[2] = button(s, Wdisp, Hdisp, 0.375, 0.58, 0.25, 0.08, back_to_menu)
 
 menu3 = Menu(buttons3, screen)
 
 
 # Меню где создаем сервер(пока нету)
 buttons4 = [0]*2
-input = inputfield(Wdisp, Hdisp, 0.375, 0.30, 0.25,
-                   0.08, 'Enter port')
+input = inputfield(Wdisp, Hdisp, 0.375, 0.30, 0.25, 0.08, 'Enter port')
 s = textsurf('Create server')
 buttons4[0] = button(s, Wdisp, Hdisp, 0.375, 0.44, 0.25,
                      0.08, multiplayer_start_create)
 s = textsurf('    Back    ')
-buttons4[1] = button(s, Wdisp, Hdisp, 0.375, 0.58, 0.25,
-                     0.08, back_to_menu)
+buttons4[1] = button(s, Wdisp, Hdisp, 0.375, 0.58, 0.25, 0.08, back_to_menu)
 menu4 = Menu(buttons4, screen, [input])
 
 
@@ -442,8 +448,7 @@ s = textsurf('Join server')
 buttons5[0] = button(s, Wdisp, Hdisp, 0.375, 0.58,
                      0.25, 0.08, multiplayer_start_join)
 s = textsurf('    Back    ')
-buttons5[1] = button(s, Wdisp, Hdisp, 0.375, 0.72, 
-                     0.25, 0.08, back_to_menu)
+buttons5[1] = button(s, Wdisp, Hdisp, 0.375, 0.72, 0.25, 0.08, back_to_menu)
 menu5 = Menu(buttons5, screen, [input1, input2])
 
 
@@ -464,7 +469,7 @@ while not finished:
     if game_st == 1:
         input_game(pygame.event.get())
         if bill.is_shoot():
-            slaves = bill.shoot(slaves, World_Map)
+            slaves = bill.shoot(slaves, map)
         update()
     if game_st == 0:
         screen.blit(main_screen, (0, 0))

@@ -3,6 +3,8 @@
 ## Imports
 import random
 import time
+from colorama import init
+from colorama import Fore, Back, Style
 import copy
 
 
@@ -19,11 +21,11 @@ def printMaze(maze):
     for i in range(0, height+2):
         for j in range(0, width+2):
             if (maze[i][j] == 0):
-                print(str(maze[i][j]), end=" ")
+                print(Fore.WHITE + str(maze[i][j]), end=" ")
             elif (maze[i][j] == 0):
-                print(str(maze[i][j]), end=" ")
+                print(Fore.GREEN + str(maze[i][j]), end=" ")
             else:
-                print(str(maze[i][j]), end=" ")
+                print(Fore.RED + str(maze[i][j]), end=" ")
             
         print('\n')
 
@@ -93,7 +95,7 @@ def main(height_,width_):
     maze = []
     height,width = height_,width_
     # Initialize colorama
-    
+    init()
 
     # Denote all cells as unvisited
     for i in range(0, height):

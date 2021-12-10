@@ -145,8 +145,8 @@ class gun:
 
 
 class billy:
-    def __init__(self, x, y, a, name, W, H, World_Map):
-        self.map = World_Map
+    def __init__(self, x, y, a, name, W, H, map):
+        self.map = map
         self.x = x
         self.y = y
         self.a = a

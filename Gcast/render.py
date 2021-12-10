@@ -64,6 +64,7 @@ class rendering(threading.Thread):
             files = next(os.walk(path))
             onlyfiles = next(os.walk(path)) 
             for i in range(len(onlyfiles[2])):
+                print(files[0]+"\\"+onlyfiles[2][i])
                 arr[-1].append(pygame.image.load(files[0]+"\\"+"  ("+str(i+1)+").png").convert_alpha())
             return arr
         
@@ -134,7 +135,7 @@ class rendering(threading.Thread):
 
     #def which find clothest point to the wall, encreases the graphics
     @lru_cache()
-    def find_clothest_point(self,World_Map,l,xp,yp,xc,yc,cos,sin,lc,lmin):
+    def find_clothest_point(self,map,l,xp,yp,xc,yc,cos,sin,lc,lmin):
         '''
         map - world map
         l - length of ray
@@ -144,7 +145,7 @@ class rendering(threading.Thread):
         lc - current ray step
         lmin - minimum step of the ray
         '''
-        while World_Map[int(yc)][int(xc)]!=0:
+        while map[int(yc)][int(xc)]!=0:
             l -= lc
             xc -= cos
             yc -= sin
@@ -152,7 +153,7 @@ class rendering(threading.Thread):
         if lc <= lmin:
             return xc+cos,yc+sin,l+lc
         if lc>lmin:
-            return self.find_clothest_point(World_Map,l+lc,xp,yp,xc+cos,yc+sin,cos/10,sin/10,lc/10,lmin)
+            return self.find_clothest_point(map,l+lc,xp,yp,xc+cos,yc+sin,cos/10,sin/10,lc/10,lmin)
 
     #def which find clothest point to the wall, encreases the graphics and fixes same bugs
     @lru_cache()
