@@ -332,30 +332,29 @@ class rendering(threading.Thread):
                     history[-1]=[rX,rY,VM]
                     
                     #stuf for speeding up program
-                    if ugol == 0:
-                        if len(render_data)>3:
-                            if l<render_data[-2][0]-1:                              
-                                if l - 1>minR:
-                                    ugol = min(int(dl/density),len(render_data)-2)+1
-                                
-                                    for i in range(len(render_data)-ugol,len(render_data)):
-                                        if history[i][2]:
-                                            mapCV[history[i][1]][history[i][0]] -= 1
-                                        else:
-                                            mapCH[history[i][1]][history[i][0]] -= 1
-                                
-                                    sc = 4
-                                    sin -= ugol*dsin
-                                    cos -=ugol*dcos
-                                    d -= ugol
-                                    
-                                
-                                    del render_data[-ugol:]
-                                    del history[-ugol:]
+                    if ugol == 0:         
+                        if l<render_data[-2][0]-1:                              
 
-                                    rX,rY,VM = history[-(1)][0],history[-(1)][1],history[-(1)][2]
-                                    
-                                    break
+                            ugol = min(int(dl/density),len(render_data)-2)+1
+                        
+                            for i in range(len(render_data)-ugol,len(render_data)):
+                                if history[i][2]:
+                                    mapCV[history[i][1]][history[i][0]] -= 1
+                                else:
+                                    mapCH[history[i][1]][history[i][0]] -= 1
+                        
+                            sc = 4
+                            sin -= ugol*dsin
+                            cos -=ugol*dcos
+                            d -= ugol
+                            
+                        
+                            del render_data[-ugol:]
+                            del history[-ugol:]
+
+                            rX,rY,VM = history[-(1)][0],history[-(1)][1],history[-(1)][2]
+                            
+                            break
 
                     break
 
