@@ -79,7 +79,7 @@ class gun:
             self.shooting = True
             self.frame_counter = self.fire_length
             self.counter = 0
-        if event.type == pygame.MOUSEBUTTONUP and self.auto:
+        if event.type == pygame.MOUSEBUTTONUP and self.auto and self.shooting:
             self.shooting = False
             self.last_frames = True
 
@@ -89,6 +89,7 @@ class gun:
 
         if self.ammo == 0 and not self.reloading and self.frame_counter == 0: # Если кончились патроны
             self.reloading = True
+            self.last_frames = False
             self.frame_counter = self.reload_length
             self.counter = 0
             pygame.mixer.Channel(1).play(pygame.mixer.Sound(self.reload_sound))
@@ -127,6 +128,7 @@ class gun:
 
             self.last_frames = False
             self.reloading = False
+            
 
 
     def draw(self, screen, Tx, Ty):
@@ -208,35 +210,43 @@ class billy:
         self.hitmark = pygame.image.load(sys.path[0]+"\\pony\\hud\\hitmark.png")
         self.hitmark = pygame.transform.rotozoom(self.hitmark, 0, 0.1)
 
-        # GLOCK
-        idle = pygame.image.load(sys.path[0]+"\\pony\\weapon\\glock\\idle.png")
-        shoot = []
-        for i in range(4):
-            shoot.append(pygame.image.load(sys.path[0]+"\\pony\\weapon\\glock\\shoot" + str(i) + ".png"))
-        reload = []
-        for i in range(8):
-            reload.append(pygame.image.load(sys.path[0]+"\\pony\\weapon\\glock\\reload" + str(i) + ".png"))
-        reload_sound = pygame.mixer.Sound(sys.path[0]+"\\pony\\weapon\\makarov\\reload.mp3")
-        shoot_sound = pygame.mixer.Sound(sys.path[0]+"\\pony\\weapon\\makarov\\shoot.mp3")
-        self.glock = gun(False, 18, shoot, idle, reload, reload_sound, shoot_sound, 0.6, 0.75, 3, 3)
 
+        def load(arr,name):
+            '''
+            arr - array in which pictures are loaded
+            name - files folder
+            '''
+            path = os.path.join(sys.path[0],name)
+            print(path)
+            files = next(os.walk(path))
+            onlyfiles = next(os.walk(path)) 
+            for i in range(len(onlyfiles[2])):
+                print(files[0]+"\\"+onlyfiles[2][i])
+                arr.append(pygame.image.load(files[0]+"\\"+"("+str(i+1)+").png").convert_alpha())
+            return arr
+        
+        def load_gun(folder,args):
+            idle = pygame.image.load(sys.path[0]+"\\pony\\weapon\\"+folder+"\\idle.png")
+            shoot1 = []
+            shoot1 = load(shoot1,"pony\\weapon\\"+folder+"\\shoot")
+            reload1 = []
+            reload1 = load(reload1,"pony\\weapon\\"+folder+"\\reload")
+            reload_sound = pygame.mixer.Sound(sys.path[0]+"\\pony\\weapon\\"+folder+"\\reload.mp3")
+            shoot_sound = pygame.mixer.Sound(sys.path[0]+"\\pony\\weapon\\"+folder+"\\shoot.mp3")
+            gun_ = gun(args[0], args[1], shoot1, idle, reload1, reload_sound, shoot_sound, args[2], args[3], args[4], args[5])
+            gun_.sleeve_posx = args[6]
+            gun_.sleeve_posy = args[7]
+            return gun_
+        
+        scale = W/1536
 
-        # MAKAROV
-        idle = pygame.image.load(sys.path[0]+"\\pony\\weapon\\pm\\idle.png")
-        shoot1 = []
-        for i in range(1, 5):
-            shoot1.append(pygame.image.load(sys.path[0]+"\\pony\\weapon\\pm\\f" + str(i) + ".png"))
-        reload1 = []
-        for i in range(1, 21):
-            reload1.append(pygame.image.load(sys.path[0]+"\\pony\\weapon\\pm\\r" + str(i) + ".png"))
-        reload_sound = pygame.mixer.Sound(sys.path[0]+"\\pony\\weapon\\makarov\\reload.mp3")
-        shoot_sound = pygame.mixer.Sound(sys.path[0]+"\\pony\\weapon\\makarov\\shoot.mp3")
-        self.pm = gun(False, 8, shoot1, idle, reload1, reload_sound, shoot_sound, 0.3, 0.1, 1, 2)
+        self.ak = load_gun("ak",(True,30,0.4*scale,0.13*scale,1,2,1,1))
+        self.svt = load_gun("svt",(False,10,0.3*scale,0.13*scale,1,2,0.82,0.77))
+        self.pm = load_gun("makarov",(False,8,0.3*scale,0.13*scale,1,2,0.62,0.67))
+        
         self.pm.sleeve_posx = 0.82
-        self.pm.sleeve_posy = 0.67
 
-
-        self.WEAPONS = [self.pm, self.glock]
+        self.WEAPONS = [self.ak, self.svt,self.pm]
         self.CURRENT_WEAPON = 0
 
 
@@ -251,8 +261,8 @@ class billy:
 
     def is_shoot(self):
         if self.WEAPONS[self.CURRENT_WEAPON].shooting and self.WEAPONS[self.CURRENT_WEAPON].frame_counter == self.WEAPONS[self.CURRENT_WEAPON].fire_length:
-            #self.z += 0.05  # РАЗКОММЕНТИТЬ ДЛЯ ОТДАЧИ
-            #self.a += (random.random() - 0.5)/10
+            self.z += 0.05  # РАЗКОММЕНТИТЬ ДЛЯ ОТДАЧИ
+            self.a += (random.random() - 0.5)/10
             return True
         else:
             return False
