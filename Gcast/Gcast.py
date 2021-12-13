@@ -369,6 +369,7 @@ def multiplayer_start_join():
                  2 * math.pi / 2, "VAn", W, H, mazeG.maze)  # создаем игрока по координатам от сервака
     map = client.map  # запоминаем карту по инфе с сервака
     bill.map = map
+    bill.recreate_minimap()
     
     update()
     
