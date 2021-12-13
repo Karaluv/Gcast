@@ -71,7 +71,7 @@ class Server(threading.Thread):
 
 
 class Client(threading.Thread):
-    def __init__(self, ip, port,delegate_data):
+    def __init__(self, ip, port, delegate_data):
         self.sock = socket.socket()
         self.sock.connect((str(ip), port))
         self.max_data = 2048

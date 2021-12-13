@@ -290,7 +290,7 @@ def game_start():
         rend.start()
 
 def delegate_data():
-    return bill.x,bill.y
+    return bill.x, bill.y
 
 def multiplayer_start_create():
     global server_info
@@ -361,9 +361,9 @@ def multiplayer_start_join():
     slaves = [] # Готовим массив для врага
     slaves.append(slave(randint(0, 2), (width - 1) * 100 + 40, height * 100 + 40, 100, 100)) # Создаем врага, владелец сервака
     # всегда спавнится в начале лабиринта
-    client = Client(server_info[1], int(server_info[0])) # подключаемся к серваку
+    client = Client(server_info[1], int(server_info[0]), delegate_data) # подключаемся к серваку
     bill = billy(client.start_x, client.start_x,
-                 2 * math.pi / 2, "VAn", W, H, mazeG.maze,delegate_data) # создаем игрока по координатам от сервака
+                 2 * math.pi / 2, "VAn", W, H, mazeG.maze) # создаем игрока по координатам от сервака
     map = client.map # запоминаем карту по инфе с сервака
 
     pygame.mouse.set_visible(False)
