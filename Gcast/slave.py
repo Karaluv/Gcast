@@ -97,7 +97,7 @@ class slave:
         
         for i in range(30):
             
-            if(map[int(dy*i+self.y)][int(dx*i+self.x)] != 0):
+            if map[int(dy * i + self.y)][int(dx * i + self.x)] != 0:
                 self.see = False
         r = math.sqrt((x0-self.x)*(x0-self.x) + (y0-self.y)*(y0-self.y))
             
