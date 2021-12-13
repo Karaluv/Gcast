@@ -42,11 +42,6 @@ class Server(threading.Thread):
 
     def get_data(self):
         data = self.conn.recv(self.max_data)
-        print("recived data: " + data)
-        data.replace("(", "")
-        data.replace(")", "")
-        data.replace(" ", "")
-        data = data.split(",")
         return data
 
     def close_server(self):
@@ -91,7 +86,6 @@ class Client(threading.Thread):
         print(self.start_x)
         self.start_x = int(self.start_x)
 
-
         self.start_y = self.sock.recv(self.max_data)
         print(self.start_y)
         self.start_y = int(self.start_y)
@@ -111,11 +105,6 @@ class Client(threading.Thread):
 
     def get_data(self):
         data = self.sock.recv(self.max_data)
-        print("recived data: " + data)
-        data.replace("(", "")
-        data.replace(")", "")
-        data.replace(" ", "")
-        data = data.split(",")
         return data
 
     # everlasting loop def, that just rerenders everything
