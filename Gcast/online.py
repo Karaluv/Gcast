@@ -22,6 +22,7 @@ class Server(threading.Thread):
         self.conn.send(data_bytes)
 
         print(x)
+
         data_bytes = bytearray(str(x), 'utf8')
         print(data_bytes)
         self.conn.send(data_bytes)
