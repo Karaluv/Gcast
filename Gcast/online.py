@@ -49,8 +49,6 @@ class Server(threading.Thread):
         import time
         
         time.sleep(1)
-        FPS = self.fps
-        FPS +=1
         while self.__running.isSet():
             self.__flag.wait()
             time.sleep(0.01)
@@ -114,8 +112,7 @@ class Client(threading.Thread):
         import time
         
         time.sleep(1)
-        FPS = self.fps
-        FPS +=1
+
         while self.__running.isSet():
             self.__flag.wait()
             time.sleep(0.01)
