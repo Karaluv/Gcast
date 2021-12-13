@@ -78,8 +78,9 @@ class Client(threading.Thread):
         self.max_data = 2048
 
         self.str_map = self.sock.recv(self.max_data)
-        self.map_1d = [int(num) for num in self.str_map if str(num).isdigit()]
-        self.map = [self.map_1d[i:i+19] for i in range(0, len(self.map_1d), 19)]
+        #self.map_1d = [int(num) for num in self.str_map if str(num).isdigit()]
+        #self.map = [self.map_1d[i:i+19] for i in range(0, len(self.map_1d), 19)]
+        self.map = eval(self.str_map)
         print(self.map)
 
         self.start_x = self.sock.recv(self.max_data)
