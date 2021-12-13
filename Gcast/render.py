@@ -441,10 +441,12 @@ class rendering(threading.Thread):
         '''
         #loads args
         map,enemies,cos0,sin0,cos1,sin1,minR,maxR,x0,y0,elevation = args
+        print(enemies)
         #cretes render wall data
         render_wall_data = self.ray_cast(map,cos0,sin0,cos1,sin1,minR,maxR,x0,y0)
         #creates enemy data
         enemy_render_data = self.enemy_ray_caster(render_wall_data,enemies,cos0,sin0,cos1,sin1,minR,maxR,x0,y0)
+        print(enemy_render_data)
         #creates texture data
         render_wall_data = self.texturize(render_wall_data)
         #sorts arrays by the distance

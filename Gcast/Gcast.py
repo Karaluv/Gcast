@@ -191,9 +191,12 @@ def update():
     # check if slaves shoot at main hero
     enemies = ()
     l = 0
+    
+    
     for i in range(len(slaves)):
-        if slaves[i - l].walk(map, bill.x, bill.y):
-            bill.hp -= 0.5
+        if not multiplayer:
+            if slaves[i - l].walk(map, bill.x, bill.y):
+                bill.hp -= 0.5
         enemies += ((slaves[i - l].x, slaves[i - l].y,
                      slaves[i - l].type, slaves[i - l].frame))
         if (slaves[i - l].death(bill.x, bill.y)):
@@ -266,6 +269,7 @@ render_h = 200
 Tx, Ty = 0, 0
 
 
+
 # def for buttons
 
 
@@ -291,7 +295,7 @@ def game_start():
 
 
 def delegate_data():
-    return bill.x, bill.y
+    return (bill.x, bill.y)
 
 
 def multiplayer_start_create():
@@ -339,6 +343,7 @@ def multiplayer_start_create():
         rend.start()
 
     if not server.is_alive():
+        print("ok")
         server.start()
 
 
@@ -362,6 +367,7 @@ def multiplayer_start_join():
 
     rend, bill, map, slaves = start()  # создаем рендер просто из старта
     slaves = []  # Готовим массив для врага
+    
     slaves.append(
         slave(randint(0, 2), (width - 1) * 100 + 40, height * 100 + 40, 100, 100))  # Создаем врага, владелец сервака
     # всегда спавнится в начале лабиринта
@@ -369,13 +375,17 @@ def multiplayer_start_join():
     bill = billy(client.start_x, client.start_x,
                  2 * math.pi / 2, "VAn", W, H, mazeG.maze)  # создаем игрока по координатам от сервака
     map = client.map  # запоминаем карту по инфе с сервака
-
+    bill.map = map
+    
+    update()
+    
     pygame.mouse.set_visible(False)
     game_st = 1
     if not rend.is_alive():
         rend.start()
-    if not server.is_alive():
-        server.start()
+    if not client.is_alive():
+        print("ok")
+        client.start()
 
 
 def game_finish():
@@ -519,13 +529,13 @@ while not finished:
             server.send_data(bill.x)
             server.send_data(bill.y)
             print("send done")
-            slaves[0].x = server.data[0]
-            slaves[0].y = server.data[1]
+            slaves[0].x = server.data[0]/100
+            slaves[0].y = server.data[1]/100
             print("data get")
         elif not is_server:  # если мы клиент
             input_game(pygame.event.get())
-            slaves[0].x = server.data[0]
-            slaves[0].y = server.data[1]
+            slaves[0].x = client.data[0]/100
+            slaves[0].y = client.data[1]/100
         update()
     if game_st == 0:
         screen.blit(main_screen, (0, 0))
