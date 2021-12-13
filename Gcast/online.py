@@ -7,6 +7,8 @@ class Server:
         self.sock.bind(('', port))
         self.sock.listen(maxplayers)
 
+        self.max_data = 2048
+
         self.conn, self.addr = self.sock.accept()
 
         data_bytes = bytearray(str(map), 'utf8')
@@ -23,7 +25,7 @@ class Server:
         self.conn.send(data_bytes)
 
     def get_data(self):
-        data = self.conn.recv(1024)
+        data = self.conn.recv(self.max_data)
         return data
 
     def close_server(self):
@@ -34,17 +36,18 @@ class Client:
     def __init__(self, ip, port):
         self.sock = socket.socket()
         self.sock.connect((str(ip), port))
+        self.max_data = 2048
 
-        self.map = self.sock.recv(1024)
+        self.map = self.sock.recv(self.max_data)
 
-        self.start_x = self.sock.recv(1024)
+        self.start_x = self.sock.recv(self.max_data)
 
-        self.start_y = self.sock.recv(1024)
+        self.start_y = self.sock.recv(self.max_data)
 
     def send_data(self, data):
         data_bytes = bytearray(str(data), 'utf8')
         self.sock.send(data_bytes)
 
     def get_data(self):
-        data = self.sock.recv(1024)
+        data = self.sock.recv(self.max_data)
         return data

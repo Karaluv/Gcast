@@ -113,7 +113,7 @@ class rendering(threading.Thread):
     def run(self):
         import time
         clock = pygame.time.Clock()
-        time.sleep(0.5)
+        time.sleep(1)
         FPS = self.fps
         FPS +=1
         while self.__running.isSet():

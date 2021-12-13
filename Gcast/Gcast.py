@@ -317,6 +317,7 @@ def multiplayer_start_create():
             break  # Когда находим, создаем врага и прерываем цикл
     server = Server(2, int(server_info[0]), map, x * 100 - 50, y * 100 - 50)  # Создаем сервак и отправляем сразу карту
     # и координаты спавна врага
+    print("server created")
 
     pygame.mouse.set_visible(False)
     game_st = 1
@@ -342,7 +343,6 @@ def multiplayer_start_join():
     Tx = 0
     Ty = 0
 
-
     rend, bill, map, slaves = start() # создаем рендер просто из старта
     slaves = [] # Готовим массив для врага
     slaves.append(slave(randint(0, 2), (width - 1) * 100 + 40, height * 100 + 40, 100, 100)) # Создаем врага, владелец сервака
@@ -351,6 +351,7 @@ def multiplayer_start_join():
     bill = billy(client.start_x, client.start_x,
                  2 * math.pi / 2, "VAn", W, H, mazeG.maze) # создаем игрока по координатам от сервака
     map = client.map # запоминаем карту по инфе с сервака
+
     pygame.mouse.set_visible(False)
     game_st = 1
     if not rend.is_alive():
@@ -495,10 +496,13 @@ while not finished:
             update()
         elif is_server: # если мы сервак
             input_game(pygame.event.get())
+            print("input done")
             server.send_data(bill.x)
             server.send_data(bill.y)
+            print("send done")
             slaves[0].x = server.get_data()
             slaves[0].y = server.get_data()
+            print("data get")
             update()
         elif not is_server: # если мы клиент
             input_game(pygame.event.get())
