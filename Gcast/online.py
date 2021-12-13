@@ -76,11 +76,20 @@ class Client(threading.Thread):
         self.sock.connect((str(ip), port))
         self.max_data = 2048
 
-        self.map = self.sock.recv(self.max_data)
+        self.str_map = self.sock.recv(self.max_data)
+        self.map_1d = [int(num) for num in self.str_map if num.isdigit()]
+        self.map = []
+        for i in range(19):
+            self.map.append([self.map_1d[j] for j in range(i*19, (i+1)*19)])
+        print(self.map)
 
         self.start_x = self.sock.recv(self.max_data)
+        self.start_x = int(self.start_x)
+        print(self.start_x)
 
         self.start_y = self.sock.recv(self.max_data)
+        self.start_y = int(self.start_y)
+        print(self.start_y)
         
         self.delegate_data = delegate_data
         

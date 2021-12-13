@@ -300,6 +300,7 @@ def multiplayer_start_create():
     global multiplayer
     global server
     global is_server
+    global enemies
 
     multiplayer = True
     is_server = True
@@ -320,6 +321,14 @@ def multiplayer_start_create():
     server = Server(2, int(server_info[0]), map, x * 100 - 50, y * 100 - 50,delegate_data)  # Создаем сервак и отправляем сразу карту
     # и координаты спавна врага
     print("server created")
+
+    enemies = ()
+    l = 0
+    for i in range(len(slaves)):
+        if slaves[i - l].walk(map, bill.x, bill.y):
+            bill.hp -= 0.5
+        enemies += ((slaves[i - l].x, slaves[i - l].y,
+                     slaves[i - l].type, slaves[i - l].frame))
 
     pygame.mouse.set_visible(False)
     game_st = 1
