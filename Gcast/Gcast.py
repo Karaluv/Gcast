@@ -289,6 +289,8 @@ def game_start():
     if not rend.is_alive():
         rend.start()
 
+def delegate_data():
+    return bill.x,bill.y
 
 def multiplayer_start_create():
     global server_info
@@ -315,7 +317,7 @@ def multiplayer_start_create():
         if mazeG.maze[int(y)][int(x)] == 0:
             slaves.append(slave(randint(0, 2), x, y, 100, 100))
             break  # Когда находим, создаем врага и прерываем цикл
-    server = Server(2, int(server_info[0]), map, x * 100 - 50, y * 100 - 50)  # Создаем сервак и отправляем сразу карту
+    server = Server(2, int(server_info[0]), map, x * 100 - 50, y * 100 - 50,delegate_data)  # Создаем сервак и отправляем сразу карту
     # и координаты спавна врага
     print("server created")
 
@@ -323,6 +325,9 @@ def multiplayer_start_create():
     game_st = 1
     if not rend.is_alive():
         rend.start()
+        
+    if not server.is_alive():
+        server.start()
 
 
 def multiplayer_start_join():
@@ -349,14 +354,15 @@ def multiplayer_start_join():
     # всегда спавнится в начале лабиринта
     client = Client(server_info[1], int(server_info[0])) # подключаемся к серваку
     bill = billy(client.start_x, client.start_x,
-                 2 * math.pi / 2, "VAn", W, H, mazeG.maze) # создаем игрока по координатам от сервака
+                 2 * math.pi / 2, "VAn", W, H, mazeG.maze,delegate_data) # создаем игрока по координатам от сервака
     map = client.map # запоминаем карту по инфе с сервака
 
     pygame.mouse.set_visible(False)
     game_st = 1
     if not rend.is_alive():
         rend.start()
-
+    if not server.is_alive():
+        server.start()
 
 def game_finish():
     global finished
@@ -493,24 +499,20 @@ while not finished:
             input_game(pygame.event.get())
             if bill.is_shoot():
                 slaves = bill.shoot(slaves, map)
-            update()
         elif is_server: # если мы сервак
             input_game(pygame.event.get())
             print("input done")
             server.send_data(bill.x)
             server.send_data(bill.y)
             print("send done")
-            slaves[0].x = server.get_data()
-            slaves[0].y = server.get_data()
+            slaves[0].x = server.data[0]
+            slaves[0].y = server.data[1]
             print("data get")
-            update()
         elif not is_server: # если мы клиент
             input_game(pygame.event.get())
-            client.send_data(bill.x)
-            client.send_data(bill.y)
-            slaves[0].x = server.get_data()
-            slaves[0].y = server.get_data()
-            update()
+            slaves[0].x = server.data[0]
+            slaves[0].y = server.data[1]
+        update()
     if game_st == 0:
         screen.blit(main_screen, (0, 0))
         menu1.draw_all()
