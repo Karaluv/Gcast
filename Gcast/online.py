@@ -80,7 +80,7 @@ class Client(threading.Thread):
         self.map_1d = [int(num) for num in self.str_map if num.isdigit()]
         self.map = []
         for i in range(19):
-            self.map.append([self.map_1d[j] for j in range(i*19, (i+1)*19)])
+            self.map.append([self.map_1d[j] for j in range(i*19, (i+1)*19 - 1)])
         print(self.map)
 
         self.start_x = self.sock.recv(self.max_data)
