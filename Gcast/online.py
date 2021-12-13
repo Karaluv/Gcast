@@ -26,7 +26,9 @@ class Server(threading.Thread):
         print(data_bytes)
         self.conn.send(data_bytes)
 
+        print(y)
         data_bytes = bytearray(str(y), 'utf8')
+        print(data_bytes)
         self.conn.send(data_bytes)
 
         self.delegate_data = delegate_data
@@ -81,7 +83,6 @@ class Client(threading.Thread):
 
         self.str_map = self.sock.recv(self.max_data)
         self.map = eval(self.str_map)
-        print(self.map)
 
         self.start_x = self.sock.recv(self.max_data)
         print(self.start_x)
