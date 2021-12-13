@@ -308,7 +308,7 @@ def multiplayer_start_create():
     Tx = 0
     Ty = 0
 
-    rend, bill, map = start()  # генерируем все кроме врагов
+    rend, bill, map, slaves = start()  # генерируем все кроме врагов
     slaves = []  # готовим пустой массив для противника
     for i in range(height * width // 2):  # ищем свободное место для спавна противника
         x, y = randint(3, height - 1) + 0.5, randint(3, width - 1) + 0.5
@@ -342,6 +342,8 @@ def multiplayer_start_join():
     Tx = 0
     Ty = 0
 
+
+    rend, bill, map, slaves = start() # создаем рендер просто из старта
     slaves = [] # Готовим массив для врага
     slaves.append(slave(randint(0, 2), (width - 1) * 100 + 40, height * 100 + 40, 100, 100)) # Создаем врага, владелец сервака
     # всегда спавнится в начале лабиринта
@@ -349,7 +351,6 @@ def multiplayer_start_join():
     bill = billy(client.start_x, client.start_x,
                  2 * math.pi / 2, "VAn", W, H, mazeG.maze) # создаем игрока по координатам от сервака
     map = client.map # запоминаем карту по инфе с сервака
-    rend = start() # создаем рендер просто из старта
     pygame.mouse.set_visible(False)
     game_st = 1
     if not rend.is_alive():
