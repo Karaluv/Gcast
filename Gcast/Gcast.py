@@ -324,19 +324,12 @@ def multiplayer_start_create():
         if mazeG.maze[int(y)][int(x)] == 0:
             slaves.append(slave(randint(0, 2), x, y, 100, 100))
             break  # Когда находим, создаем врага и прерываем цикл
-    server = Server(2, int(server_info[0]), map, x * 100 - 50, y * 100 - 50,
+    server = Server(2, int(server_info[0]), map, x * 100, y * 100,
                     delegate_data)  # Создаем сервак и отправляем сразу карту
     # и координаты спавна врага
     print("server created")
 
-    enemies = ()
-    l = 0
-    for i in range(len(slaves)):
-        if slaves[i - l].walk(map, bill.x, bill.y):
-            bill.hp -= 0.5
-        enemies += ((slaves[i - l].x, slaves[i - l].y,
-                     slaves[i - l].type, slaves[i - l].frame))
-
+    update()
     pygame.mouse.set_visible(False)
     game_st = 1
     if not rend.is_alive():
@@ -525,13 +518,10 @@ while not finished:
                 slaves = bill.shoot(slaves, map)
         elif is_server:  # если мы сервак
             input_game(pygame.event.get())
-            print("input done")
-            server.send_data(bill.x)
-            server.send_data(bill.y)
-            print("send done")
             slaves[0].x = server.data[0]/100
             slaves[0].y = server.data[1]/100
-            print("data get")
+            
+
         elif not is_server:  # если мы клиент
             input_game(pygame.event.get())
             slaves[0].x = client.data[0]/100

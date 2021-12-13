@@ -1,6 +1,6 @@
 import socket
 import threading
-
+import time
 
 class StopThread(StopIteration): pass
 
@@ -21,13 +21,12 @@ class Server(threading.Thread):
         data_bytes = bytearray(str(map), 'utf8')
         self.conn.send(data_bytes)
 
-        print(x)
-        data_bytes = bytearray(str(x), 'utf8')
-        print(data_bytes)
+        coords = [1440, 1440]
+        data_bytes = bytearray(str(coords), 'utf8')
+        #print(data_bytes)
         self.conn.send(data_bytes)
-        
-        data_bytes = bytearray(str(y), 'utf8')
-        self.conn.send(data_bytes)
+        self.data = [x, y]
+
 
         self.delegate_data = delegate_data
 
@@ -43,11 +42,14 @@ class Server(threading.Thread):
         
 
     def send_data(self, data):
+        #print("i send data")
         data_bytes = bytearray(str(data), 'utf8')
         self.conn.send(data_bytes)
 
     def get_data(self):
         data = self.conn.recv(self.max_data)
+        data = eval(data)
+        #print(data)
         return data
 
     def close_server(self):
@@ -55,15 +57,17 @@ class Server(threading.Thread):
 
     # everlasting loop def, that just rerenders everything
     def run(self):
-        import time
 
-        time.sleep(1)
+        #time.sleep(1)
         while self.__running.isSet():
             self.__flag.wait()
-            time.sleep(0.01)
-
+            time.sleep(0.1)
+            x, y = self.delegate_data()
+            coords = (x, y)
+            self.send_data(coords)
             self.data = self.get_data()
-            self.send_data(self.delegate_data())
+
+
 
     # defs that are needed to control the thread: pause render,resume render,stop render process
     def pause(self):
@@ -85,7 +89,6 @@ class Client(threading.Thread):
 
         self.str_map = self.sock.recv(self.max_data)
         self.map = eval(self.str_map)
-        print(self.map)
 
         self.start_x,self.start_y = eval(self.sock.recv(self.max_data))
         print(self.start_x,self.start_y)
