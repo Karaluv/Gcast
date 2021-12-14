@@ -244,6 +244,7 @@ while success:
         img.tobytes(), shape, "BGR"), (Wdisp, Hdisp)), (0, 0))
     pygame.display.update()
 
+
 # sets ingame music
 pygame.mixer.music.load(os.path.join(
     sys.path[0] + "\\pony\\music\\", "main_theme.mp3"))
