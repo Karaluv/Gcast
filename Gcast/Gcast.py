@@ -295,7 +295,7 @@ def game_start():
 
 
 def delegate_data():
-    return (bill.x, bill.y)
+    return (bill.x, bill.y, slave[0].lives)
 
 
 def multiplayer_start_create():
@@ -521,12 +521,16 @@ while not finished:
             input_game(pygame.event.get())
             slaves[0].x = server.data[0]/100
             slaves[0].y = server.data[1]/100
-            
-
+            bill.hp = server.data[2]
+            if bill.is_shoot():
+                slaves = bill.shoot(slaves, map)
         elif not is_server:  # если мы клиент
             input_game(pygame.event.get())
             slaves[0].x = client.data[0]/100
             slaves[0].y = client.data[1]/100
+            bill.hp = server.data[2]
+            if bill.is_shoot():
+                slaves = bill.shoot(slaves, map)
         update()
     if game_st == 0:
         screen.blit(main_screen, (0, 0))
