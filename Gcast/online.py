@@ -53,7 +53,7 @@ class Server(threading.Thread):
 
     # everlasting loop def, that just rerenders everything
     def run(self):
-        time.sleep(1)
+        time.sleep(0.5)
         while self.__running.isSet():
             self.__flag.wait()
             time.sleep(0.1)
