@@ -2,6 +2,7 @@ import socket
 import threading
 import time
 
+
 class StopThread(StopIteration): pass
 
 
@@ -23,10 +24,9 @@ class Server(threading.Thread):
 
         coords = [1440, 1440]
         data_bytes = bytearray(str(coords), 'utf8')
-        #print(data_bytes)
+        # print(data_bytes)
         self.conn.send(data_bytes)
         self.data = [x, y]
-
 
         self.delegate_data = delegate_data
 
@@ -34,22 +34,18 @@ class Server(threading.Thread):
         self.__flag.set()  # Set to True
         self.__running = threading.Event()  # Used to stop the thread identification
         self.__running.set()  # Set running to True
-        
-        
 
         threading.Thread.__init__(self)
-        
-        
 
     def send_data(self, data):
-        #print("i send data")
+        # print("i send data")
         data_bytes = bytearray(str(data), 'utf8')
         self.conn.send(data_bytes)
 
     def get_data(self):
         data = self.conn.recv(self.max_data)
         data = eval(data)
-        #print(data)
+        # print(data)
         return data
 
     def close_server(self):
@@ -57,8 +53,7 @@ class Server(threading.Thread):
 
     # everlasting loop def, that just rerenders everything
     def run(self):
-
-        #time.sleep(1)
+        # time.sleep(1)
         while self.__running.isSet():
             self.__flag.wait()
             time.sleep(0.1)
@@ -66,8 +61,6 @@ class Server(threading.Thread):
             coords = (x, y)
             self.send_data(coords)
             self.data = self.get_data()
-
-
 
     # defs that are needed to control the thread: pause render,resume render,stop render process
     def pause(self):
@@ -90,17 +83,17 @@ class Client(threading.Thread):
         self.str_map = self.sock.recv(self.max_data)
         self.map = eval(self.str_map)
 
-        self.start_x,self.start_y = eval(self.sock.recv(self.max_data))
-        print(self.start_x,self.start_y)
+        self.start_x, self.start_y = eval(self.sock.recv(self.max_data))
+        print(self.start_x, self.start_y)
         self.delegate_data = delegate_data
 
         self.__flag = threading.Event()  # The flag used to pause the thread
         self.__flag.set()  # Set to True
         self.__running = threading.Event()  # Used to stop the thread identification
         self.__running.set()  # Set running to True
-        
-        self.data = [1540,1000]
-        
+
+        self.data = [1540, 1000]
+
         threading.Thread.__init__(self)
 
     def send_data(self, data):
@@ -123,9 +116,6 @@ class Client(threading.Thread):
             time.sleep(0.1)
             self.send_data(self.delegate_data())
             self.data = self.get_data()
-            
-            
-    
 
     # defs that are needed to control the thread: pause render,resume render,stop render process
     def pause(self):
