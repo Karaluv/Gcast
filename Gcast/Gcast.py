@@ -527,7 +527,6 @@ while not finished:
             input_game(pygame.event.get())
             slaves[0].x = client.data[0]/100
             slaves[0].y = client.data[1]/100
-            print(client.data)
             bill.hp = client.data[2]
 
             if bill.is_shoot():

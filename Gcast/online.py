@@ -102,6 +102,7 @@ class Client(threading.Thread):
 
     def get_data(self):
         data = eval(self.sock.recv(self.max_data))
+        print(data)
         return data
 
     # everlasting loop def, that just rerenders everything
