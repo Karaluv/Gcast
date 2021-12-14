@@ -191,8 +191,7 @@ def update():
     # check if slaves shoot at main hero
     enemies = ()
     l = 0
-    
-    
+
     for i in range(len(slaves)):
         if not multiplayer:
             if slaves[i - l].walk(map, bill.x, bill.y):
@@ -295,7 +294,7 @@ def game_start():
 
 
 def delegate_data():
-    return (bill.x, bill.y, slave[0].lives)
+    return (bill.x, bill.y, slaves[0].lives)
 
 
 def multiplayer_start_create():
