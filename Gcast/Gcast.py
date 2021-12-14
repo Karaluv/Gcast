@@ -294,7 +294,7 @@ def game_start():
 
 
 def delegate_data():
-    return (bill.x, bill.y, slaves[0].lives)
+    return (bill.x, bill.y, slaves[0].lifes)
 
 
 def multiplayer_start_create():
