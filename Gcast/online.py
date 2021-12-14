@@ -22,11 +22,11 @@ class Server(threading.Thread):
         data_bytes = bytearray(str(map), 'utf8')
         self.conn.send(data_bytes)
 
-        coords = [1440, 1440]
+        coords = [1440, 1440, 2]
         data_bytes = bytearray(str(coords), 'utf8')
         # print(data_bytes)
         self.conn.send(data_bytes)
-        self.data = [x, y]
+        self.data = [x, y, 2]
 
         self.delegate_data = delegate_data
 
@@ -45,7 +45,7 @@ class Server(threading.Thread):
     def get_data(self):
         data = self.conn.recv(self.max_data)
         data = eval(data)
-        # print(data)
+        print(data)
         return data
 
     def close_server(self):
@@ -53,7 +53,7 @@ class Server(threading.Thread):
 
     # everlasting loop def, that just rerenders everything
     def run(self):
-        # time.sleep(1)
+        time.sleep(1)
         while self.__running.isSet():
             self.__flag.wait()
             time.sleep(0.1)
@@ -92,7 +92,7 @@ class Client(threading.Thread):
         self.__running = threading.Event()  # Used to stop the thread identification
         self.__running.set()  # Set running to True
 
-        self.data = [1540, 1000]
+        self.data = [1440, 1440, 2]
 
         threading.Thread.__init__(self)
 
@@ -108,7 +108,7 @@ class Client(threading.Thread):
     def run(self):
         import time
 
-        time.sleep(0.5)
+        time.sleep(1)
         #print("ok")
 
         while self.__running.isSet():
