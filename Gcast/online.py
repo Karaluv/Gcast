@@ -22,7 +22,7 @@ class Server(threading.Thread):
         data_bytes = bytearray(str(map), 'utf8')
         self.conn.send(data_bytes)
 
-        coords = [1440, 1440, 2]
+        coords = [1540, 1440, 2]
         data_bytes = bytearray(str(coords), 'utf8')
         # print(data_bytes)
         self.conn.send(data_bytes)
