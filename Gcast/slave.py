@@ -122,6 +122,7 @@ class slave:
                 vy = self.v*(y0-self.y)/r+randint(0,100)/100
                 self.shooting = False
                 self.walking = True
+                self.ended = False
             else:
                 vx,vy =0,0
                 self.shooting = True
