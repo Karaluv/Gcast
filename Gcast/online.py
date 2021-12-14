@@ -84,7 +84,7 @@ class Client(threading.Thread):
         self.map = eval(self.str_map)
 
         self.start_x, self.start_y = eval(self.sock.recv(self.max_data))
-        print(self.start_x, self.start_y)
+        #print(self.start_x, self.start_y)
         self.delegate_data = delegate_data
 
         self.__flag = threading.Event()  # The flag used to pause the thread
@@ -109,7 +109,7 @@ class Client(threading.Thread):
         import time
 
         time.sleep(0.5)
-        print("ok")
+        #print("ok")
 
         while self.__running.isSet():
             self.__flag.wait()
