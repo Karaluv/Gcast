@@ -364,7 +364,10 @@ def multiplayer_start_join():
     bill = billy(client.start_x, client.start_x,
                  2 * math.pi / 2, "VAn", W, H, mazeG.maze)  # создаем игрока по координатам от сервака
     map = client.map  # запоминаем карту по инфе с сервака
-
+    bill.map = map
+    
+    update()
+    
     pygame.mouse.set_visible(False)
     game_st = 1
     if not rend.is_alive():

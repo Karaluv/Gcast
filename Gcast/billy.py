@@ -255,6 +255,7 @@ class billy:
         self.pm.z_recoil = 0.03
         self.pm.a_recoil = 0.07
 
+
         self.ak.z_recoil = 0.03
         self.ak.a_recoil = 0.07
 
@@ -273,18 +274,10 @@ class billy:
                                      (i * self.res + 100, j * self.res + 100, self.res, self.res))
         self.minimap_circle = pygame.image.load(sys.path[0] + "\\pony\\hud\\minimap.png")
 
-    def recreate_minimap(self):
-        self.minimap = pygame.Surface((len(self.map[0]) * self.res + 200, len(self.map) * self.res + 200))
-        for i in range(len(self.map[0])):
-            for j in range(len(self.map)):
-                if self.map[i][j] != 0:
-                    pygame.draw.rect(self.minimap, (100, 100, 100),
-                                     (i * self.res + 100, j * self.res + 100, self.res, self.res))
-
     def is_shoot(self):
         if self.WEAPONS[self.CURRENT_WEAPON].shooting and self.WEAPONS[self.CURRENT_WEAPON].frame_counter == \
                 self.WEAPONS[self.CURRENT_WEAPON].fire_length:
-            self.z += self.WEAPONS[self.CURRENT_WEAPON].z_recoil  # РАЗКОММЕНТИТЬ ДЛЯ ОТДАЧИ
+            self.z += self.WEAPONS[self.CURRENT_WEAPON].z_recoil # РАЗКОММЕНТИТЬ ДЛЯ ОТДАЧИ
             self.a += (random.random() - 0.5) * self.WEAPONS[self.CURRENT_WEAPON].a_recoil
             return True
         else:
