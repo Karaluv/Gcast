@@ -57,8 +57,8 @@ class Server(threading.Thread):
         while self.__running.isSet():
             self.__flag.wait()
             time.sleep(0.1)
-            x, y = self.delegate_data()
-            coords = (x, y)
+            x, y, hp = self.delegate_data()
+            coords = (x, y, hp)
             self.send_data(coords)
             self.data = self.get_data()
 
@@ -114,7 +114,9 @@ class Client(threading.Thread):
         while self.__running.isSet():
             self.__flag.wait()
             time.sleep(0.1)
-            self.send_data(self.delegate_data())
+            x, y, hp = self.delegate_data()
+            coords = (x, y, hp)
+            self.send_data(coords)
             self.data = self.get_data()
 
     # defs that are needed to control the thread: pause render,resume render,stop render process
