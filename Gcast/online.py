@@ -83,7 +83,7 @@ class Client(threading.Thread):
         self.str_map = self.sock.recv(self.max_data)
         self.map = eval(self.str_map)
 
-        self.start_x, self.start_y = eval(self.sock.recv(self.max_data))
+        self.start_x, self.start_y, self.start_hp = eval(self.sock.recv(self.max_data))
         #print(self.start_x, self.start_y)
         self.delegate_data = delegate_data
 
