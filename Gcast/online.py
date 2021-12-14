@@ -102,13 +102,14 @@ class Client(threading.Thread):
 
     def get_data(self):
         data = eval(self.sock.recv(self.max_data))
+        print(data)
         return data
 
     # everlasting loop def, that just rerenders everything
     def run(self):
         import time
 
-        time.sleep(0.5)
+        time.sleep(1)
         #print("ok")
 
         while self.__running.isSet():
