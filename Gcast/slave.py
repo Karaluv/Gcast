@@ -17,9 +17,12 @@ class slave:
         self.stepx = stepx
         self.stepy = stepy
         self.shooting = False
+        self.walking = True
+        self.standing = False
         self.r0 = 2
         self.targetting_time = 30
         self.lifes = 2
+        self.ended = False
         self.see = True
         if type == 0:
             self.maxFrame  = 16
@@ -79,13 +82,27 @@ class slave:
             return False
         elif self.frame >= self.maxFrame - self.speed_animation*2 and self.lifes < 0:
             return True
+        
+        
             
 
     def walk(self, map, x0, y0):
-
+        
         self.frame+=self.speed_animation
-        if self.frame >= self.maxFrame - self.speed_animation:
-            self.frame = self.start_frame
+        
+        if self.walking:
+            if self.frame >= self.shootingframe:
+                self.frame = 0
+                self.ended = True
+                
+        if self.shooting:
+            if self.frame >= self.maxFrame:
+                self.frame = self.shootingframe
+                self.ended = True
+                
+        if self.standing:
+            self.frame = 0
+                
 
         a = self.rotation
         self.see = True
@@ -96,7 +113,6 @@ class slave:
         dy,dx = (y0-self.y)/30,(x0-self.x)/30
         
         for i in range(30):
-            
             if map[int(dy * i + self.y)][int(dx * i + self.x)] != 0:
                 self.see = False
         r = math.sqrt((x0-self.x)*(x0-self.x) + (y0-self.y)*(y0-self.y))
@@ -106,8 +122,12 @@ class slave:
             if self.frame < self.shootingframe-1:
                 vx = self.v*(x0-self.x)/r+randint(0,100)/100
                 vy = self.v*(y0-self.y)/r+randint(0,100)/100
+                self.shooting = False
+                self.walking = True
             else:
                 vx,vy =0,0
+                self.shooting = True
+                self.walking = False
                 
 
  
