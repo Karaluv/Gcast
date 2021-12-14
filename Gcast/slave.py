@@ -25,15 +25,15 @@ class slave:
         self.ended = False
         self.see = True
         if type == 0:
-            self.maxFrame  = 16
+            self.maxFrame = 16
             self.speed_animation = 0.2
             self.shootingframe = 10
         if type == 1:
-            self.maxFrame  = 17
+            self.maxFrame = 17
             self.speed_animation = 0.2
             self.shootingframe = 13
         if type == 2:
-            self.maxFrame  = 13
+            self.maxFrame = 13
             self.speed_animation = 0.2
             self.shootingframe = 9
 
@@ -82,9 +82,7 @@ class slave:
             return False
         elif self.frame >= self.maxFrame - self.speed_animation*2 and self.lifes < 0:
             return True
-        
-        
-            
+
 
     def walk(self, map, x0, y0):
         

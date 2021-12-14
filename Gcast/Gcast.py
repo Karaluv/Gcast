@@ -529,6 +529,7 @@ while not finished:
             slaves[0].x = client.data[0]/100
             slaves[0].y = client.data[1]/100
             bill.hp = client.data[2]
+
             if bill.is_shoot():
                 slaves = bill.shoot(slaves, map)
         update()
