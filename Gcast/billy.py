@@ -1,6 +1,7 @@
 from random import randint
 import random
 import math
+from cv2 import FlannBasedMatcher
 import pygame
 import sys
 import os
@@ -16,7 +17,7 @@ W, H = infoObject.current_w, infoObject.current_h
 
 class gun:
     def __init__(self, auto, maxammo, fire, idle, reload, reload_sound, fire_sound, screen_x, screen_y, scale,
-                 frame_time):
+                 frame_time,damage):
         self.screen_x = screen_x
         self.screen_y = screen_y
 
@@ -46,6 +47,8 @@ class gun:
 
         self.fire_length = len(fire)
         self.reload_length = len(reload)
+        
+        self.damage = damage
 
         for i in range(self.fire_length):
             new_w = self.fire_texture[i].get_width() * self.scale
@@ -219,11 +222,11 @@ class billy:
             name - files folder
             '''
             path = os.path.join(sys.path[0], name)
-            print(path)
+            
             files = next(os.walk(path))
             onlyfiles = next(os.walk(path))
             for i in range(len(onlyfiles[2])):
-                print(files[0] + "\\" + onlyfiles[2][i])
+                
                 arr.append(pygame.image.load(files[0] + "\\" + "(" + str(i + 1) + ").png").convert_alpha())
             return arr
 
@@ -236,22 +239,25 @@ class billy:
             reload_sound = pygame.mixer.Sound(sys.path[0] + "\\pony\\weapon\\" + folder + "\\reload.mp3")
             shoot_sound = pygame.mixer.Sound(sys.path[0] + "\\pony\\weapon\\" + folder + "\\shoot.mp3")
             gun_ = gun(args[0], args[1], shoot1, idle, reload1, reload_sound, shoot_sound, args[2], args[3], args[4],
-                       args[5])
+                       args[5],args[8])
             gun_.sleeve_posx = args[6]
             gun_.sleeve_posy = args[7]
             return gun_
 
-        scale = W / 1536
-
-        self.ak = load_gun("ak", (True, 30, 0.4 * scale, 0.13 * scale, 1, 2, 1, 1))
+        scale_x = W / 1536
+        scale_y = H/864
+        if scale_y != 1:
+            scale_y = scale_y*1.7
+            
+        self.ak = load_gun("ak", (True, 30, 0.4 * scale_x, 0.13 * scale_y, 1, 2, 1, 1,2))
         self.ak.z_recoil = 0.04
         self.ak.a_recoil = 0.09
 
-        self.svt = load_gun("svt", (False, 10, 0.3 * scale, 0.13 * scale, 1, 2, 0.82, 0.77))
+        self.svt = load_gun("svt", (False, 10, 0.3 * scale_x, 0.13 * scale_y, 1, 2, 0.82, 0.77,4))
         self.svt.z_recoil = 0.06
         self.svt.a_recoil = 0.12
 
-        self.pm = load_gun("makarov", (False, 8, 0.3 * scale, 0.13 * scale, 1, 2, 0.62, 0.67))
+        self.pm = load_gun("makarov", (False, 8, 0.3 * scale_x, 0.13 * scale_y, 1, 2, 0.62, 0.67,3))
         self.pm.z_recoil = 0.03
         self.pm.a_recoil = 0.07
 
@@ -264,6 +270,8 @@ class billy:
         self.WEAPONS = [self.ak, self.svt, self.pm]
         self.CURRENT_WEAPON = 0
 
+        self.died = False
+        
         # Создание миникарты
         self.res = 20
         self.minimap = pygame.Surface((len(self.map[0]) * self.res + 200, len(self.map) * self.res + 200))
@@ -315,10 +323,7 @@ class billy:
         self.Tx += 0.1
 
     def check_fisting(self, slaves):
-        x, y = self.x / self.stepx, self.y / self.stepy
-        for i in range(0, len(slaves), 3):
-            if abs(slaves[i] - x) < 0.3 and abs(slaves[i + 1] - y) < 0.3:
-                print(slaves[i + 2])
+        pass
 
     def update(self, slaves):
         self.a = self.a % self.pi_2
@@ -345,6 +350,11 @@ class billy:
             self.Move(-3 * self.speed, 0, slaves)
         if self.kd:
             self.Move(3 * self.speed, 0, slaves)
+            
+        if self.hp<=0:
+            self.died = True
+            self.hp = 0
+            pygame.mixer.Channel(3).play(pygame.mixer.Sound(os.path.join(sys.path[0], "pony\\music\\die.mp3")))
 
     def keyinput(self, event):
         if event.type == pygame.KEYDOWN:
@@ -460,9 +470,13 @@ class billy:
 
                     if z_2 < 0.01 and slaves[j].lifes != -1 and (-self.z - 0.9 / r) < -1 and (self.z - 0.3 / r) < 1:
                         find = True
-                        slaves[j].lifes -= 1
+                        slaves[j].lifes -= self.WEAPONS[self.CURRENT_WEAPON].damage
                         if (self.z - 0.1 / r) > 1:
-                            slaves[j].lifes -= 1
+                            slaves[j].lifes -= self.WEAPONS[self.CURRENT_WEAPON].damage*1.5
+                            if slaves[j].lifes < 0:
+                                slaves[j].lifes = 0
+                        if slaves[j].lifes < 0:
+                                slaves[j].lifes = 0
                         self.hitmark_counter = 15
                         break
 

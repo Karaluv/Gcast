@@ -18,21 +18,26 @@ class slave:
         self.stepy = stepy
         self.r0 = 2
         self.targetting_time = 30
+
         self.lifes = 2
         self.state = 1
+
         self.see = True
         if type == 0:
             self.maxFrame = 16
             self.speed_animation = 0.2
             self.shootingframe = 10
+            self.lifes = 4
         if type == 1:
             self.maxFrame = 17
             self.speed_animation = 0.2
             self.shootingframe = 13
+            self.lifes = 6
         if type == 2:
             self.maxFrame = 13
             self.speed_animation = 0.2
             self.shootingframe = 9
+            self.lifes = 8
 
         self.start_frame = 0
         self.frame = randint(0,self.maxFrame)

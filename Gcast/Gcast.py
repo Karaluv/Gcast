@@ -127,12 +127,15 @@ def start():
     global pe, height, width, W, H, density, dl
     # creates maze
     mazeG.main(height, width)
+    map_ = mazeG.maze.copy()
     mazeG.maze = tuple(tuple(i) for i in mazeG.maze)
     # spawns slaves
+    
     slaves = []
     for i in range(height * width // 2):
         x, y = randint(3, height - 1) + 0.5, randint(3, width - 1) + 0.5
-        if mazeG.maze[int(y)][int(x)] == 0:
+        if map_[int(y)][int(x)] == 0:
+            map_[int(y)][int(x)]+=1
             slaves.append(slave(randint(0, 2), x, y, 100, 100))
     # inits render core
     rend = rendering(0.5, density, dl, render_zone, height +
@@ -195,6 +198,8 @@ def update():
     # check if slaves shoot at main hero
     enemies = ()
     l = 0
+    
+    
     for i in range(len(slaves)):
         if not multiplayer:
             if slaves[i - l].walk(map, bill.x, bill.y,slaves,i-1, False):
@@ -336,7 +341,7 @@ def multiplayer_start_create():
                     delegate_data)  # Создаем сервак и отправляем сразу карту
     # и координаты спавна врага
     print("server created")
-
+    slaves[0].lifes = 100
     update()
     pygame.mouse.set_visible(False)
     game_st = 1
@@ -375,7 +380,7 @@ def multiplayer_start_join():
                  2 * math.pi / 2, "VAn", W, H, mazeG.maze)  # создаем игрока по координатам от сервака
     map = client.map  # запоминаем карту по инфе с сервака
     bill.map = map
-    
+    slaves[0].lifes = 100
     update()
     
     pygame.mouse.set_visible(False)
@@ -399,6 +404,13 @@ def game_resume():
 def game_return():
     global game_st
     game_st = 0
+    if multiplayer:
+        if is_server == True:
+            server.stop()
+            server.join()
+        else:
+            client.stop()
+            client.join()
     rend.stop()
     rend.join()
     screen.fill(bl)
@@ -543,7 +555,10 @@ while not finished:
             if bill.is_shoot():
                 slaves = bill.shoot(slaves, map)
                 me_shoot = 1
-        update()
+        if not bill.died:
+            update()
+        else:
+            game_st = 2
     if game_st == 0:
         screen.blit(main_screen, (0, 0))
         menu1.draw_all()

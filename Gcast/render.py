@@ -64,7 +64,6 @@ class rendering(threading.Thread):
             files = next(os.walk(path))
             onlyfiles = next(os.walk(path)) 
             for i in range(len(onlyfiles[2])):
-                print(files[0]+"\\"+onlyfiles[2][i])
                 arr[-1].append(pygame.image.load(files[0]+"\\"+"  ("+str(i+1)+").png").convert_alpha())
             return arr
         
@@ -205,8 +204,8 @@ class rendering(threading.Thread):
                     k = ch / zn
                     w = k / density
                     #checks if enemy is in field of view
-                    if ch<0 and zn<0:
-                        if wall_data[min(int(w),len(wall_data)-1)][0]>l:
+                    if ch<0.2 and zn<0.2:
+                        if wall_data[max(0,min(int(w),len(wall_data)-1))][0]>l:
                             enemy_render_data.append([l,w,enemies[i+2],enemies[i+3]])
 
         return enemy_render_data
