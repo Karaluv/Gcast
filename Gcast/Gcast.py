@@ -214,6 +214,7 @@ def start(map):
             map), len(map[0]), update_render, redraw_all, 1)
         bill = billy((len(map[0])-1) * 100 + 40, (len(map)-1) * 100 +
                      40, 2 * math.pi / 2, "VAn", W, H, map)
+        slaves = []
     return rend, bill, map, slaves
 
 
@@ -262,15 +263,11 @@ def multiplayer_start_create():
            [1, 4, 4, 4, 4, 4, 4, 4, 4, 1]]
 
     rend, bill, map, slaves = start(map)  # генерируем все кроме врагов
-    slaves = []  # готовим пустой массив для противника
 
-    for i in range(height * width // 2):  # ищем свободное место для спавна противника
-        x, y = randint(3, height - 1) + 0.5, randint(3, width - 1) + 0.5
-        if mazeG.maze[int(y)][int(x)] == 0:
-            slaves.append(slave(randint(0, 2), x, y, 100, 100))
-            break  # Когда находим, создаем врага и прерываем цикл
 
-    server = Server(2, int(server_info[0]), map, x * 100, y * 100,
+    slaves = [slave(randint(0, 2), 150, 150, 100, 100)]
+    
+    server = Server(2, int(server_info[0]), map, 150, 150,
                     delegate_data)  # Создаем сервак и отправляем сразу карту
     # и координаты спавна врага
     print("server created")
