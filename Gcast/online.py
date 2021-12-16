@@ -21,14 +21,14 @@ class Server(threading.Thread):
         data_bytes = bytearray(str(map), 'utf8')
         self.conn.send(data_bytes)
 
-        coords = "1540!1440!50!0!0!"
+        coords = "1540!1440!100!0!0!"
         self.send_data(coords)
         data_bytes = bytearray(str(coords), 'utf8')
-        #print(data_bytes)
+
         self.conn.send(data_bytes)
         time.sleep(1)
 
-        self.data = [1440, 1440, 50, 0, 0]
+        self.data = [1440, 1440, 100, 0, 0]
 
         self.delegate_data = delegate_data
 
@@ -47,7 +47,7 @@ class Server(threading.Thread):
         data_raw = self.conn.recv(self.max_data)
         data_raw = data_raw.decode('utf8')
         data_splited = data_raw.split("!")
-        x, y, hp, shoot, move = float(data_splited[0]), float(data_splited[1]), int(data_splited[2]), int(data_splited[3]), int(data_splited[4])
+        x, y, hp, shoot, move = float(data_splited[0]), float(data_splited[1]), int(float(data_splited[2])), int(float(data_splited[3])), int(float(data_splited[4]))
         data = (x, y, hp, shoot, move)
         return data
 
@@ -89,7 +89,7 @@ class Client(threading.Thread):
 
         self.str_map = self.sock.recv(self.max_data)
         self.map = eval(self.str_map)
-        self.data = [1540, 1440, 25, 0, 0]
+        self.data = [1540, 1440, 100, 0, 0]
         self.start_x, self.start_x, hp, shoot, move = self.get_data()
 
         self.delegate_data = delegate_data
@@ -109,7 +109,7 @@ class Client(threading.Thread):
         data_raw = self.sock.recv(self.max_data)
         data_raw = data_raw.decode('utf8')
         data_splited = data_raw.split("!")
-        x, y, hp, shoot, move = float(data_splited[0]), float(data_splited[1]), int(data_splited[2]), int(data_splited[3]), int(data_splited[4])
+        x, y, hp, shoot, move = float(data_splited[0]), float(data_splited[1]), int(float(data_splited[2])), int(float(data_splited[3])), int(float(data_splited[4]))
         data = (x, y, hp, shoot, move)
         return data
 
