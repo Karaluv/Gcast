@@ -198,7 +198,9 @@ def update():
     # check if slaves shoot at main hero
     enemies = ()
     l = 0
-    
+    if multiplayer:
+        if len(slaves)>0:
+            slaves[0].walk(map,bill.x,bill.y,[],0,True)
     
     for i in range(len(slaves)):
         if not multiplayer:
@@ -304,11 +306,15 @@ def game_start():
 
 def delegate_data():
     global me_shoot
-    if me_shoot == 1:
-        me_shoot = 0
-        return bill.x, bill.y, slaves[0].lifes, 1, bill.moving
+    
+    if len(slaves)>0:
+        if me_shoot == 1:
+            me_shoot = 0
+            return bill.x, bill.y, slaves[0].lifes, 1, bill.moving
+        else:
+            return bill.x, bill.y, slaves[0].lifes, 0, bill.moving
     else:
-        return bill.x, bill.y, slaves[0].lifes, 0, bill.moving
+        return 0,0,0,0,0
 
 
 def multiplayer_start_create():
@@ -411,6 +417,7 @@ def game_return():
         else:
             client.stop()
             client.join()
+        pygame.mouse.set_visible(True)
     rend.stop()
     rend.join()
     screen.fill(bl)
@@ -535,45 +542,50 @@ while not finished:
                 slaves = bill.shoot(slaves, map)
         elif is_server:  # если мы сервак
             input_game(pygame.event.get())
-            slaves[0].x = server.data[0]/100
-            slaves[0].y = server.data[1]/100
+            
+            if len(slaves)>0:
+                slaves[0].x = server.data[0]/100
+                slaves[0].y = server.data[1]/100
 
-            bill.hp = server.data[2]
-            is_enemy_shooting = server.data[3]*2
-            is_enemy_moving = server.data[4]
-            
-            if is_enemy_shooting == 1:
-                    pygame.mixer.Channel(2).play(pygame.mixer.Sound(os.path.join(sys.path[0], "pony\\music\\enemy3_shoot.mp3")))
-                    pygame.mixer.Channel(2).set_volume(1)
-            
-            slaves[0].state = max(is_enemy_moving,is_enemy_shooting)
-            if bill.is_shoot():
-                slaves = bill.shoot(slaves, map)
-                me_shoot = 1
+                bill.hp = server.data[2]
+                is_enemy_shooting = server.data[3]*2
+                is_enemy_moving = server.data[4]
+                
+                if is_enemy_shooting == 2:
+                        pygame.mixer.Channel(2).play(pygame.mixer.Sound(os.path.join(sys.path[0], "pony\\music\\enemy3_shoot.mp3")))
+                        pygame.mixer.Channel(2).set_volume(1)
+                
+                slaves[0].state = max(is_enemy_moving,is_enemy_shooting)
+
+                if bill.is_shoot():
+                    slaves = bill.shoot(slaves, map)
+                    me_shoot = 1
         elif not is_server:  # если мы клиент
             input_game(pygame.event.get())
-            slaves[0].x = client.data[0] / 100
-            slaves[0].y = client.data[1] / 100
+            if len(slaves)>0:
+                slaves[0].x = client.data[0] / 100
+                slaves[0].y = client.data[1] / 100
 
-            bill.hp = client.data[2]
-            is_enemy_shooting = client.data[3]*2
-            is_enemy_moving = client.data[4]
-            
-            slaves[0].state = max(is_enemy_moving,is_enemy_shooting)
-            
-            if is_enemy_shooting == 1:
-                    pygame.mixer.Channel(2).play(pygame.mixer.Sound(os.path.join(sys.path[0], "pony\\music\\enemy3_shoot.mp3")))
-                    pygame.mixer.Channel(2).set_volume(1)
-            
-            
+                bill.hp = client.data[2]
+                is_enemy_shooting = client.data[3]*2
+                is_enemy_moving = client.data[4]
                 
-            if bill.is_shoot():
-                slaves = bill.shoot(slaves, map)
-                me_shoot = 1
+                slaves[0].state = max(is_enemy_moving,is_enemy_shooting)
+                
+                if is_enemy_shooting == 2:
+                        pygame.mixer.Channel(2).play(pygame.mixer.Sound(os.path.join(sys.path[0], "pony\\music\\enemy3_shoot.mp3")))
+                        pygame.mixer.Channel(2).set_volume(1)
+                
+                
+                    
+                if bill.is_shoot():
+                    slaves = bill.shoot(slaves, map)
+                    me_shoot = 1
         if not bill.died:
             update()
         else:
-            game_st = 2
+            game_st = 0
+            game_return()
     if game_st == 0:
         screen.blit(main_screen, (0, 0))
         menu1.draw_all()

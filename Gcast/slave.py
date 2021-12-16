@@ -91,111 +91,114 @@ class slave:
         
         self.frame+=self.speed_animation
 
-        
+        print(self.state)
         if self.state == 1 and self.lifes > 0:
             if self.frame >= self.shootingframe:
                 self.frame = 0
                 
                 
         if self.state == 2 and self.lifes > 0:
+            if self.frame<self.shootingframe:
+                self.frame = self.shootingframe
             if self.frame >= self.maxFrame:
                 self.frame = self.shootingframe
-                self.state = 1
-                self.targetting_time = 30
+                if not online:
+                    self.state = 1
+                    self.targetting_time = 30
                 
                 
         if self.state == 0 and self.lifes > 0:
             self.frame = 0
                 
-
-        a = self.rotation
-        self.see = True
-        
-        x0 = x0/100
-        y0 = y0/100
-        hit = False
-        dy,dx = (y0-self.y)/30,(x0-self.x)/30
-        
-        for i in range(30):
-            if map[int(dy * i + self.y)][int(dx * i + self.x)] != 0:
-                self.see = False
-        r = math.sqrt((x0-self.x)*(x0-self.x) + (y0-self.y)*(y0-self.y))
+        if not online:
+            a = self.rotation
+            self.see = True
             
-
-        if self.see and self.lifes > 0:
-            if self.targetting_time == 0:
-                self.state = 2
-                self.frame = self.shootingframe
-            if self.state == 1:
-                vx = self.v*(x0-self.x)/r+randint(0,100)/100
-                vy = self.v*(y0-self.y)/r+randint(0,100)/100
-            else:
-                vx,vy =0,0
-            self.targetting_time -= 1
-
+            x0 = x0/100
+            y0 = y0/100
+            hit = False
+            dy,dx = (y0-self.y)/30,(x0-self.x)/30
+            
+            for i in range(30):
+                if map[int(dy * i + self.y)][int(dx * i + self.x)] != 0:
+                    self.see = False
+            r = math.sqrt((x0-self.x)*(x0-self.x) + (y0-self.y)*(y0-self.y))
                 
 
+            if self.see and self.lifes > 0:
+                if self.targetting_time == 0:
+                    self.state = 2
+                    self.frame = self.shootingframe
+                if self.state == 1:
+                    vx = self.v*(x0-self.x)/r+randint(0,100)/100
+                    vy = self.v*(y0-self.y)/r+randint(0,100)/100
+                else:
+                    vx,vy =0,0
+                self.targetting_time -= 1
 
-            if int(self.frame) == (self.maxFrame+self.shootingframe)//2:
-                c = randint(0,1)
-                if c==1:
-                    hit = True
-                    #pygame.mixer.music.load(os.path.join(sys.path[0] + "\\pony\\music\\", "enemy_shoot.mp3"))
-                    if self.type == 1 or self.type == 2:
-                        pygame.mixer.Channel(2).play(pygame.mixer.Sound(os.path.join(sys.path[0], "pony\\music\\enemy3_shoot.mp3")))
-                        pygame.mixer.Channel(2).set_volume(1)
-                    if self.type == 0:
-                        pygame.mixer.Channel(2).play(pygame.mixer.Sound(os.path.join(sys.path[0], "pony\\music\\enemy2_shoot.mp3")))
-                        pygame.mixer.Channel(2).set_volume(1)
                     
-        else:
-            vx = math.cos(a)*self.v
-            vy = math.sin(a)*self.v
 
-        x = self.x
-        y = self.y
 
-        stepx = self.stepx
-        stepy = self.stepy
-        
-        go = False
-        if r > 1.5:
-            if self.state != 2 and self.see:
-                self.state = 1
-                self.v = 2
-            x_ = x + vx/stepx
-            y_ = y + vy/stepy
-            for i in range(len(slaves)):
-                if i != I and ((slaves[i].x-x_)**2 + (slaves[i].y-y_)**2) <= 1:
-                    x_ = x
-                    y_ = y
-                    if self.state != 2:
-                        self.state = 0
-                    go = True
-                    break
-        else:
-            x_ = x
-            y_ = y
-            if self.state != 2:
-                self.state = 0
-        
-        self.x,self.y = x_,y_
-        while not go:
-
-            if map[int(y_+0.25)][int(x_+0.25)] == 0:
-                if map[int(y_-0.25)][int(x_-0.25)] == 0:
-                    if map[int(y_-0.25)][int(x_+0.25)] == 0:
-                        if map[int(y_+0.25)][int(x_-0.25)] == 0:
-                            self.x,self.y = x_,y_
-                            go = True
-            if not go:
-                a = randint(0,10)/10*math.pi*2
+                if int(self.frame) == (self.maxFrame+self.shootingframe)//2:
+                    c = randint(0,1)
+                    if c==1:
+                        hit = True
+                        #pygame.mixer.music.load(os.path.join(sys.path[0] + "\\pony\\music\\", "enemy_shoot.mp3"))
+                        if self.type == 1 or self.type == 2:
+                            pygame.mixer.Channel(2).play(pygame.mixer.Sound(os.path.join(sys.path[0], "pony\\music\\enemy3_shoot.mp3")))
+                            pygame.mixer.Channel(2).set_volume(1)
+                        if self.type == 0:
+                            pygame.mixer.Channel(2).play(pygame.mixer.Sound(os.path.join(sys.path[0], "pony\\music\\enemy2_shoot.mp3")))
+                            pygame.mixer.Channel(2).set_volume(1)
+                        
+            else:
                 vx = math.cos(a)*self.v
                 vy = math.sin(a)*self.v
 
+            x = self.x
+            y = self.y
+
+            stepx = self.stepx
+            stepy = self.stepy
+            
+            go = False
+            if r > 1.5:
+                if self.state != 2 and self.see:
+                    self.state = 1
+                    self.v = 2
                 x_ = x + vx/stepx
                 y_ = y + vy/stepy
+                for i in range(len(slaves)):
+                    if i != I and ((slaves[i].x-x_)**2 + (slaves[i].y-y_)**2) <= 0.25:
+                        x_ = x
+                        y_ = y
+                        if self.state != 2:
+                            self.state = 0
+                        go = True
+                        break
+            else:
+                x_ = x
+                y_ = y
+                if self.state != 2:
+                    self.state = 0
+            
+            self.x,self.y = x_,y_
+            while not go:
 
-        self.rotation = a
- 
-        return hit
+                if map[int(y_+0.25)][int(x_+0.25)] == 0:
+                    if map[int(y_-0.25)][int(x_-0.25)] == 0:
+                        if map[int(y_-0.25)][int(x_+0.25)] == 0:
+                            if map[int(y_+0.25)][int(x_-0.25)] == 0:
+                                self.x,self.y = x_,y_
+                                go = True
+                if not go:
+                    a = randint(0,10)/10*math.pi*2
+                    vx = math.cos(a)*self.v
+                    vy = math.sin(a)*self.v
+
+                    x_ = x + vx/stepx
+                    y_ = y + vy/stepy
+
+            self.rotation = a
+    
+            return hit

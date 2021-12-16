@@ -354,7 +354,7 @@ class billy:
         if self.hp<=0:
             self.died = True
             self.hp = 0
-            pygame.mixer.Channel(3).play(pygame.mixer.Sound(os.path.join(sys.path[0], "pony\\music\\die.mp3")))
+            pygame.mixer.Channel(2).play(pygame.mixer.Sound(os.path.join(sys.path[0], "pony\\music\\die.mp3")))
 
     def keyinput(self, event):
         if event.type == pygame.KEYDOWN:
