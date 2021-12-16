@@ -306,7 +306,7 @@ def multiplayer_start_join():
     map = client.map  # запоминаем карту по инфе с сервака
     rend = rendering(0.5, density, dl, render_zone, len(map), len(map[0]), update_render, redraw_all, 1)
     bill = billy(client.start_x, client.start_x,
-                 2 * math.pi / 2, "VAn", W, H, mazeG.maze)  # создаем игрока по координатам от сервака
+                 2 * math.pi / 2, "VAn", W, H, map)  # создаем игрока по координатам от сервака
     
     bill.map = map
     slaves[0].lifes = 100
