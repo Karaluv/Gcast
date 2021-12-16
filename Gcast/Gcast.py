@@ -147,6 +147,7 @@ def update():
             
             if slaves[0].death(bill.x,bill.y):
                 slaves[0] = slave(randint(0, 2), 1.5, 1.5, 100, 100)
+                slaves[0].hp = 100
                 
 
     for i in range(len(slaves)):
