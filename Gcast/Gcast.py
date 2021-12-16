@@ -621,7 +621,7 @@ while not finished:
         input_menu(pygame.event.get())
         pygame.display.update()
 
-    if game_st == 1 and bill.y < 150:
+    if game_st == 1 and bill.y < 150 and not multiplayer:
         # loads video for intro
         cap = cv2.VideoCapture(os.path.join(
             sys.path[0] + "\\pony\\video\\", "Ending_video_resized.mp4"))
