@@ -248,7 +248,7 @@ class billy:
         scale_y = H/864
         if scale_y != 1:
             scale_y = scale_y*1.7
-        print(H)
+            
         self.ak = load_gun("ak", (True, 30, 0.4 * scale_x, 0.13 * scale_y, 1, 2, 1, 1,2))
         self.ak.z_recoil = 0.04
         self.ak.a_recoil = 0.09
