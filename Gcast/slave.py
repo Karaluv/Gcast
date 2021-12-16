@@ -123,8 +123,9 @@ class slave:
             
 
         if self.see and self.lifes > 0:
-            if self.targetting_time <= 0:
+            if self.targetting_time == 0:
                 self.state = 2
+                self.frame = self.shootingframe
             if self.state == 1:
                 vx = self.v*(x0-self.x)/r+randint(0,100)/100
                 vy = self.v*(y0-self.y)/r+randint(0,100)/100
@@ -196,4 +197,5 @@ class slave:
                 y_ = y + vy/stepy
 
         self.rotation = a
+ 
         return hit
