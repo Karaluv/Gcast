@@ -261,7 +261,7 @@ def multiplayer_start_create():
            [1, 0, 0, 0, 0, 0, 0, 0, 0, 1], [1, 0, 2, 2, 0, 0, 2, 2, 0, 1],
            [1, 0, 2, 2, 0, 0, 2, 2, 0, 1], [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
            [1, 4, 4, 4, 4, 4, 4, 4, 4, 1]]
-
+    map = tuple(tuple(i) for i in map)
     rend, bill, map, slaves = start(map)  # генерируем все кроме врагов
 
 
