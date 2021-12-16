@@ -214,6 +214,7 @@ def start(map):
             map), len(map[0]), update_render, redraw_all, 1)
         bill = billy((len(map[0])-1) * 100 + 40, (len(map)-1) * 100 +
                      40, 2 * math.pi / 2, "VAn", W, H, map)
+        slaves = []
     return rend, bill, map, slaves
 
 
@@ -247,8 +248,7 @@ def multiplayer_start_create():
     global enemies
 
     multiplayer, is_server = True, True
-    rend,bill,map,slaves,Tx,Ty = 0,0,0,0,0,0
-
+    rend, bill, map, slaves, Tx, Ty = 0, 0, 0, 0, 0, 0
 
     map = [[1, 5, 5, 5, 5, 5, 5, 5, 5, 1], [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
            [1, 0, 2, 2, 0, 0, 2, 2, 0, 1], [1, 0, 2, 2, 0, 0, 2, 2, 0, 1],
@@ -258,15 +258,11 @@ def multiplayer_start_create():
            [1, 4, 4, 4, 4, 4, 4, 4, 4, 1]]
 
     rend, bill, map, slaves = start(map)  # генерируем все кроме врагов
-    slaves = []  # готовим пустой массив для противника
 
-    for i in range(height * width // 2):  # ищем свободное место для спавна противника
-        x, y = randint(3, height - 1) + 0.5, randint(3, width - 1) + 0.5
-        if mazeG.maze[int(y)][int(x)] == 0:
-            slaves.append(slave(randint(0, 2), x, y, 100, 100))
-            break  # Когда находим, создаем врага и прерываем цикл
 
-    server = Server(2, int(server_info[0]), map, x * 100, y * 100,
+    slaves = [slave(randint(0, 2), 150, 150, 100, 100)]
+    
+    server = Server(2, int(server_info[0]), map, 150, 150,
                     delegate_data)  # Создаем сервак и отправляем сразу карту
     # и координаты спавна врага
     print("server created")
@@ -294,7 +290,7 @@ def multiplayer_start_join():
     is_server = False
     Tx, Ty = 0, 0
 
-    rend, bill, map, slaves = start()  # создаем рендер просто из старта
+    rend, bill, map, slaves = start(False)  # создаем рендер просто из старта
     slaves = []  # Готовим массив для врага
     slaves.append(
         slave(randint(0, 2), (width - 1) * 100 + 40, height * 100 + 40, 100, 100))  # Создаем врага, владелец сервака
@@ -315,7 +311,7 @@ def multiplayer_start_join():
     if not client.is_alive():
         client.start()
 
-
+#def which sends data to online
 def delegate_data():
     global me_shoot
 
@@ -400,6 +396,36 @@ render_zone = pygame.Surface((700, 200))
 wh = (255, 255, 255)
 bl = (0, 0, 0)
 
+# plays intro sound
+pygame.mixer.music.load(os.path.join(
+    sys.path[0] + "\\pony\\music\\", "Intro_sound.mp3"))
+pygame.mixer.music.set_volume(1)
+pygame.mixer.music.play(1)
+
+
+# plays intro
+# loads video for intro
+cap = cv2.VideoCapture(os.path.join(
+    sys.path[0] + "\\pony\\video\\", "Intro_video_resized.mp4"))
+success, img = cap.read()
+shape = img.shape[1::-1]
+wn = pygame.display.set_mode((W, H))
+clock = pygame.time.Clock()
+while success:
+    clock.tick(24)
+    success, img = cap.read()
+    if (img is None):
+        break
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            success = False
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                success = False
+    wn.blit(pygame.transform.scale(pygame.image.frombuffer(
+        img.tobytes(), shape, "BGR"), (Wdisp, Hdisp)), (0, 0))
+    pygame.display.update()
+
 
 # sets ingame music
 pygame.mixer.music.load(os.path.join(
@@ -472,37 +498,6 @@ game_st = 0
 main_screen = pygame.image.load(os.path.join(
     sys.path[0] + "\\pony\\", "main_screen.png"))
 main_screen = pygame.transform.scale(main_screen, (Wdisp, Hdisp))
-
-
-# loads video for intro
-cap = cv2.VideoCapture(os.path.join(
-    sys.path[0] + "\\pony\\video\\", "Intro_video_resized.mp4"))
-success, img = cap.read()
-shape = img.shape[1::-1]
-wn = pygame.display.set_mode((W, H))
-clock = pygame.time.Clock()
-
-# plays intro sound
-pygame.mixer.music.load(os.path.join(
-    sys.path[0] + "\\pony\\music\\", "Intro_sound.mp3"))
-pygame.mixer.music.set_volume(1)
-pygame.mixer.music.play(1)
-
-# plays intro
-while success:
-    clock.tick(24)
-    success, img = cap.read()
-    if (img is None):
-        break
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            success = False
-        elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_ESCAPE:
-                success = False
-    wn.blit(pygame.transform.scale(pygame.image.frombuffer(
-        img.tobytes(), shape, "BGR"), (Wdisp, Hdisp)), (0, 0))
-    pygame.display.update()
 
 
 # main core loop
