@@ -428,6 +428,7 @@ start_time_r = time.time()
 counter_r = 0
 game_paused = False
 game_st = 0
+
 main_screen = pygame.image.load(os.path.join(
     sys.path[0] + "\\pony\\", "main_screen.png"))
 main_screen = pygame.transform.scale(main_screen, (Wdisp, Hdisp))
