@@ -127,12 +127,15 @@ def start():
     global pe, height, width, W, H, density, dl
     # creates maze
     mazeG.main(height, width)
+    map_ = mazeG.maze.copy()
     mazeG.maze = tuple(tuple(i) for i in mazeG.maze)
     # spawns slaves
+    
     slaves = []
     for i in range(height * width // 2):
         x, y = randint(3, height - 1) + 0.5, randint(3, width - 1) + 0.5
-        if mazeG.maze[int(y)][int(x)] == 0:
+        if map_[int(y)][int(x)] == 0:
+            map_[int(y)][int(x)]+=1
             slaves.append(slave(randint(0, 2), x, y, 100, 100))
     # inits render core
     rend = rendering(0.5, density, dl, render_zone, height +
@@ -195,6 +198,8 @@ def update():
     # check if slaves shoot at main hero
     enemies = ()
     l = 0
+    
+    
     for i in range(len(slaves)):
         if not multiplayer:
             if slaves[i - l].walk(map, bill.x, bill.y,slaves,i-1):
