@@ -64,7 +64,6 @@ class rendering(threading.Thread):
             files = next(os.walk(path))
             onlyfiles = next(os.walk(path)) 
             for i in range(len(onlyfiles[2])):
-                print(files[0]+"\\"+onlyfiles[2][i])
                 arr[-1].append(pygame.image.load(files[0]+"\\"+"  ("+str(i+1)+").png").convert_alpha())
             return arr
         

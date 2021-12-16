@@ -222,11 +222,11 @@ class billy:
             name - files folder
             '''
             path = os.path.join(sys.path[0], name)
-            print(path)
+            
             files = next(os.walk(path))
             onlyfiles = next(os.walk(path))
             for i in range(len(onlyfiles[2])):
-                print(files[0] + "\\" + onlyfiles[2][i])
+                
                 arr.append(pygame.image.load(files[0] + "\\" + "(" + str(i + 1) + ").png").convert_alpha())
             return arr
 
@@ -244,17 +244,20 @@ class billy:
             gun_.sleeve_posy = args[7]
             return gun_
 
-        scale = W / 1536
-
-        self.ak = load_gun("ak", (True, 30, 0.4 * scale, 0.13 * scale, 1, 2, 1, 1,2))
+        scale_x = W / 1536
+        scale_y = H/864
+        if scale_y != 1:
+            scale_y = scale_y*1.7
+        print(H)
+        self.ak = load_gun("ak", (True, 30, 0.4 * scale_x, 0.13 * scale_y, 1, 2, 1, 1,2))
         self.ak.z_recoil = 0.04
         self.ak.a_recoil = 0.09
 
-        self.svt = load_gun("svt", (False, 10, 0.3 * scale, 0.13 * scale, 1, 2, 0.82, 0.77,4))
+        self.svt = load_gun("svt", (False, 10, 0.3 * scale_x, 0.13 * scale_y, 1, 2, 0.82, 0.77,4))
         self.svt.z_recoil = 0.06
         self.svt.a_recoil = 0.12
 
-        self.pm = load_gun("makarov", (False, 8, 0.3 * scale, 0.13 * scale, 1, 2, 0.62, 0.67,3))
+        self.pm = load_gun("makarov", (False, 8, 0.3 * scale_x, 0.13 * scale_y, 1, 2, 0.62, 0.67,3))
         self.pm.z_recoil = 0.03
         self.pm.a_recoil = 0.07
 
@@ -320,10 +323,7 @@ class billy:
         self.Tx += 0.1
 
     def check_fisting(self, slaves):
-        x, y = self.x / self.stepx, self.y / self.stepy
-        for i in range(0, len(slaves), 3):
-            if abs(slaves[i] - x) < 0.3 and abs(slaves[i + 1] - y) < 0.3:
-                print(slaves[i + 2])
+        pass
 
     def update(self, slaves):
         self.a = self.a % self.pi_2
