@@ -44,12 +44,15 @@ class Server(threading.Thread):
         self.conn.send(data_bytes)
 
     def get_data(self):
-        data_raw = self.conn.recv(self.max_data)
-        data_raw = data_raw.decode('utf8')
-        data_splited = data_raw.split("!")
-        x, y, hp, shoot, move = float(data_splited[0]), float(data_splited[1]), int(float(data_splited[2])), int(float(data_splited[3])), int(float(data_splited[4]))
-        data = (x, y, hp, shoot, move)
-        return data
+        try:
+            data_raw = self.conn.recv(self.max_data)
+            data_raw = data_raw.decode('utf8')
+            data_splited = data_raw.split("!")
+            x, y, hp, shoot, move = float(data_splited[0]), float(data_splited[1]), int(float(data_splited[2])), int(float(data_splited[3])), int(float(data_splited[4]))
+            data = (x, y, hp, shoot, move)
+            return data
+        except:
+            return (0,0,0,0,0)
 
     def close_server(self):
         self.sock.close()
