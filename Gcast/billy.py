@@ -386,8 +386,8 @@ class billy:
             while go:
                 x0,y0 = randint(1,len(self.map[0])-1),randint(1,len(self.map)-1)
                 if self.map[y0][x0] == 0:
-                    self.x = x0
-                    self.y = y0
+                    self.x = x0*100+40
+                    self.y = y0*100+40
                     self.hp = 100
                     go = False
                     
