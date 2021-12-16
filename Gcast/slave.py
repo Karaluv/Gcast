@@ -165,7 +165,7 @@ class slave:
             x_ = x + vx/stepx
             y_ = y + vy/stepy
             for i in range(len(slaves)):
-                if i != I and math.sqrt((slaves[i].x-x_)**2 + (slaves[i].y-y_)**2) <= 1:
+                if i != I and ((slaves[i].x-x_)**2 + (slaves[i].y-y_)**2) <= 1:
                     x_ = x
                     y_ = y
                     if self.state != 2:
