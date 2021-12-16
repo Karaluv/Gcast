@@ -335,7 +335,7 @@ def multiplayer_start_create():
                     delegate_data)  # Создаем сервак и отправляем сразу карту
     # и координаты спавна врага
     print("server created")
-
+    slaves[0].lifes = 50
     update()
     pygame.mouse.set_visible(False)
     game_st = 1
@@ -374,7 +374,7 @@ def multiplayer_start_join():
                  2 * math.pi / 2, "VAn", W, H, mazeG.maze)  # создаем игрока по координатам от сервака
     map = client.map  # запоминаем карту по инфе с сервака
     bill.map = map
-    
+    slaves[0].lifes = 50
     update()
     
     pygame.mouse.set_visible(False)
