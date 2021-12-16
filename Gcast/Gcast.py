@@ -169,6 +169,15 @@ def update():
     if multiplayer:
         if len(slaves) > 0:
             slaves[0].walk(map, bill.x, bill.y, [], 0, True)
+            
+
+            if slaves[0].death(bill.x,bill.y):
+                go = True
+                while go:
+                    x0,y0 = randint(1,len(map[0])-1),randint(1,len(map)-1)
+                    if map[y0][x0] == 0:
+                        go = False
+                        slaves[0] = slave(randint(0, 2), x0, y0, 100, 100)
 
     for i in range(len(slaves)):
         if not multiplayer:
@@ -544,7 +553,8 @@ while not finished:
             if bill.is_shoot():
                 slaves = bill.shoot(slaves, map)
         elif is_server:  # если мы сервак
-            input_game(pygame.event.get())
+            if bill.hp>0:
+                input_game(pygame.event.get())
 
             if len(slaves) > 0:
                 slaves[0].x = server.data[0]/100
@@ -565,7 +575,8 @@ while not finished:
                     slaves = bill.shoot(slaves, map)
                     me_shoot = 1
         elif not is_server:  # если мы клиент
-            input_game(pygame.event.get())
+            if bill.hp>0:
+                input_game(pygame.event.get())
             if len(slaves) > 0:
                 slaves[0].x = client.data[0] / 100
                 slaves[0].y = client.data[1] / 100
