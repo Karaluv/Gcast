@@ -201,6 +201,7 @@ def update():
                 bill.hp -= 0.5
         enemies += ((slaves[i - l].x, slaves[i - l].y,
                      slaves[i - l].type, slaves[i - l].frame))
+
         if (slaves[i - l].death(bill.x, bill.y)):
             del (slaves[i - l])
             l += 1
@@ -574,6 +575,7 @@ while not finished:
         server_info = menu5.check_all()
         input_menu(pygame.event.get())
         pygame.display.update()
+
     if game_st == 1 and bill.y < 150:
         # loads video for intro
         cap = cv2.VideoCapture(os.path.join(
@@ -612,6 +614,7 @@ while not finished:
         pygame.mixer.music.set_volume(0.2)
         pygame.mixer.music.play(-1)
     # fps counter
+
     counter += 1
     if counter == 10:
         fps_text = font.render(

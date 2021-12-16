@@ -84,7 +84,8 @@ class slave:
             return True
 
 
-    def walk(self, map, x0, y0):
+    def walk(self, map, x0, y0, slaves, I):
+
         
         self.frame+=self.speed_animation
         
@@ -152,13 +153,21 @@ class slave:
 
         stepx = self.stepx
         stepy = self.stepy
+        
+        go = False
         if r > 1.5:
             x_ = x + vx/stepx
             y_ = y + vy/stepy
+            for i in range(len(slaves)):
+                if i != I and math.sqrt((slaves[i].x-x_)**2 + (slaves[i].y-y_)**2) <= 1:
+                    x_ = x
+                    y_ = y
+                    go = True
+                    break
         else:
             x_ = x
             y_ = y
-        go = False
+        
         self.x,self.y = x_,y_
         while not go:
 
