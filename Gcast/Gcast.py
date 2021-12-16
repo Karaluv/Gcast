@@ -197,7 +197,7 @@ def update():
     l = 0
     for i in range(len(slaves)):
         if not multiplayer:
-            if slaves[i - l].walk(map, bill.x, bill.y):
+            if slaves[i - l].walk(map, bill.x, bill.y,slaves,i-1):
                 bill.hp -= 0.5
         enemies += ((slaves[i - l].x, slaves[i - l].y,
                      slaves[i - l].type, slaves[i - l].frame))

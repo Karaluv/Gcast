@@ -84,7 +84,7 @@ class slave:
             return True
 
 
-    def walk(self, map, x0, y0, slaves, I):
+    def walk(self, map, x0, y0, slaves,I):
 
         
         self.frame+=self.speed_animation
