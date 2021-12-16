@@ -273,7 +273,7 @@ class billy:
         self.ak.a_recoil = 0.09
 
         self.svt = load_gun("svt", (False, 10, 0.3 * scale_x,
-                            0.13 * scale_y, 1, 2, 0.82, 0.77, 8))
+                            0.13 * scale_y, 1, 2, 0.82, 0.77, 6))
         self.svt.z_recoil = 0.06
         self.svt.a_recoil = 0.12
 
@@ -384,8 +384,8 @@ class billy:
             
             go = True
             while go:
-                x0,y0 = randint(1,len(self.map[0])),randint(1,len(self.map))
-                if self.map[x0][y0] == 0:
+                x0,y0 = randint(1,len(self.map[0])-1),randint(1,len(self.map)-1)
+                if self.map[y0][x0] == 0:
                     self.x = x0
                     self.y = y0
                     self.hp = 100
