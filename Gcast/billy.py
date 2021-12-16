@@ -383,14 +383,11 @@ class billy:
                 os.path.join(sys.path[0], "pony\\music\\die.mp3")))
             go = True
             while go:
-                x0,y0 = randint(1,len(map[0])-1),randint(1,len(map)-1)
+                x0, y0 = randint(1, len(self.map[0])-1), randint(1, len(self.map)-1)
                 if self.map[y0][x0] == 0:
                     go = False
                     self.x = x0
                     self.y = y0
-        
-
-                    
 
     def keyinput(self, event):
         if event.type == pygame.KEYDOWN:
@@ -503,7 +500,7 @@ class billy:
         dsin = math.sin(a) * dl
 
         l = 0
-        
+
         while not find and l < maxR:
 
             if map[int(y)][int(x)] > 0:
