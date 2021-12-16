@@ -167,7 +167,7 @@ def update():
     enemies = ()
     l = 0
     for i in range(len(slaves)):
-        if slaves[i - l].walk(map, bill.x, bill.y):
+        if slaves[i - l].walk(map, bill.x, bill.y, slaves, i - l):
             bill.hp -=0.5
         enemies += ((slaves[i - l].x,slaves[i - l].y,slaves[i - l].type,slaves[i - l].frame))
         if (slaves[i - l].death(bill.x, bill.y)):
@@ -459,22 +459,40 @@ while not finished:
         server_info = menu5.check_all()
         input_menu(pygame.event.get())
         pygame.display.update()
-    if game_st == 1 and bill.y < 150:
+    if game_st == 1 and bill.y < 1500:
             #loads video for intro
             cap = cv2.VideoCapture(os.path.join(sys.path[0] + "\\pony\\video\\", "Ending_video_resized.mp4"))
             success, img = cap.read()
             shape = img.shape[1::-1]
-           
+            
+            ending_time = 0
+            h = -3330
+            file = os.path.join(sys.path[0] + "\\pony\\", "titles.txt")
+            titles = []
+            with open(os.path.join(sys.path[0] + "\\pony\\", "titles.txt")) as file:
+                inp = open(os.path.join(sys.path[0] + "\\pony\\", "titles.txt"), 'r')
+                while True:
+                    line = inp.readline()
+                    line = line.replace('\n',' ')
+                    s = pygame.Surface((Wdisp, 90), pygame.SRCALPHA)
+                    myfont = pygame.font.SysFont('arial', 60)
+                    textsurface = myfont.render(line, False, (125, 125, 125))
+                    u1 = myfont.size(line)
+                    s.blit(textsurface,(int((Wdisp - u1[0])/2),0))
+                    titles.append(s)
+                    if not line:
+                        break
+            
             wn = pygame.display.set_mode((Wdisp,Hdisp))
             clock = pygame.time.Clock()
               
-            #plays intro sound
+            #plays ending sound
             pygame.mixer.music.load(os.path.join(sys.path[0] + "\\pony\\music\\", "Ending_sound.mp3"))
             pygame.mixer.music.set_volume(1)
             pygame.mixer.music.play(1)
 
             game_return()
-            #plays intro
+            #plays ending
             while success:
                 clock.tick(30)
                 success, img = cap.read()
@@ -487,11 +505,18 @@ while not finished:
                         if event.key == pygame.K_ESCAPE:
                             success = False
                 wn.blit(pygame.transform.scale(pygame.image.frombuffer(img.tobytes(), shape, "BGR"), (Wdisp, Hdisp)),(0,0))
+                if ending_time >= 1900:
+                    for i in range(len(titles)):
+                        screen.blit(titles[i], (0,h + 90*i))
+                    h += 2
                 pygame.display.update()
+                ending_time += 1
             pygame.mouse.set_visible(True)
             pygame.mixer.music.load(os.path.join(sys.path[0] + "\\pony\\music\\", "main_theme.mp3"))
             pygame.mixer.music.set_volume(0.2)
             pygame.mixer.music.play(-1)
+
+            
     #fps counter
     counter += 1
     if counter == 10:

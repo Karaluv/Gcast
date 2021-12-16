@@ -273,8 +273,7 @@ class billy:
 
         logic = 1
         for i in range(len(slaves)):
-            if math.sqrt((slaves[i].x - x_ / 100) ** 2 + (slaves[i].y - y_ / 100) ** 2) <= 0.8 and slaves[
-                i].lifes >= 1:
+            if math.sqrt((slaves[i].x - x_ / 100) ** 2 + (slaves[i].y - y_ / 100) ** 2) <= 0.8 and slaves[i].lifes >= 1:
                 logic = 0
         if logic == 1:
             new_tile_coords = [int((y_ + delta_y)/ 100), int((x_ + delta_x) / 100)]
