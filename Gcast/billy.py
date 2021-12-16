@@ -381,7 +381,14 @@ class billy:
             self.hp = 0
             pygame.mixer.Channel(2).play(pygame.mixer.Sound(
                 os.path.join(sys.path[0], "pony\\music\\die.mp3")))
-            
+            go = True
+            while go:
+                x0,y0 = randint(1,len(map[0])-1),randint(1,len(map)-1)
+                if self.map[y0][x0] == 0:
+                    go = False
+                    self.x = x0
+                    self.y = y0
+        
 
                     
 
