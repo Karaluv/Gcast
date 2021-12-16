@@ -381,6 +381,7 @@ class billy:
             self.hp = 0
             pygame.mixer.Channel(2).play(pygame.mixer.Sound(
                 os.path.join(sys.path[0], "pony\\music\\die.mp3")))
+            
             go = True
             while go:
                 x0, y0 = randint(1, len(self.map[0])-1), randint(1, len(self.map)-1)
@@ -388,6 +389,8 @@ class billy:
                     go = False
                     self.x = x0*100+50
                     self.y = y0*100+50
+                    self.hp = 100
+                    
 
     def keyinput(self, event):
         if event.type == pygame.KEYDOWN:

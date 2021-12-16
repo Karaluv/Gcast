@@ -212,9 +212,7 @@ class rendering(threading.Thread):
                     w = k / density
                     # checks if enemy is in field of view
                     if ch < 0.2 and zn < 0.2:
-                        if wall_data[max(0, min(int(w), len(wall_data)-1))][0] > l:
-                            enemy_render_data.append(
-                                [l, w, enemies[i+2], enemies[i+3]])
+                        enemy_render_data.append([l, w, enemies[i+2], enemies[i+3]])
 
         return enemy_render_data
 
@@ -431,6 +429,31 @@ class rendering(threading.Thread):
             # draws column of the wall it self
             self.render_surface.blit(render_data[i][5], (render_data[i][1], int(
                 H//2*elevation-pe/render_data[i][0])))
+            
+        for i in range(j,len(enemies)):
+            render_image = pygame.transform.scale(sprites[enemies[j][2]][int(enemies[j][3])], (int(pe/enemies[j][0]), int(pe/enemies[j][0]*1.4)))
+
+            render_mask = pygame.mask.from_surface(render_image)
+            render_mask = render_mask.to_surface()
+            dark = pygame.Surface(
+                render_image.get_size()).convert_alpha()
+            dark.fill((0, 0, 0, min(255, enemies[j][0]*255/10)))
+            render_image.blit(dark, (0, 0))
+            render_image.blit(render_image, (0, 0),
+                                None, pygame.BLEND_RGBA_MULT)
+            inv = pygame.Surface(
+                render_mask.get_rect().size, pygame.SRCALPHA)
+            inv.fill((255, 255, 255, 255))
+            inv.blit(render_mask, (0, 0), None, pygame.BLEND_RGB_SUB)
+            render_mask.set_colorkey((255, 255, 255))
+            render_image.blit(render_mask, (0, 0))
+            render_image.set_colorkey((0, 0, 0))
+            inv.set_colorkey((255, 255, 255))
+
+            self.render_surface.blit(inv, (int(
+                enemies[j][1]*dW-pe/enemies[j][0]/2), int(H//2*elevation-pe/enemies[j][0]*0.4)))
+            self.render_surface.blit(render_image, (int(
+                enemies[j][1]*dW-pe/enemies[j][0]/2), int(H//2*elevation-pe/enemies[j][0]*0.4)))
 
     # def which draws background
     def draw_background(self, elevation, maxR):
