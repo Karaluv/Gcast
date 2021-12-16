@@ -7,27 +7,6 @@ from menu import Menu
 font1 = pygame.font.Font(os.path.join(
     sys.path[0] + "\\ttf\\", "MAGNETOB.ttf"), 40)
 
-
-def back_to_menu():
-    global game_st
-    game_st = 0
-
-
-def open_multiplayer_menu1():
-    global game_st
-    game_st = 3
-
-
-def create_server_menu():
-    global game_st
-    game_st = 4
-
-
-def join_server_menu():
-    global game_st
-    game_st = 5
-
-
 # def for creating text
 def textsurf(text):
     '''
@@ -41,7 +20,7 @@ def textsurf(text):
 
 
 def create_menus(screen, game_start, game_finish, game_return, game_resume, multiplayer_start_join,
-                 multiplayer_start_create):
+                 multiplayer_start_create, back_to_menu, open_multiplayer_menu1, create_server_menu, join_server_menu):
     # gets display size
     Wdisp, Hdisp = screen.get_size()
     # creates arrays of buttons

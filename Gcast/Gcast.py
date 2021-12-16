@@ -4,17 +4,10 @@ import sys
 import time
 from random import randint
 from threading import Thread
-
 import cv2
-import moviepy.editor as mp
 import pygame
-from pygame import display
-from pygame.locals import Color
-
 import mazeG
 from billy import billy
-from buttons import button, inputfield, just_text
-from menu import Menu
 from online import Client, Server
 from render import rendering
 from slave import slave
@@ -51,24 +44,7 @@ fps_text_r = font.render("FPS: ", True, (255, 255, 255))
 # FPS core timer
 counter = 0
 
-
-# def for creating text
-
-
-def textsurf(text):
-    '''
-    text - text string
-    '''
-    textsurface = font1.render(text, False, (255, 255, 255))
-    textsurface.set_colorkey((0, 0, 0))
-    s = pygame.Surface(textsurface.get_size(), pygame.SRCALPHA)
-    s.blit(textsurface, (0, 0))
-    return s
-
-
 # def for user input in menues
-
-
 def input_menu(user_input):
     '''
     user_input - pygame ivents
@@ -88,8 +64,6 @@ def input_menu(user_input):
 
 
 # def for user input in menues
-
-
 def input_game(user_input):
     '''
     user_input - pygame ivents
@@ -111,8 +85,6 @@ def input_game(user_input):
 
 
 # def which redraws some on sreen images
-
-
 def draw_stuff():
     screen.blit(fps_text, (30, 30))
     screen.blit(fps_text_r, (30, 60))
@@ -120,8 +92,6 @@ def draw_stuff():
     pygame.display.flip()
 
 # def that starts gameplay and inits all stuff
-
-
 def redraw_all():
     # takes global variables
     global W, H, start_time_r, counter_r, fps_text_r
@@ -142,8 +112,6 @@ def redraw_all():
     thread_draw_stuff.start()
 
 # def which is called by render core and updates render data
-
-
 def update_render():
     global u, enemies, map
     a = bill.a
@@ -170,15 +138,6 @@ def update():
     if multiplayer:
         if len(slaves) > 0:
             slaves[0].walk(map, bill.x, bill.y, [], 0, True)
-            
-
-            if slaves[0].death(bill.x,bill.y):
-                go = True
-                while go:
-                    x0,y0 = randint(1,len(map[0])-1),randint(1,len(map)-1)
-                    if map[y0][x0] == 0:
-                        go = False
-                        slaves[0] = slave(randint(0, 2), x0, y0, 100, 100)
 
     for i in range(len(slaves)):
         if not multiplayer:
@@ -223,8 +182,6 @@ def start():
 
 
 # def for buttons
-
-
 def game_start():
     global game_st, W, H
     global rend, bill, slaves, map
@@ -270,7 +227,7 @@ def multiplayer_start_create():
     bill = billy((len(map[0])-2) * 100 + 40, (len(map)-2) * 100 +40, 2 * math.pi / 2, "VAn", W, H, map)
 
     slaves = [slave(randint(0, 2), 150, 150, 100, 100)]
-    
+
     server = Server(2, int(server_info[0]), map, 150, 150,
                     delegate_data)  # Создаем сервак и отправляем сразу карту
     # и координаты спавна врага
@@ -304,20 +261,18 @@ def multiplayer_start_join():
     Tx = 0
     Ty = 0
 
-   
-
     slaves = []  # Готовим массив для врага
     slaves.append(
         slave(randint(0, 2), (width - 1) * 100 + 40, height * 100 + 40, 100, 100))  # Создаем врага, владелец сервака
     # всегда спавнится в начале лабиринта
     # подключаемся к серваку
     client = Client(server_info[1], int(server_info[0]), delegate_data)
-    
+
     map = client.map  # запоминаем карту по инфе с сервака
     rend = rendering(0.5, density, dl, render_zone, len(map), len(map[0]), update_render, redraw_all, 1)
     bill = billy(client.start_x, client.start_x,
                  2 * math.pi / 2, "VAn", W, H, map)  # создаем игрока по координатам от сервака
-    
+
     bill.map = map
     slaves[0].lifes = 100
     update()
@@ -353,6 +308,26 @@ def game_resume():
     game_paused = game_reset_mode(game_paused)
 
 
+def back_to_menu():
+    global game_st
+    game_st = 0
+
+
+def open_multiplayer_menu1():
+    global game_st
+    game_st = 3
+
+
+def create_server_menu():
+    global game_st
+    game_st = 4
+
+
+def join_server_menu():
+    global game_st
+    game_st = 5
+
+
 def game_return():
     global game_st
     game_st = 0
@@ -380,26 +355,6 @@ def game_reset_mode(paused):
         pygame.mouse.set_visible(False)
         rend.resume()
     return not paused
-
-
-def back_to_menu():
-    global game_st
-    game_st = 0
-
-
-def open_multiplayer_menu1():
-    global game_st
-    game_st = 3
-
-
-def create_server_menu():
-    global game_st
-    game_st = 4
-
-
-def join_server_menu():
-    global game_st
-    game_st = 5
 
 
 # starts out game and inits parametrs
@@ -467,82 +422,20 @@ render_w = 355
 render_h = 200
 Tx, Ty = 0, 0
 
-# gets display size
-Wdisp, Hdisp = screen.get_size()
-# creates arrays of buttons
-buttons1 = [0] * 3
-buttons2 = [0] * 3
-
-# sets buttons for menues
-s = textsurf(' Singleplayer ')
-buttons1[0] = button(s, Wdisp, Hdisp, 0.375, 0.3, 0.25, 0.08, game_start)
-s = textsurf(' Multiplayer ')
-buttons1[1] = button(s, Wdisp, Hdisp, 0.375, 0.44,
-                     0.25, 0.08, open_multiplayer_menu1)
-s = textsurf(' Main menu ')
-buttons2[1] = button(s, Wdisp, Hdisp, 0.375, 0.44, 0.25, 0.08, game_return)
-s = textsurf('    Quit    ')
-buttons1[2] = button(s, Wdisp, Hdisp, 0.375, 0.58, 0.25, 0.08, game_finish)
-buttons2[2] = button(s, Wdisp, Hdisp, 0.375, 0.58, 0.25, 0.08, game_finish)
-s = textsurf('Resume')
-buttons2[0] = button(s, Wdisp, Hdisp, 0.375, 0.3, 0.25, 0.08, game_resume)
-# sets menues
-menu1 = Menu(buttons1, screen)
-menu2 = Menu(buttons2, screen)
-
-# Меню где выбираем, создаем сервер или присоединяемся
-buttons3 = [0] * 3
-
-s = textsurf('Create server')
-buttons3[0] = button(s, Wdisp, Hdisp, 0.375, 0.3,
-                     0.25, 0.08, create_server_menu)
-
-s = textsurf('Join server')
-buttons3[1] = button(s, Wdisp, Hdisp, 0.375, 0.44,
-                     0.25, 0.08, join_server_menu)
-
-
-s = textsurf('   Back   ')
-buttons3[2] = button(s, Wdisp, Hdisp, 0.375, 0.58,
-                     0.25, 0.08, back_to_menu)
-
-menu3 = Menu(buttons3, screen)
-
-# Меню где создаем сервер(пока нету)
-buttons4 = [0] * 2
-input = inputfield(Wdisp, Hdisp, 0.375, 0.30,
-                   0.25, 0.08, 'Enter port')
-s = textsurf('Create server')
-buttons4[0] = button(s, Wdisp, Hdisp, 0.375, 0.44, 0.25,
-                     0.08, multiplayer_start_create)
-s = textsurf('    Back    ')
-buttons4[1] = button(s, Wdisp, Hdisp, 0.375, 0.58,
-                     0.25, 0.08, back_to_menu)
-menu4 = Menu(buttons4, screen, [input])
-
-# Меню где подключаемся к серверу
-buttons5 = [0] * 2
-input1 = inputfield(Wdisp, Hdisp, 0.375, 0.30, 0.25, 0.08, 'Enter port')
-input2 = inputfield(Wdisp, Hdisp, 0.375, 0.44, 0.25, 0.08, 'Enter ip')
-s = textsurf('Join server')
-buttons5[0] = button(s, Wdisp, Hdisp, 0.375, 0.58,
-                     0.25, 0.08, multiplayer_start_join)
-s = textsurf('    Back    ')
-buttons5[1] = button(s, Wdisp, Hdisp, 0.375, 0.72,
-                     0.25, 0.08, back_to_menu)
-menu5 = Menu(buttons5, screen, [input1, input2])
 
 start_time = time.time()
 start_time_r = time.time()
 counter_r = 0
 game_paused = False
 game_st = 0
+
 main_screen = pygame.image.load(os.path.join(
     sys.path[0] + "\\pony\\", "main_screen.png"))
 main_screen = pygame.transform.scale(main_screen, (Wdisp, Hdisp))
 
 
-
+menu1, menu2, menu3, menu4, menu5 = create_menus(screen, game_start, game_finish, game_return, game_resume, multiplayer_start_join,
+                 multiplayer_start_create, back_to_menu, open_multiplayer_menu1, create_server_menu, join_server_menu)
 
 # main core loop
 while not finished:
@@ -554,8 +447,7 @@ while not finished:
             if bill.is_shoot():
                 slaves = bill.shoot(slaves, map)
         elif is_server:  # если мы сервак
-            if bill.hp>0:
-                input_game(pygame.event.get())
+            input_game(pygame.event.get())
 
             if len(slaves) > 0:
                 slaves[0].x = server.data[0]/100
@@ -576,9 +468,7 @@ while not finished:
                     slaves = bill.shoot(slaves, map)
                     me_shoot = 1
         elif not is_server:  # если мы клиент
-            if bill.hp>0:
-                input_game(pygame.event.get())
-                
+            input_game(pygame.event.get())
             if len(slaves) > 0:
                 slaves[0].x = client.data[0] / 100
                 slaves[0].y = client.data[1] / 100
@@ -604,33 +494,28 @@ while not finished:
             game_return()
     if game_st == 0:
         screen.blit(main_screen, (0, 0))
-        menu1.draw_all()
-        menu1.check_all()
+        menu1.run()
         input_menu(pygame.event.get())
         pygame.display.update()
     if game_st == 2:
         pygame.draw.rect(screen, (233, 0, 0), (int(
             Wdisp * 0.375 - 0.1 * Hdisp), 0, int(0.25 * Wdisp + 0.2 * Hdisp), Hdisp), 0)
-        menu2.draw_all()
-        menu2.check_all()
+        menu2.run()
         input_menu(pygame.event.get())
         pygame.display.update()
     if game_st == 3:
         screen.blit(main_screen, (0, 0))
-        menu3.draw_all()
-        menu3.check_all()
+        menu3.run()
         input_menu(pygame.event.get())
         pygame.display.update()
     if game_st == 4:
         screen.blit(main_screen, (0, 0))
-        menu4.draw_all()
-        server_info = menu4.check_all()
+        server_info = menu4.run()
         input_menu(pygame.event.get())
         pygame.display.update()
     if game_st == 5:
         screen.blit(main_screen, (0, 0))
-        menu5.draw_all()
-        server_info = menu5.check_all()
+        server_info = menu5.run()
         input_menu(pygame.event.get())
         pygame.display.update()
 
