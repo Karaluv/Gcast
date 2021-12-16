@@ -36,6 +36,10 @@ density = 0.009
 height = 15
 width = 15
 
+me_shoot = 0
+last_enemy_coords_x = 0
+last_enemy_coords_y = 0
+
 # init some stuff for printing out stats
 pygame.font.init()
 font = pygame.font.Font(None, 30)
@@ -293,7 +297,12 @@ def game_start():
 
 
 def delegate_data():
-    return bill.x, bill.y, slaves[0].lifes
+    global me_shoot
+    if me_shoot == 1:
+        me_shoot = 0
+        return bill.x, bill.y, slaves[0].lifes, 1, bill.moving
+    else:
+        return bill.x, bill.y, slaves[0].lifes, 0, bill.moving
 
 
 def multiplayer_start_create():
@@ -515,16 +524,24 @@ while not finished:
             input_game(pygame.event.get())
             slaves[0].x = server.data[0]/100
             slaves[0].y = server.data[1]/100
+
             bill.hp = server.data[2]
+            is_enemy_shooting = server.data[3]
+            is_enemy_moving = server.data[4]
             if bill.is_shoot():
                 slaves = bill.shoot(slaves, map)
+                me_shoot = 1
         elif not is_server:  # если мы клиент
             input_game(pygame.event.get())
-            slaves[0].x = client.data[0]/100
-            slaves[0].y = client.data[1]/100
+            slaves[0].x = client.data[0] / 100
+            slaves[0].y = client.data[1] / 100
+
             bill.hp = client.data[2]
+            is_enemy_shooting = client.data[3]
+            is_enemy_moving = client.data[4]
             if bill.is_shoot():
                 slaves = bill.shoot(slaves, map)
+                me_shoot = 1
         update()
     if game_st == 0:
         screen.blit(main_screen, (0, 0))

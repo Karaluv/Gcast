@@ -333,6 +333,11 @@ class billy:
 
         self.WEAPONS[self.CURRENT_WEAPON].update()
 
+        if self.kw or self.ks or self.ka or self.kd:
+            self.moving = 1
+        else:
+            self.moving = 0
+
         if self.kw:
             self.Move(0, 3 * self.speed, slaves)
         if self.ks:
