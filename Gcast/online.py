@@ -2,7 +2,9 @@ import socket
 import threading
 import time
 
-class StopThread(StopIteration): pass
+
+class StopThread(StopIteration):
+    pass
 
 
 threading.SystemExit = SystemExit, StopThread
@@ -18,10 +20,18 @@ class Server(threading.Thread):
 
         self.conn, self.addr = self.sock.accept()
 
+        map = [[1, 5, 5, 5, 5, 5, 5, 5, 5, 1], [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+               [1, 0, 2, 2, 0, 0, 2, 2, 0, 1], [1, 0, 2, 2, 0, 0, 2, 2, 0, 1],
+               [1, 0, 0, 0, 0, 0, 0, 0, 0, 1], [1, 3, 3, 0, 0, 0, 0, 3, 3, 1],
+               [1, 0, 0, 0, 0, 0, 0, 0, 0, 1], [1, 0, 2, 2, 0, 0, 2, 2, 0, 1],
+               [1, 0, 2, 2, 0, 0, 2, 2, 0, 1], [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+               [1, 4, 4, 4, 4, 4, 4, 4, 4, 1]]
+
         data_bytes = bytearray(str(map), 'utf8')
         self.conn.send(data_bytes)
 
         coords = "1540!1440!100!0!0!"
+
         self.send_data(coords)
         data_bytes = bytearray(str(coords), 'utf8')
 
@@ -48,11 +58,12 @@ class Server(threading.Thread):
             data_raw = self.conn.recv(self.max_data)
             data_raw = data_raw.decode('utf8')
             data_splited = data_raw.split("!")
-            x, y, hp, shoot, move = float(data_splited[0]), float(data_splited[1]), int(float(data_splited[2])), int(float(data_splited[3])), int(float(data_splited[4]))
+            x, y, hp, shoot, move = float(data_splited[0]), float(data_splited[1]), int(
+                float(data_splited[2])), int(float(data_splited[3])), int(float(data_splited[4]))
             data = (x, y, hp, shoot, move)
             return data
         except:
-            return (0,0,0,0,0)
+            return (0, 0, 0, 0, 0)
 
     def close_server(self):
         self.sock.close()
@@ -60,19 +71,19 @@ class Server(threading.Thread):
     # everlasting loop def, that just rerenders everything
     def run(self):
 
-        #time.sleep(1)
+        # time.sleep(1)
         while self.__running.isSet():
             self.__flag.wait()
             time.sleep(0.03)
             x, y, hp, shoot, move = self.delegate_data()
-            coords = str(x) + "!" + str(y) + "!" + str(hp) + "!" + str(shoot) + "!" + str(move) + "!"
+            coords = str(x) + "!" + str(y) + "!" + str(hp) + \
+                "!" + str(shoot) + "!" + str(move) + "!"
             self.send_data(coords)
             self.data = self.get_data()
         self.close_server()
 
-
-
     # defs that are needed to control the thread: pause render,resume render,stop render process
+
     def pause(self):
         self.__flag.clear()  # Set to False to block the thread
 
@@ -112,7 +123,8 @@ class Client(threading.Thread):
         data_raw = self.sock.recv(self.max_data)
         data_raw = data_raw.decode('utf8')
         data_splited = data_raw.split("!")
-        x, y, hp, shoot, move = float(data_splited[0]), float(data_splited[1]), int(float(data_splited[2])), int(float(data_splited[3])), int(float(data_splited[4]))
+        x, y, hp, shoot, move = float(data_splited[0]), float(data_splited[1]), int(
+            float(data_splited[2])), int(float(data_splited[3])), int(float(data_splited[4]))
         data = (x, y, hp, shoot, move)
         return data
 
@@ -126,7 +138,8 @@ class Client(threading.Thread):
             self.__flag.wait()
             time.sleep(0.03)
             x, y, hp, shoot, move = self.delegate_data()
-            coords = str(x) + "!" + str(y) + "!" + str(hp) + "!" + str(shoot) + "!" + str(move) + "!"
+            coords = str(x) + "!" + str(y) + "!" + str(hp) + \
+                "!" + str(shoot) + "!" + str(move) + "!"
             self.send_data(coords)
             self.data = self.get_data()
 

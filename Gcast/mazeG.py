@@ -1,6 +1,6 @@
 # Maze generator -- Randomized Prim Algorithm
 
-## Imports
+# Imports
 import random
 import time
 from colorama import init
@@ -16,7 +16,7 @@ def build_matrix(rows, cols):
     return matrix
 
 
-## Functions
+# Functions
 def printMaze(maze):
     for i in range(0, height + 2):
         for j in range(0, width + 2):
@@ -74,7 +74,7 @@ def surroundingCells(rand_wall):
     return s_cells
 
 
-## Main code
+# Main code
 # Init variables
 
 height = 10

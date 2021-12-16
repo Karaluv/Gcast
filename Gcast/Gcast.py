@@ -122,32 +122,39 @@ def draw_stuff():
 # def that starts gameplay and inits all stuff
 
 
-def start():
+def start(map):
     # loads global variables
     global pe, height, width, W, H, density, dl
     # creates maze
-    mazeG.main(height, width)
-    map_ = mazeG.maze.copy()
-    mazeG.maze = tuple(tuple(i) for i in mazeG.maze)
-    # spawns slaves
-    
-    slaves = []
-    for i in range(height * width // 2):
-        x, y = randint(3, height - 1) + 0.5, randint(3, width - 1) + 0.5
-        if map_[int(y)][int(x)] == 0:
-            map_[int(y)][int(x)]+=1
-            slaves.append(slave(randint(0, 2), x, y, 100, 100))
-    # inits render core
-    rend = rendering(0.5, density, dl, render_zone, height +
-                     2, width + 2, update_render, redraw_all, 1)
-    # creates bill
-    bill = billy((width - 1) * 100 + 40, height * 100 + 40,
-                 2 * math.pi / 2, "VAn", W, H, mazeG.maze)
-    if mazeG.maze[int(bill.y / 100)][int(bill.x / 100)] != 0:
-        bill = billy((width - 2) * 100 + 40, height * 100 + 40,
-                     3 * math.pi / 2, "VAn", W, H, mazeG.maze)
+    if map == False:
+        mazeG.main(height, width)
+        map_ = mazeG.maze.copy()
+        mazeG.maze = tuple(tuple(i) for i in mazeG.maze)
+        # spawns slaves
+        map = mazeG.maze
+        slaves = []
+        for i in range(height * width // 2):
+            x, y = randint(3, height - 1) + 0.5, randint(3, width - 1) + 0.5
+            if map_[int(y)][int(x)] == 0:
+                map_[int(y)][int(x)] += 1
+                slaves.append(slave(randint(0, 2), x, y, 100, 100))
+        # inits render core
+
+        rend = rendering(0.5, density, dl, render_zone, height +
+                         2, width + 2, update_render, redraw_all, 1)
+        # creates bill
+        bill = billy((width - 1) * 100 + 40, height * 100 + 40,
+                     2 * math.pi / 2, "VAn", W, H, map)
+        if map[int(bill.y / 100)][int(bill.x / 100)] != 0:
+            bill = billy((width - 2) * 100 + 40, height * 100 + 40,
+                         3 * math.pi / 2, "VAn", W, H, map)
     # returns new variables
-    return rend, bill, mazeG.maze, slaves
+    else:
+        rend = rendering(0.5, density, dl, render_zone, len(
+            map), len(map[0]), update_render, redraw_all, 1)
+        bill = billy((len(map[0])-1) * 100 + 40, (len(map)-1) * 100 +
+                     40, 2 * math.pi / 2, "VAn", W, H, map)
+    return rend, bill, map, slaves
 
 
 # def which is called by render core and updates render data
@@ -178,7 +185,8 @@ def redraw_all():
     x = rend.xs
     final_render = pygame.transform.scale(
         render_zone, (int(W * render_zone.get_width() / x), int(H)))
-    screen.blit(final_render, (math.sin(bill.x) * 0 - 0, math.cos(bill.Ty) * 0 - 0))
+    screen.blit(final_render, (math.sin(bill.x) *
+                0 - 0, math.cos(bill.Ty) * 0 - 0))
     thread_draw_stuff = Thread(target=draw_stuff, args=())
     thread_draw_stuff.start()
 
@@ -199,12 +207,12 @@ def update():
     enemies = ()
     l = 0
     if multiplayer:
-        if len(slaves)>0:
-            slaves[0].walk(map,bill.x,bill.y,[],0,True)
-    
+        if len(slaves) > 0:
+            slaves[0].walk(map, bill.x, bill.y, [], 0, True)
+
     for i in range(len(slaves)):
         if not multiplayer:
-            if slaves[i - l].walk(map, bill.x, bill.y,slaves,i-l, False):
+            if slaves[i - l].walk(map, bill.x, bill.y, slaves, i-l, False):
                 bill.hp -= 0.5
         enemies += ((slaves[i - l].x, slaves[i - l].y,
                      slaves[i - l].type, slaves[i - l].frame))
@@ -296,7 +304,7 @@ def game_start():
     slaves = 0
     Tx = 0
     Ty = 0
-    rend, bill, map, slaves = start()
+    rend, bill, map, slaves = start(False)
 
     pygame.mouse.set_visible(False)
     game_st = 1
@@ -306,15 +314,15 @@ def game_start():
 
 def delegate_data():
     global me_shoot
-    
-    if len(slaves)>0:
+
+    if len(slaves) > 0:
         if me_shoot == 1:
             me_shoot = 0
             return bill.x, bill.y, slaves[0].lifes, 1, bill.moving
         else:
             return bill.x, bill.y, slaves[0].lifes, 0, bill.moving
     else:
-        return 0,0,0,0,0
+        return 0, 0, 0, 0, 0
 
 
 def multiplayer_start_create():
@@ -336,7 +344,14 @@ def multiplayer_start_create():
     Tx = 0
     Ty = 0
 
-    rend, bill, map, slaves = start()  # генерируем все кроме врагов
+    map = [[1, 5, 5, 5, 5, 5, 5, 5, 5, 1], [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+           [1, 0, 2, 2, 0, 0, 2, 2, 0, 1], [1, 0, 2, 2, 0, 0, 2, 2, 0, 1],
+           [1, 0, 0, 0, 0, 0, 0, 0, 0, 1], [1, 3, 3, 0, 0, 0, 0, 3, 3, 1],
+           [1, 0, 0, 0, 0, 0, 0, 0, 0, 1], [1, 0, 2, 2, 0, 0, 2, 2, 0, 1],
+           [1, 0, 2, 2, 0, 0, 2, 2, 0, 1], [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+           [1, 4, 4, 4, 4, 4, 4, 4, 4, 1]]
+
+    rend, bill, map, slaves = start(map)  # генерируем все кроме врагов
     slaves = []  # готовим пустой массив для противника
     for i in range(height * width // 2):  # ищем свободное место для спавна противника
         x, y = randint(3, height - 1) + 0.5, randint(3, width - 1) + 0.5
@@ -381,14 +396,15 @@ def multiplayer_start_join():
     slaves.append(
         slave(randint(0, 2), (width - 1) * 100 + 40, height * 100 + 40, 100, 100))  # Создаем врага, владелец сервака
     # всегда спавнится в начале лабиринта
-    client = Client(server_info[1], int(server_info[0]), delegate_data)  # подключаемся к серваку
+    # подключаемся к серваку
+    client = Client(server_info[1], int(server_info[0]), delegate_data)
     bill = billy(client.start_x, client.start_x,
                  2 * math.pi / 2, "VAn", W, H, mazeG.maze)  # создаем игрока по координатам от сервака
     map = client.map  # запоминаем карту по инфе с сервака
     bill.map = map
     slaves[0].lifes = 100
     update()
-    
+
     pygame.mouse.set_visible(False)
     game_st = 1
     if not rend.is_alive():
@@ -417,7 +433,7 @@ def game_return():
         else:
             client.stop()
             client.join()
-        pygame.mouse.set_visible(True)
+    pygame.mouse.set_visible(True)
     rend.stop()
     rend.join()
     screen.fill(bl)
@@ -542,42 +558,42 @@ while not finished:
                 slaves = bill.shoot(slaves, map)
         elif is_server:  # если мы сервак
             input_game(pygame.event.get())
-            
-            if len(slaves)>0:
+
+            if len(slaves) > 0:
                 slaves[0].x = server.data[0]/100
                 slaves[0].y = server.data[1]/100
 
                 bill.hp = server.data[2]
                 is_enemy_shooting = server.data[3]*2
                 is_enemy_moving = server.data[4]
-                
+
                 if is_enemy_shooting == 2:
-                        pygame.mixer.Channel(2).play(pygame.mixer.Sound(os.path.join(sys.path[0], "pony\\music\\enemy3_shoot.mp3")))
-                        pygame.mixer.Channel(2).set_volume(1)
-                
-                slaves[0].state = max(is_enemy_moving,is_enemy_shooting)
+                    pygame.mixer.Channel(2).play(pygame.mixer.Sound(
+                        os.path.join(sys.path[0], "pony\\music\\enemy3_shoot.mp3")))
+                    pygame.mixer.Channel(2).set_volume(1)
+
+                slaves[0].state = max(is_enemy_moving, is_enemy_shooting)
 
                 if bill.is_shoot():
                     slaves = bill.shoot(slaves, map)
                     me_shoot = 1
         elif not is_server:  # если мы клиент
             input_game(pygame.event.get())
-            if len(slaves)>0:
+            if len(slaves) > 0:
                 slaves[0].x = client.data[0] / 100
                 slaves[0].y = client.data[1] / 100
 
                 bill.hp = client.data[2]
                 is_enemy_shooting = client.data[3]*2
                 is_enemy_moving = client.data[4]
-                
-                slaves[0].state = max(is_enemy_moving,is_enemy_shooting)
-                
+
+                slaves[0].state = max(is_enemy_moving, is_enemy_shooting)
+
                 if is_enemy_shooting == 2:
-                        pygame.mixer.Channel(2).play(pygame.mixer.Sound(os.path.join(sys.path[0], "pony\\music\\enemy3_shoot.mp3")))
-                        pygame.mixer.Channel(2).set_volume(1)
-                
-                
-                    
+                    pygame.mixer.Channel(2).play(pygame.mixer.Sound(
+                        os.path.join(sys.path[0], "pony\\music\\enemy3_shoot.mp3")))
+                    pygame.mixer.Channel(2).set_volume(1)
+
                 if bill.is_shoot():
                     slaves = bill.shoot(slaves, map)
                     me_shoot = 1
@@ -625,6 +641,25 @@ while not finished:
         success, img = cap.read()
         shape = img.shape[1::-1]
 
+        ending_time = 0
+        h = -3330
+        file = os.path.join(sys.path[0] + "\\pony\\", "titles.txt")
+        titles = []
+        with open(os.path.join(sys.path[0] + "\\pony\\", "titles.txt")) as file:
+            inp = open(os.path.join(
+                sys.path[0] + "\\pony\\", "titles.txt"), 'r')
+            while True:
+                line = inp.readline()
+                line = line.replace('\n', ' ')
+                s = pygame.Surface((Wdisp, 90), pygame.SRCALPHA)
+                myfont = pygame.font.SysFont('arial', 60)
+                textsurface = myfont.render(line, False, (125, 125, 125))
+                u1 = myfont.size(line)
+                s.blit(textsurface, (int((Wdisp - u1[0])/2), 0))
+                titles.append(s)
+                if not line:
+                    break
+
         wn = pygame.display.set_mode((Wdisp, Hdisp))
         clock = pygame.time.Clock()
 
@@ -649,7 +684,12 @@ while not finished:
                         success = False
             wn.blit(pygame.transform.scale(pygame.image.frombuffer(
                 img.tobytes(), shape, "BGR"), (Wdisp, Hdisp)), (0, 0))
+            if ending_time >= 1900:
+                for i in range(len(titles)):
+                    screen.blit(titles[i], (0, h + 90*i))
+                h += 2
             pygame.display.update()
+            ending_time += 1
         pygame.mouse.set_visible(True)
         pygame.mixer.music.load(os.path.join(
             sys.path[0] + "\\pony\\music\\", "main_theme.mp3"))

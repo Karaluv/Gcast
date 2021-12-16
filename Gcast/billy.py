@@ -17,7 +17,7 @@ W, H = infoObject.current_w, infoObject.current_h
 
 class gun:
     def __init__(self, auto, maxammo, fire, idle, reload, reload_sound, fire_sound, screen_x, screen_y, scale,
-                 frame_time,damage):
+                 frame_time, damage):
         self.screen_x = screen_x
         self.screen_y = screen_y
 
@@ -34,9 +34,12 @@ class gun:
         self.a_recoil = 0.1
 
         self.sleeve = []
-        self.sleeve.append(pygame.image.load(sys.path[0] + "\\pony\\weapon\\sleeve0.png"))
-        self.sleeve.append(pygame.image.load(sys.path[0] + "\\pony\\weapon\\sleeve1.png"))
-        self.sleeve.append(pygame.image.load(sys.path[0] + "\\pony\\weapon\\sleeve2.png"))
+        self.sleeve.append(pygame.image.load(
+            sys.path[0] + "\\pony\\weapon\\sleeve0.png"))
+        self.sleeve.append(pygame.image.load(
+            sys.path[0] + "\\pony\\weapon\\sleeve1.png"))
+        self.sleeve.append(pygame.image.load(
+            sys.path[0] + "\\pony\\weapon\\sleeve2.png"))
 
         self.sleeve_x = 0
         self.sleeve_y = 0
@@ -47,20 +50,23 @@ class gun:
 
         self.fire_length = len(fire)
         self.reload_length = len(reload)
-        
+
         self.damage = damage
 
         for i in range(self.fire_length):
             new_w = self.fire_texture[i].get_width() * self.scale
             new_h = self.fire_texture[i].get_height() * self.scale
-            self.fire_texture[i] = pygame.transform.scale(self.fire_texture[i], (new_w, new_h))
+            self.fire_texture[i] = pygame.transform.scale(
+                self.fire_texture[i], (new_w, new_h))
         for i in range(self.reload_length):
             new_w = self.reload_texture[i].get_width() * self.scale
             new_h = self.reload_texture[i].get_height() * self.scale
-            self.reload_texture[i] = pygame.transform.scale(self.reload_texture[i], (new_w, new_h))
+            self.reload_texture[i] = pygame.transform.scale(
+                self.reload_texture[i], (new_w, new_h))
         new_w = self.idle_texture.get_width() * self.scale
         new_h = self.idle_texture.get_height() * self.scale
-        self.idle_texture = pygame.transform.scale(self.idle_texture, (new_w, new_h))
+        self.idle_texture = pygame.transform.scale(
+            self.idle_texture, (new_w, new_h))
 
         self.frame_counter = 0
         self.counter = 0
@@ -79,7 +85,8 @@ class gun:
                 self.reloading = True
                 self.frame_counter = self.reload_length
                 self.counter = 0
-                pygame.mixer.Channel(1).play(pygame.mixer.Sound(self.reload_sound))
+                pygame.mixer.Channel(1).play(
+                    pygame.mixer.Sound(self.reload_sound))
                 pygame.mixer.Channel(1).set_volume(2)
         if event.type == pygame.MOUSEBUTTONDOWN and self.frame_counter == 0 and self.ammo > 0 and not self.last_frames:
             self.sleeve_x = self.sleeve_y = 0
@@ -108,7 +115,8 @@ class gun:
             if self.frame_counter == 0:
                 self.ammo = self.maxammo
 
-        if self.frame_counter > 0 and (self.shooting or self.last_frames):  # Если в процессе стрельбы
+        # Если в процессе стрельбы
+        if self.frame_counter > 0 and (self.shooting or self.last_frames):
             if self.counter % self.frame_time == 0:
                 self.frame_counter -= 1
 
@@ -138,9 +146,11 @@ class gun:
         screen_pos = (round(screen.get_width() * self.screen_x + math.sin(Tx) * 20),
                       round(screen.get_height() * self.screen_y + math.cos(Ty) * 20))
         if self.frame_counter > 0 and (self.shooting or self.last_frames):
-            screen.blit(self.fire_texture[self.fire_length - self.frame_counter], screen_pos)
+            screen.blit(
+                self.fire_texture[self.fire_length - self.frame_counter], screen_pos)
         elif self.frame_counter > 0 and self.reloading:
-            screen.blit(self.reload_texture[self.reload_length - self.frame_counter], screen_pos)
+            screen.blit(
+                self.reload_texture[self.reload_length - self.frame_counter], screen_pos)
         else:
             screen.blit(self.idle_texture, screen_pos)
 
@@ -203,17 +213,21 @@ class billy:
         self.kd = False
 
         # Загрузка текстурок для худа и прочего
-        self.bullet = pygame.image.load(sys.path[0] + "\\pony\\hud\\bullet.png")
+        self.bullet = pygame.image.load(
+            sys.path[0] + "\\pony\\hud\\bullet.png")
         self.bullet.set_colorkey((0, 0, 0))
 
-        self.hp_bar = pygame.image.load(sys.path[0] + "\\pony\\hud\\hp_bar.png")
+        self.hp_bar = pygame.image.load(
+            sys.path[0] + "\\pony\\hud\\hp_bar.png")
 
-        self.ammo_bar = pygame.image.load(sys.path[0] + "\\pony\\hud\\ammo_bar.png")
+        self.ammo_bar = pygame.image.load(
+            sys.path[0] + "\\pony\\hud\\ammo_bar.png")
 
         self.scope = pygame.image.load(sys.path[0] + "\\pony\\hud\\scope.png")
         self.scope = pygame.transform.rotozoom(self.scope, 0, 0.5)
 
-        self.hitmark = pygame.image.load(sys.path[0] + "\\pony\\hud\\hitmark.png")
+        self.hitmark = pygame.image.load(
+            sys.path[0] + "\\pony\\hud\\hitmark.png")
         self.hitmark = pygame.transform.rotozoom(self.hitmark, 0, 0.1)
 
         def load(arr, name):
@@ -222,24 +236,28 @@ class billy:
             name - files folder
             '''
             path = os.path.join(sys.path[0], name)
-            
+
             files = next(os.walk(path))
             onlyfiles = next(os.walk(path))
             for i in range(len(onlyfiles[2])):
-                
-                arr.append(pygame.image.load(files[0] + "\\" + "(" + str(i + 1) + ").png").convert_alpha())
+
+                arr.append(pygame.image.load(
+                    files[0] + "\\" + "(" + str(i + 1) + ").png").convert_alpha())
             return arr
 
         def load_gun(folder, args):
-            idle = pygame.image.load(sys.path[0] + "\\pony\\weapon\\" + folder + "\\idle.png")
+            idle = pygame.image.load(
+                sys.path[0] + "\\pony\\weapon\\" + folder + "\\idle.png")
             shoot1 = []
             shoot1 = load(shoot1, "pony\\weapon\\" + folder + "\\shoot")
             reload1 = []
             reload1 = load(reload1, "pony\\weapon\\" + folder + "\\reload")
-            reload_sound = pygame.mixer.Sound(sys.path[0] + "\\pony\\weapon\\" + folder + "\\reload.mp3")
-            shoot_sound = pygame.mixer.Sound(sys.path[0] + "\\pony\\weapon\\" + folder + "\\shoot.mp3")
+            reload_sound = pygame.mixer.Sound(
+                sys.path[0] + "\\pony\\weapon\\" + folder + "\\reload.mp3")
+            shoot_sound = pygame.mixer.Sound(
+                sys.path[0] + "\\pony\\weapon\\" + folder + "\\shoot.mp3")
             gun_ = gun(args[0], args[1], shoot1, idle, reload1, reload_sound, shoot_sound, args[2], args[3], args[4],
-                       args[5],args[8])
+                       args[5], args[8])
             gun_.sleeve_posx = args[6]
             gun_.sleeve_posy = args[7]
             return gun_
@@ -248,19 +266,21 @@ class billy:
         scale_y = H/864
         if scale_y != 1:
             scale_y = scale_y*1.7
-            
-        self.ak = load_gun("ak", (True, 30, 0.4 * scale_x, 0.13 * scale_y, 1, 2, 1, 1,2))
+
+        self.ak = load_gun("ak", (True, 30, 0.4 * scale_x,
+                           0.13 * scale_y, 1, 2, 1, 1, 2))
         self.ak.z_recoil = 0.04
         self.ak.a_recoil = 0.09
 
-        self.svt = load_gun("svt", (False, 10, 0.3 * scale_x, 0.13 * scale_y, 1, 2, 0.82, 0.77,4))
+        self.svt = load_gun("svt", (False, 10, 0.3 * scale_x,
+                            0.13 * scale_y, 1, 2, 0.82, 0.77, 4))
         self.svt.z_recoil = 0.06
         self.svt.a_recoil = 0.12
 
-        self.pm = load_gun("makarov", (False, 8, 0.3 * scale_x, 0.13 * scale_y, 1, 2, 0.62, 0.67,3))
+        self.pm = load_gun("makarov", (False, 8, 0.3 * scale_x,
+                           0.13 * scale_y, 1, 2, 0.62, 0.67, 3))
         self.pm.z_recoil = 0.03
         self.pm.a_recoil = 0.07
-
 
         self.ak.z_recoil = 0.03
         self.ak.a_recoil = 0.07
@@ -271,22 +291,26 @@ class billy:
         self.CURRENT_WEAPON = 0
 
         self.died = False
-        
+
         # Создание миникарты
         self.res = 20
-        self.minimap = pygame.Surface((len(self.map[0]) * self.res + 200, len(self.map) * self.res + 200))
-        for i in range(len(self.map[0])):
-            for j in range(len(self.map)):
+        self.minimap = pygame.Surface(
+            (len(self.map[0]) * self.res + 200, len(self.map) * self.res + 200))
+        for i in range(len(self.map)):
+            for j in range(len(self.map[0])):
                 if self.map[i][j] != 0:
                     pygame.draw.rect(self.minimap, (100, 100, 100),
                                      (i * self.res + 100, j * self.res + 100, self.res, self.res))
-        self.minimap_circle = pygame.image.load(sys.path[0] + "\\pony\\hud\\minimap.png")
+        self.minimap_circle = pygame.image.load(
+            sys.path[0] + "\\pony\\hud\\minimap.png")
 
     def is_shoot(self):
         if self.WEAPONS[self.CURRENT_WEAPON].shooting and self.WEAPONS[self.CURRENT_WEAPON].frame_counter == \
                 self.WEAPONS[self.CURRENT_WEAPON].fire_length:
-            self.z += self.WEAPONS[self.CURRENT_WEAPON].z_recoil # РАЗКОММЕНТИТЬ ДЛЯ ОТДАЧИ
-            self.a += (random.random() - 0.5) * self.WEAPONS[self.CURRENT_WEAPON].a_recoil
+            # РАЗКОММЕНТИТЬ ДЛЯ ОТДАЧИ
+            self.z += self.WEAPONS[self.CURRENT_WEAPON].z_recoil
+            self.a += (random.random() - 0.5) * \
+                self.WEAPONS[self.CURRENT_WEAPON].a_recoil
             return True
         else:
             return False
@@ -309,7 +333,8 @@ class billy:
             if math.sqrt((slaves[i].x - x_ / 100) ** 2 + (slaves[i].y - y_ / 100) ** 2) <= 0.8 and slaves[i].lifes >= 1:
                 logic = 0
         if logic == 1:
-            new_tile_coords = [int((y_ + delta_y) / 100), int((x_ + delta_x) / 100)]
+            new_tile_coords = [int((y_ + delta_y) / 100),
+                               int((x_ + delta_x) / 100)]
             old_tile_coords = [int(self.y / 100), int(self.x / 100)]
             if self.map[new_tile_coords[0]][new_tile_coords[1]] == 0:
                 self.y = y_
@@ -350,11 +375,12 @@ class billy:
             self.Move(-3 * self.speed, 0, slaves)
         if self.kd:
             self.Move(3 * self.speed, 0, slaves)
-            
-        if self.hp<=0:
+
+        if self.hp <= 0:
             self.died = True
             self.hp = 0
-            pygame.mixer.Channel(2).play(pygame.mixer.Sound(os.path.join(sys.path[0], "pony\\music\\die.mp3")))
+            pygame.mixer.Channel(2).play(pygame.mixer.Sound(
+                os.path.join(sys.path[0], "pony\\music\\die.mp3")))
 
     def keyinput(self, event):
         if event.type == pygame.KEYDOWN:
@@ -398,7 +424,8 @@ class billy:
         minimap_small = pygame.transform.flip(minimap_small, False, True)
         minimap_rotated = pygame.Surface.copy(
             pygame.transform.rotozoom(pygame.Surface.copy(minimap_small), self.a * 180 / math.pi, 1))
-        blit_coord = 200 * (1 - abs(math.sin(self.a)) - abs(math.cos(self.a))) / 2
+        blit_coord = 200 * (1 - abs(math.sin(self.a)) -
+                            abs(math.cos(self.a))) / 2
 
         minimap_rotated.blit(self.minimap_circle, (-blit_coord, -blit_coord))
         minimap_rotated.set_colorkey((0, 0, 0))
@@ -409,8 +436,10 @@ class billy:
 
         screen.blit(surface, (screen.get_width() - 200, 0))
 
-        pygame.draw.circle(screen, (255, 0, 0), (screen.get_width() - 100, 100), 5)
-        pygame.draw.circle(screen, (100, 100, 100), (screen.get_width() - 100, 100), 102, 4)
+        pygame.draw.circle(screen, (255, 0, 0),
+                           (screen.get_width() - 100, 100), 5)
+        pygame.draw.circle(screen, (100, 100, 100),
+                           (screen.get_width() - 100, 100), 102, 4)
 
         W, H = self.W, self.H
 
@@ -421,16 +450,23 @@ class billy:
         text = font.render(str(round(self.hp)), True, (80, 80, 80))
         text_red = font.render(str(round(self.hp)), True, (110, 30, 30))
         text_x = 20 + (self.hp_bar.get_width() - text.get_width()) / 2
-        screen.blit(text, (text_x + 2, hp_bar_y + (self.hp_bar.get_height() - text.get_height()) / 2 + 2))
-        screen.blit(text_red, (text_x, hp_bar_y + (self.hp_bar.get_height() - text.get_height()) / 2))
+        screen.blit(text, (text_x + 2, hp_bar_y +
+                    (self.hp_bar.get_height() - text.get_height()) / 2 + 2))
+        screen.blit(text_red, (text_x, hp_bar_y +
+                    (self.hp_bar.get_height() - text.get_height()) / 2))
 
         ammo_bar_y = screen.get_height() - self.ammo_bar.get_height()
         screen.blit(self.ammo_bar, (25 + self.hp_bar.get_width(), ammo_bar_y))
-        text = font.render(str(round(self.WEAPONS[self.CURRENT_WEAPON].ammo)), True, (80, 80, 80))
-        text_red = font.render(str(round(self.WEAPONS[self.CURRENT_WEAPON].ammo)), True, (110, 30, 30))
-        text_x = 25 + self.hp_bar.get_width() + (self.ammo_bar.get_width() - text.get_width()) / 2
-        screen.blit(text, (text_x + 2, hp_bar_y + (self.ammo_bar.get_height() - text.get_height()) / 2 + 2))
-        screen.blit(text_red, (text_x, hp_bar_y + (self.ammo_bar.get_height() - text.get_height()) / 2))
+        text = font.render(
+            str(round(self.WEAPONS[self.CURRENT_WEAPON].ammo)), True, (80, 80, 80))
+        text_red = font.render(
+            str(round(self.WEAPONS[self.CURRENT_WEAPON].ammo)), True, (110, 30, 30))
+        text_x = 25 + self.hp_bar.get_width() + (self.ammo_bar.get_width() -
+                                                 text.get_width()) / 2
+        screen.blit(text, (text_x + 2, hp_bar_y +
+                    (self.ammo_bar.get_height() - text.get_height()) / 2 + 2))
+        screen.blit(text_red, (text_x, hp_bar_y +
+                    (self.ammo_bar.get_height() - text.get_height()) / 2))
 
         screen.blit(self.scope, (
             (screen.get_width() - self.scope.get_width()) / 2, (screen.get_height() - self.scope.get_height()) / 2))
@@ -465,7 +501,8 @@ class billy:
                 break
             else:
                 for j in range(len(slaves)):
-                    r = math.sqrt((slaves[j].x - self.x / 100) ** 2 + (slaves[j].y - self.y / 100) ** 2)
+                    r = math.sqrt((slaves[j].x - self.x / 100)
+                                  ** 2 + (slaves[j].y - self.y / 100) ** 2)
                     z_2 = (slaves[j].x - x) ** 2 + (slaves[j].y - y) ** 2
 
                     if z_2 < 0.01 and slaves[j].lifes != -1 and (-self.z - 0.9 / r) < -1 and (self.z - 0.3 / r) < 1:
@@ -476,7 +513,7 @@ class billy:
                             if slaves[j].lifes < 0:
                                 slaves[j].lifes = 0
                         if slaves[j].lifes < 0:
-                                slaves[j].lifes = 0
+                            slaves[j].lifes = 0
                         self.hitmark_counter = 15
                         break
 
