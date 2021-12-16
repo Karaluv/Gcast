@@ -539,8 +539,10 @@ while not finished:
             slaves[0].y = server.data[1]/100
 
             bill.hp = server.data[2]
-            is_enemy_shooting = server.data[3]
+            is_enemy_shooting = server.data[3]*2
             is_enemy_moving = server.data[4]
+            
+            slaves[0].state = max(is_enemy_moving,is_enemy_shooting)
             if bill.is_shoot():
                 slaves = bill.shoot(slaves, map)
                 me_shoot = 1
@@ -550,8 +552,13 @@ while not finished:
             slaves[0].y = client.data[1] / 100
 
             bill.hp = client.data[2]
-            is_enemy_shooting = client.data[3]
+            is_enemy_shooting = client.data[3]*2
             is_enemy_moving = client.data[4]
+            
+            slaves[0].state = max(is_enemy_moving,is_enemy_shooting)
+            
+            
+                
             if bill.is_shoot():
                 slaves = bill.shoot(slaves, map)
                 me_shoot = 1
