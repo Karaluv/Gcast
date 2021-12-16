@@ -584,7 +584,7 @@ while not finished:
                 if bill.is_shoot():
                     slaves = bill.shoot(slaves, map)
                     me_shoot = 1
-        if not bill.died:
+        if not bill.died or multiplayer:
             update()
         else:
             game_st = 0
