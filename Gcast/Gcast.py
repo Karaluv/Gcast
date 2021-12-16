@@ -300,7 +300,7 @@ def multiplayer_start_join():
     Tx = 0
     Ty = 0
 
-    rend, bill, map, slaves = start()  # создаем рендер просто из старта
+    rend, bill, map, slaves = start(False)  # создаем рендер просто из старта
     slaves = []  # Готовим массив для врага
     slaves.append(
         slave(randint(0, 2), (width - 1) * 100 + 40, height * 100 + 40, 100, 100))  # Создаем врага, владелец сервака
