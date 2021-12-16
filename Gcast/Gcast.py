@@ -252,8 +252,7 @@ def multiplayer_start_create():
     global enemies
 
     multiplayer, is_server = True, True
-    rend,bill,map,slaves,Tx,Ty = 0,0,0,0,0,0
-
+    rend, bill, map, slaves, Tx, Ty = 0, 0, 0, 0, 0, 0
 
     map = [[1, 5, 5, 5, 5, 5, 5, 5, 5, 1], [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
            [1, 0, 2, 2, 0, 0, 2, 2, 0, 1], [1, 0, 2, 2, 0, 0, 2, 2, 0, 1],
@@ -325,7 +324,7 @@ def multiplayer_start_join():
     if not client.is_alive():
         client.start()
 
-
+#def which sends data to online
 def delegate_data():
     global me_shoot
 
@@ -409,6 +408,36 @@ render_zone = pygame.Surface((700, 200))
 # sets white and black
 wh = (255, 255, 255)
 bl = (0, 0, 0)
+
+# plays intro sound
+pygame.mixer.music.load(os.path.join(
+    sys.path[0] + "\\pony\\music\\", "Intro_sound.mp3"))
+pygame.mixer.music.set_volume(1)
+pygame.mixer.music.play(1)
+
+
+# plays intro
+# loads video for intro
+cap = cv2.VideoCapture(os.path.join(
+    sys.path[0] + "\\pony\\video\\", "Intro_video_resized.mp4"))
+success, img = cap.read()
+shape = img.shape[1::-1]
+wn = pygame.display.set_mode((W, H))
+clock = pygame.time.Clock()
+while success:
+    clock.tick(24)
+    success, img = cap.read()
+    if (img is None):
+        break
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            success = False
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                success = False
+    wn.blit(pygame.transform.scale(pygame.image.frombuffer(
+        img.tobytes(), shape, "BGR"), (Wdisp, Hdisp)), (0, 0))
+    pygame.display.update()
 
 
 # sets ingame music
@@ -508,36 +537,6 @@ main_screen = pygame.image.load(os.path.join(
 main_screen = pygame.transform.scale(main_screen, (Wdisp, Hdisp))
 
 
-# loads video for intro
-cap = cv2.VideoCapture(os.path.join(
-    sys.path[0] + "\\pony\\video\\", "Intro_video_resized.mp4"))
-success, img = cap.read()
-shape = img.shape[1::-1]
-wn = pygame.display.set_mode((W, H))
-clock = pygame.time.Clock()
-
-# plays intro sound
-pygame.mixer.music.load(os.path.join(
-    sys.path[0] + "\\pony\\music\\", "Intro_sound.mp3"))
-pygame.mixer.music.set_volume(1)
-pygame.mixer.music.play(1)
-
-
-# plays intro
-while success:
-    clock.tick(24)
-    success, img = cap.read()
-    if (img is None):
-        break
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            success = False
-        elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_ESCAPE:
-                success = False
-    wn.blit(pygame.transform.scale(pygame.image.frombuffer(
-        img.tobytes(), shape, "BGR"), (Wdisp, Hdisp)), (0, 0))
-    pygame.display.update()
 
 
 # main core loop
