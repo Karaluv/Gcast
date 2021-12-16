@@ -16,13 +16,10 @@ class slave:
         self.rotation = randint(0,10)/10*math.pi*2
         self.stepx = stepx
         self.stepy = stepy
-        self.shooting = False
-        self.walking = True
-        self.standing = False
         self.r0 = 2
         self.targetting_time = 30
         self.lifes = 2
-        self.ended = False
+        self.state = 1
         self.see = True
         if type == 0:
             self.maxFrame = 16
@@ -84,22 +81,25 @@ class slave:
             return True
 
 
-    def walk(self, map, x0, y0, slaves,I):
+    def walk(self, map, x0, y0, slaves,I,online):
 
         
         self.frame+=self.speed_animation
+
         
-        if self.walking:
+        if self.state == 1 and self.lifes > 0:
             if self.frame >= self.shootingframe:
                 self.frame = 0
-                self.ended = True
                 
-        if self.shooting:
+                
+        if self.state == 2 and self.lifes > 0:
             if self.frame >= self.maxFrame:
                 self.frame = self.shootingframe
-                self.ended = True
+                self.state = 1
+                self.targetting_time = 30
                 
-        if self.standing:
+                
+        if self.state == 0 and self.lifes > 0:
             self.frame = 0
                 
 
@@ -117,32 +117,30 @@ class slave:
         r = math.sqrt((x0-self.x)*(x0-self.x) + (y0-self.y)*(y0-self.y))
             
 
-        if self.see and self.lifes != -1:
-            if self.frame < self.shootingframe-1:
+        if self.see and self.lifes > 0:
+            if self.targetting_time <= 0:
+                self.state = 2
+            if self.state == 1:
                 vx = self.v*(x0-self.x)/r+randint(0,100)/100
                 vy = self.v*(y0-self.y)/r+randint(0,100)/100
-                self.shooting = False
-                self.walking = True
-                self.ended = False
             else:
                 vx,vy =0,0
-                self.shooting = True
-                self.walking = False
+            self.targetting_time -= 1
+
                 
 
-            if self.ended:
-                self.ended = False
-                if int(self.frame) == (self.maxFrame+self.shootingframe)//2:
-                    c = randint(0,1)
-                    if c==1:
-                        hit = True
-                        #pygame.mixer.music.load(os.path.join(sys.path[0] + "\\pony\\music\\", "enemy_shoot.mp3"))
-                        if self.type == 1 or self.type == 2:
-                            pygame.mixer.Channel(2).play(pygame.mixer.Sound(os.path.join(sys.path[0], "pony\\music\\enemy3_shoot.mp3")))
-                            pygame.mixer.Channel(2).set_volume(1)
-                        if self.type == 0:
-                            pygame.mixer.Channel(2).play(pygame.mixer.Sound(os.path.join(sys.path[0], "pony\\music\\enemy2_shoot.mp3")))
-                            pygame.mixer.Channel(2).set_volume(1)
+
+            if int(self.frame) == (self.maxFrame+self.shootingframe)//2:
+                c = randint(0,1)
+                if c==1:
+                    hit = True
+                    #pygame.mixer.music.load(os.path.join(sys.path[0] + "\\pony\\music\\", "enemy_shoot.mp3"))
+                    if self.type == 1 or self.type == 2:
+                        pygame.mixer.Channel(2).play(pygame.mixer.Sound(os.path.join(sys.path[0], "pony\\music\\enemy3_shoot.mp3")))
+                        pygame.mixer.Channel(2).set_volume(1)
+                    if self.type == 0:
+                        pygame.mixer.Channel(2).play(pygame.mixer.Sound(os.path.join(sys.path[0], "pony\\music\\enemy2_shoot.mp3")))
+                        pygame.mixer.Channel(2).set_volume(1)
                     
         else:
             vx = math.cos(a)*self.v
@@ -156,17 +154,24 @@ class slave:
         
         go = False
         if r > 1.5:
+            if self.state != 2 and self.see:
+                self.state = 1
+                self.v = 2
             x_ = x + vx/stepx
             y_ = y + vy/stepy
             for i in range(len(slaves)):
                 if i != I and math.sqrt((slaves[i].x-x_)**2 + (slaves[i].y-y_)**2) <= 1:
                     x_ = x
                     y_ = y
+                    if self.state != 2:
+                        self.state = 0
                     go = True
                     break
         else:
             x_ = x
             y_ = y
+            if self.state != 2:
+                self.state = 0
         
         self.x,self.y = x_,y_
         while not go:
