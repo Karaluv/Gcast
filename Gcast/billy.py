@@ -273,12 +273,12 @@ class billy:
         self.ak.a_recoil = 0.09
 
         self.svt = load_gun("svt", (False, 10, 0.3 * scale_x,
-                            0.13 * scale_y, 1, 2, 0.82, 0.77, 4))
+                            0.13 * scale_y, 1, 2, 0.82, 0.77, 8))
         self.svt.z_recoil = 0.06
         self.svt.a_recoil = 0.12
 
         self.pm = load_gun("makarov", (False, 8, 0.3 * scale_x,
-                           0.13 * scale_y, 1, 2, 0.62, 0.67, 3))
+                           0.13 * scale_y, 1, 2, 0.62, 0.67, 5))
         self.pm.z_recoil = 0.03
         self.pm.a_recoil = 0.07
 
