@@ -18,7 +18,15 @@ threading.SystemExit = SystemExit, StopThread
 class rendering(threading.Thread):
 
     def __init__(self,u,density,dl,render_surface,height,width,update,redraw,elevation):
-
+        '''
+        u - field of view 
+        density - 1/X_axis_resolutin
+        render_surface - surface were to draw stuff
+        dl - resolution by z_axis
+        height,width - size of the maze
+        update,redraw - delegate functions from the Gcast to achive multithreading
+        elevation - y axis camera movement
+        '''
         #block which defines variables for class
         self.render_surface = render_surface
         self.dl = dl
@@ -105,7 +113,7 @@ class rendering(threading.Thread):
     def run(self):
         import time
         clock = pygame.time.Clock()
-        time.sleep(0.5)
+        time.sleep(1)
         FPS = self.fps
         FPS +=1
         while self.__running.isSet():
@@ -324,30 +332,29 @@ class rendering(threading.Thread):
                     history[-1]=[rX,rY,VM]
                     
                     #stuf for speeding up program
-                    if ugol == 0:
-                        if len(render_data)>3:
-                            if l<render_data[-2][0]-1:                              
-                                if l - 1>minR:
-                                    ugol = min(int(dl/density),len(render_data)-2)+1
-                                
-                                    for i in range(len(render_data)-ugol,len(render_data)):
-                                        if history[i][2]:
-                                            mapCV[history[i][1]][history[i][0]] -= 1
-                                        else:
-                                            mapCH[history[i][1]][history[i][0]] -= 1
-                                
-                                    sc = 4
-                                    sin -= ugol*dsin
-                                    cos -=ugol*dcos
-                                    d -= ugol
-                                    
-                                
-                                    del render_data[-ugol:]
-                                    del history[-ugol:]
+                    if ugol == 0:         
+                        if l<render_data[-2][0]-1:                              
 
-                                    rX,rY,VM = history[-(1)][0],history[-(1)][1],history[-(1)][2]
-                                    
-                                    break
+                            ugol = min(int(dl/density),len(render_data)-2)+1
+                        
+                            for i in range(len(render_data)-ugol,len(render_data)):
+                                if history[i][2]:
+                                    mapCV[history[i][1]][history[i][0]] -= 1
+                                else:
+                                    mapCH[history[i][1]][history[i][0]] -= 1
+                        
+                            sc = 4
+                            sin -= ugol*dsin
+                            cos -=ugol*dcos
+                            d -= ugol
+                            
+                        
+                            del render_data[-ugol:]
+                            del history[-ugol:]
+
+                            rX,rY,VM = history[-(1)][0],history[-(1)][1],history[-(1)][2]
+                            
+                            break
 
                     break
 
@@ -434,10 +441,12 @@ class rendering(threading.Thread):
         '''
         #loads args
         map,enemies,cos0,sin0,cos1,sin1,minR,maxR,x0,y0,elevation = args
+        #print(enemies)
         #cretes render wall data
         render_wall_data = self.ray_cast(map,cos0,sin0,cos1,sin1,minR,maxR,x0,y0)
         #creates enemy data
         enemy_render_data = self.enemy_ray_caster(render_wall_data,enemies,cos0,sin0,cos1,sin1,minR,maxR,x0,y0)
+        #print(enemy_render_data)
         #creates texture data
         render_wall_data = self.texturize(render_wall_data)
         #sorts arrays by the distance
