@@ -21,14 +21,14 @@ class Server(threading.Thread):
         data_bytes = bytearray(str(map), 'utf8')
         self.conn.send(data_bytes)
 
-        coords = "1540!1440!50!0!0!"
+        coords = "1540!1440!100!0!0!"
         self.send_data(coords)
         data_bytes = bytearray(str(coords), 'utf8')
         #print(data_bytes)
         self.conn.send(data_bytes)
         time.sleep(1)
 
-        self.data = [1440, 1440, 50, 0, 0]
+        self.data = [1440, 1440, 100, 0, 0]
 
         self.delegate_data = delegate_data
 
@@ -89,7 +89,7 @@ class Client(threading.Thread):
 
         self.str_map = self.sock.recv(self.max_data)
         self.map = eval(self.str_map)
-        self.data = [1540, 1440, 25, 0, 0]
+        self.data = [1540, 1440, 100, 0, 0]
         self.start_x, self.start_x, hp, shoot, move = self.get_data()
 
         self.delegate_data = delegate_data
