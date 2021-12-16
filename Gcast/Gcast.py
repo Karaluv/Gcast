@@ -227,12 +227,7 @@ def game_start():
     global multiplayer
 
     multiplayer = False
-    rend = 0
-    bill = 0
-    map = 0
-    slaves = 0
-    Tx = 0
-    Ty = 0
+    Tx, Ty = 0, 0
     rend, bill, map, slaves = start(False)
 
     pygame.mouse.set_visible(False)
@@ -297,12 +292,7 @@ def multiplayer_start_join():
 
     multiplayer = True
     is_server = False
-    rend = 0
-    bill = 0
-    map = 0
-    slaves = 0
-    Tx = 0
-    Ty = 0
+    Tx, Ty = 0, 0
 
     rend, bill, map, slaves = start()  # создаем рендер просто из старта
     slaves = []  # Готовим массив для врага
@@ -440,18 +430,12 @@ buttons1 = [0] * 3
 buttons2 = [0] * 3
 
 # sets buttons for menues
-s = textsurf(' Singleplayer ')
-buttons1[0] = button(s, Wdisp, Hdisp, 0.375, 0.3, 0.25, 0.08, game_start)
-s = textsurf(' Multiplayer ')
-buttons1[1] = button(s, Wdisp, Hdisp, 0.375, 0.44,
-                     0.25, 0.08, open_multiplayer_menu1)
-s = textsurf(' Main menu ')
-buttons2[1] = button(s, Wdisp, Hdisp, 0.375, 0.44, 0.25, 0.08, game_return)
-s = textsurf('    Quit    ')
-buttons1[2] = button(s, Wdisp, Hdisp, 0.375, 0.58, 0.25, 0.08, game_finish)
-buttons2[2] = button(s, Wdisp, Hdisp, 0.375, 0.58, 0.25, 0.08, game_finish)
-s = textsurf('Resume')
-buttons2[0] = button(s, Wdisp, Hdisp, 0.375, 0.3, 0.25, 0.08, game_resume)
+buttons1[0] = button(textsurf(' Singleplayer '), Wdisp, Hdisp, 0.375, 0.3, 0.25, 0.08, game_start)
+buttons1[1] = button(textsurf(' Multiplayer '), Wdisp, Hdisp, 0.375, 0.44, 0.25, 0.08, open_multiplayer_menu1)
+buttons2[1] = button(textsurf(' Main menu '), Wdisp, Hdisp, 0.375, 0.44, 0.25, 0.08, game_return)
+buttons1[2] = button(textsurf('    Quit    '), Wdisp, Hdisp, 0.375, 0.58, 0.25, 0.08, game_finish)
+buttons2[2] = button(textsurf('    Quit    '), Wdisp, Hdisp, 0.375, 0.58, 0.25, 0.08, game_finish)
+buttons2[0] = button(textsurf('Resume'), Wdisp, Hdisp, 0.375, 0.3, 0.25, 0.08, game_resume)
 # sets menues
 menu1 = Menu(buttons1, screen)
 menu2 = Menu(buttons2, screen)
@@ -459,44 +443,26 @@ menu2 = Menu(buttons2, screen)
 # Меню где выбираем, создаем сервер или присоединяемся
 buttons3 = [0] * 3
 
-s = textsurf('Create server')
-buttons3[0] = button(s, Wdisp, Hdisp, 0.375, 0.3,
-                     0.25, 0.08, create_server_menu)
-
-s = textsurf('Join server')
-buttons3[1] = button(s, Wdisp, Hdisp, 0.375, 0.44,
-                     0.25, 0.08, join_server_menu)
-
-
-s = textsurf('   Back   ')
-buttons3[2] = button(s, Wdisp, Hdisp, 0.375, 0.58,
-                     0.25, 0.08, back_to_menu)
-
+buttons3[0] = button(textsurf('Create server'), Wdisp, Hdisp, 0.375, 0.3, 0.25, 0.08, create_server_menu)
+buttons3[1] = button(textsurf('Join server'), Wdisp, Hdisp, 0.375, 0.44, 0.25, 0.08, join_server_menu)
+buttons3[2] = button(textsurf('   Back   '), Wdisp, Hdisp, 0.375, 0.58, 0.25, 0.08, back_to_menu)
 menu3 = Menu(buttons3, screen)
 
 # Меню где создаем сервер(пока нету)
 buttons4 = [0] * 2
-input = inputfield(Wdisp, Hdisp, 0.375, 0.30,
-                   0.25, 0.08, 'Enter port')
-s = textsurf('Create server')
-buttons4[0] = button(s, Wdisp, Hdisp, 0.375, 0.44, 0.25,
-                     0.08, multiplayer_start_create)
-s = textsurf('    Back    ')
-buttons4[1] = button(s, Wdisp, Hdisp, 0.375, 0.58,
-                     0.25, 0.08, back_to_menu)
+input = inputfield(Wdisp, Hdisp, 0.375, 0.30, 0.25, 0.08, 'Enter port')
+buttons4[0] = button(textsurf('Create server'), Wdisp, Hdisp, 0.375, 0.44, 0.25, 0.08, multiplayer_start_create)
+buttons4[1] = button(textsurf('    Back    '), Wdisp, Hdisp, 0.375, 0.58, 0.25, 0.08, back_to_menu)
 menu4 = Menu(buttons4, screen, [input])
 
 # Меню где подключаемся к серверу
 buttons5 = [0] * 2
 input1 = inputfield(Wdisp, Hdisp, 0.375, 0.30, 0.25, 0.08, 'Enter port')
 input2 = inputfield(Wdisp, Hdisp, 0.375, 0.44, 0.25, 0.08, 'Enter ip')
-s = textsurf('Join server')
-buttons5[0] = button(s, Wdisp, Hdisp, 0.375, 0.58,
-                     0.25, 0.08, multiplayer_start_join)
-s = textsurf('    Back    ')
-buttons5[1] = button(s, Wdisp, Hdisp, 0.375, 0.72,
-                     0.25, 0.08, back_to_menu)
+buttons5[0] = button(textsurf('Join server'), Wdisp, Hdisp, 0.375, 0.58, 0.25, 0.08, multiplayer_start_join)
+buttons5[1] = button(textsurf('    Back    '), Wdisp, Hdisp, 0.375, 0.72, 0.25, 0.08, back_to_menu)
 menu5 = Menu(buttons5, screen, [input1, input2])
+
 
 start_time = time.time()
 start_time_r = time.time()
@@ -521,7 +487,6 @@ pygame.mixer.music.load(os.path.join(
     sys.path[0] + "\\pony\\music\\", "Intro_sound.mp3"))
 pygame.mixer.music.set_volume(1)
 pygame.mixer.music.play(1)
-
 
 # plays intro
 while success:
@@ -551,7 +516,6 @@ while not finished:
                 slaves = bill.shoot(slaves, map)
         elif is_server:  # если мы сервак
             input_game(pygame.event.get())
-
             if len(slaves) > 0:
                 slaves[0].x = server.data[0]/100
                 slaves[0].y = server.data[1]/100
