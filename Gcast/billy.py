@@ -496,7 +496,7 @@ class billy:
         dsin = math.sin(a) * dl
 
         l = 0
-
+        
         while not find and l < maxR:
 
             if map[int(y)][int(x)] > 0:

@@ -382,6 +382,26 @@ def game_reset_mode(paused):
     return not paused
 
 
+def back_to_menu():
+    global game_st
+    game_st = 0
+
+
+def open_multiplayer_menu1():
+    global game_st
+    game_st = 3
+
+
+def create_server_menu():
+    global game_st
+    game_st = 4
+
+
+def join_server_menu():
+    global game_st
+    game_st = 5
+
+
 # starts out game and inits parametrs
 pygame.init()
 
@@ -447,6 +467,70 @@ render_w = 355
 render_h = 200
 Tx, Ty = 0, 0
 
+# gets display size
+Wdisp, Hdisp = screen.get_size()
+# creates arrays of buttons
+buttons1 = [0] * 3
+buttons2 = [0] * 3
+
+# sets buttons for menues
+s = textsurf(' Singleplayer ')
+buttons1[0] = button(s, Wdisp, Hdisp, 0.375, 0.3, 0.25, 0.08, game_start)
+s = textsurf(' Multiplayer ')
+buttons1[1] = button(s, Wdisp, Hdisp, 0.375, 0.44,
+                     0.25, 0.08, open_multiplayer_menu1)
+s = textsurf(' Main menu ')
+buttons2[1] = button(s, Wdisp, Hdisp, 0.375, 0.44, 0.25, 0.08, game_return)
+s = textsurf('    Quit    ')
+buttons1[2] = button(s, Wdisp, Hdisp, 0.375, 0.58, 0.25, 0.08, game_finish)
+buttons2[2] = button(s, Wdisp, Hdisp, 0.375, 0.58, 0.25, 0.08, game_finish)
+s = textsurf('Resume')
+buttons2[0] = button(s, Wdisp, Hdisp, 0.375, 0.3, 0.25, 0.08, game_resume)
+# sets menues
+menu1 = Menu(buttons1, screen)
+menu2 = Menu(buttons2, screen)
+
+# Меню где выбираем, создаем сервер или присоединяемся
+buttons3 = [0] * 3
+
+s = textsurf('Create server')
+buttons3[0] = button(s, Wdisp, Hdisp, 0.375, 0.3,
+                     0.25, 0.08, create_server_menu)
+
+s = textsurf('Join server')
+buttons3[1] = button(s, Wdisp, Hdisp, 0.375, 0.44,
+                     0.25, 0.08, join_server_menu)
+
+
+s = textsurf('   Back   ')
+buttons3[2] = button(s, Wdisp, Hdisp, 0.375, 0.58,
+                     0.25, 0.08, back_to_menu)
+
+menu3 = Menu(buttons3, screen)
+
+# Меню где создаем сервер(пока нету)
+buttons4 = [0] * 2
+input = inputfield(Wdisp, Hdisp, 0.375, 0.30,
+                   0.25, 0.08, 'Enter port')
+s = textsurf('Create server')
+buttons4[0] = button(s, Wdisp, Hdisp, 0.375, 0.44, 0.25,
+                     0.08, multiplayer_start_create)
+s = textsurf('    Back    ')
+buttons4[1] = button(s, Wdisp, Hdisp, 0.375, 0.58,
+                     0.25, 0.08, back_to_menu)
+menu4 = Menu(buttons4, screen, [input])
+
+# Меню где подключаемся к серверу
+buttons5 = [0] * 2
+input1 = inputfield(Wdisp, Hdisp, 0.375, 0.30, 0.25, 0.08, 'Enter port')
+input2 = inputfield(Wdisp, Hdisp, 0.375, 0.44, 0.25, 0.08, 'Enter ip')
+s = textsurf('Join server')
+buttons5[0] = button(s, Wdisp, Hdisp, 0.375, 0.58,
+                     0.25, 0.08, multiplayer_start_join)
+s = textsurf('    Back    ')
+buttons5[1] = button(s, Wdisp, Hdisp, 0.375, 0.72,
+                     0.25, 0.08, back_to_menu)
+menu5 = Menu(buttons5, screen, [input1, input2])
 
 start_time = time.time()
 start_time_r = time.time()
@@ -458,8 +542,7 @@ main_screen = pygame.image.load(os.path.join(
 main_screen = pygame.transform.scale(main_screen, (Wdisp, Hdisp))
 
 
-menu1, menu2, menu3, menu4, menu5 = create_menus(screen, game_start, game_finish, game_return, game_resume,
-                                                 multiplayer_start_join, multiplayer_start_create)
+
 
 # main core loop
 while not finished:
@@ -495,6 +578,7 @@ while not finished:
         elif not is_server:  # если мы клиент
             if bill.hp>0:
                 input_game(pygame.event.get())
+                
             if len(slaves) > 0:
                 slaves[0].x = client.data[0] / 100
                 slaves[0].y = client.data[1] / 100
