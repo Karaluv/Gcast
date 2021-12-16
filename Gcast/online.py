@@ -21,7 +21,8 @@ class Server(threading.Thread):
         data_bytes = bytearray(str(map), 'utf8')
         self.conn.send(data_bytes)
 
-        coords = [1440, 1440]
+        coords = "1540!1440!"
+        self.send_data(coords)
         data_bytes = bytearray(str(coords), 'utf8')
         #print(data_bytes)
         self.conn.send(data_bytes)
@@ -39,14 +40,15 @@ class Server(threading.Thread):
         threading.Thread.__init__(self)
 
     def send_data(self, data):
-        #print("i send data")
         data_bytes = bytearray(str(data), 'utf8')
         self.conn.send(data_bytes)
 
     def get_data(self):
-        data = self.conn.recv(self.max_data)
-        data = eval(data)
-        #print(data)
+        data_raw = self.conn.recv(self.max_data)
+        data_raw = data_raw.decode('utf8')
+        data_splited = data_raw.split("!")
+        x, y = float(data_splited[0]), float(data_splited[1])
+        data = (x, y)
         return data
 
     def close_server(self):
@@ -60,7 +62,7 @@ class Server(threading.Thread):
             self.__flag.wait()
             time.sleep(0.1)
             x, y = self.delegate_data()
-            coords = (x, y)
+            coords = str(x) + "!" + str(y) + "!"
             self.send_data(coords)
             self.data = self.get_data()
 
@@ -86,14 +88,8 @@ class Client(threading.Thread):
 
         self.str_map = self.sock.recv(self.max_data)
         self.map = eval(self.str_map)
-
-        self.start_x = self.sock.recv(self.max_data)
-        print(self.start_x)
-        self.start_x = int(self.start_x)
-
-        self.start_y = self.sock.recv(self.max_data)
-        print(self.start_y)
-        self.start_y = int(self.start_y)
+        self.data = [1540, 1440]
+        self.start_x, self.start_x = self.get_data()
 
         self.delegate_data = delegate_data
 
@@ -109,7 +105,11 @@ class Client(threading.Thread):
         self.sock.send(data_bytes)
 
     def get_data(self):
-        data = self.sock.recv(self.max_data)
+        data_raw = self.sock.recv(self.max_data)
+        data_raw = data_raw.decode('utf8')
+        data_splited = data_raw.split("!")
+        x, y = float(data_splited[0]), float(data_splited[1])
+        data = (x, y)
         return data
 
     # everlasting loop def, that just rerenders everything
@@ -121,9 +121,10 @@ class Client(threading.Thread):
         while self.__running.isSet():
             self.__flag.wait()
             time.sleep(0.1)
-
+            x, y = self.delegate_data()
+            coords = str(x) + "!" + str(y) + "!"
+            self.send_data(coords)
             self.data = self.get_data()
-            self.send_data(self.delegate_data())
 
     # defs that are needed to control the thread: pause render,resume render,stop render process
     def pause(self):

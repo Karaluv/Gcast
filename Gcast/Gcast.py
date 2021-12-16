@@ -372,8 +372,8 @@ def multiplayer_start_join():
     game_st = 1
     if not rend.is_alive():
         rend.start()
-    if not server.is_alive():
-        server.start()
+    if not client.is_alive():
+        client.start()
 
 
 def game_finish():
@@ -518,8 +518,8 @@ while not finished:
             print(slaves[0].x, slaves[0].y)
         elif not is_server:  # если мы клиент
             input_game(pygame.event.get())
-            slaves[0].x = server.data[0]
-            slaves[0].y = server.data[1]
+            slaves[0].x = client.data[0]/100
+            slaves[0].y = client.data[1]/100
         update()
     if game_st == 0:
         screen.blit(main_screen, (0, 0))
