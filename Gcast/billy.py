@@ -273,12 +273,12 @@ class billy:
         self.ak.a_recoil = 0.09
 
         self.svt = load_gun("svt", (False, 10, 0.3 * scale_x,
-                            0.13 * scale_y, 1, 2, 0.82, 0.77, 4))
+                            0.13 * scale_y, 1, 2, 0.82, 0.77, 6))
         self.svt.z_recoil = 0.06
         self.svt.a_recoil = 0.12
 
         self.pm = load_gun("makarov", (False, 8, 0.3 * scale_x,
-                           0.13 * scale_y, 1, 2, 0.62, 0.67, 3))
+                           0.13 * scale_y, 1, 2, 0.62, 0.67, 5))
         self.pm.z_recoil = 0.03
         self.pm.a_recoil = 0.07
 
@@ -381,6 +381,16 @@ class billy:
             self.hp = 0
             pygame.mixer.Channel(2).play(pygame.mixer.Sound(
                 os.path.join(sys.path[0], "pony\\music\\die.mp3")))
+            
+            go = True
+            while go:
+                x0,y0 = randint(1,len(self.map[0])-1),randint(1,len(self.map)-1)
+                if self.map[y0][x0] == 0:
+                    self.x = x0*100+40
+                    self.y = y0*100+40
+                    self.hp = 100
+                    go = False
+                    
 
     def keyinput(self, event):
         if event.type == pygame.KEYDOWN:
