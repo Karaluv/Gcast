@@ -182,39 +182,33 @@ def update():
             l += 1
 
 
-def start(map):
+def start():
     # loads global variables
     global pe, height, width, W, H, density, dl
     # creates maze
-    if map == False:
-        mazeG.main(height, width)
-        map_ = mazeG.maze.copy()
-        mazeG.maze = tuple(tuple(i) for i in mazeG.maze)
-        # spawns slaves
-        map = mazeG.maze
-        slaves = []
-        for i in range(height * width // 2):
-            x, y = randint(3, height - 1) + 0.5, randint(3, width - 1) + 0.5
-            if map_[int(y)][int(x)] == 0:
-                map_[int(y)][int(x)] += 1
-                slaves.append(slave(randint(0, 2), x, y, 100, 100))
-        # inits render core
 
-        rend = rendering(0.5, density, dl, render_zone, height +
-                         2, width + 2, update_render, redraw_all, 1)
-        # creates bill
-        bill = billy((width - 1) * 100 + 40, height * 100 + 40,
-                     2 * math.pi / 2, "VAn", W, H, map)
-        if map[int(bill.y / 100)][int(bill.x / 100)] != 0:
-            bill = billy((width - 2) * 100 + 40, height * 100 + 40,
-                         3 * math.pi / 2, "VAn", W, H, map)
+    mazeG.main(height, width)
+    map_ = mazeG.maze.copy()
+    mazeG.maze = tuple(tuple(i) for i in mazeG.maze)
+    # spawns slaves
+    map = mazeG.maze
+    slaves = []
+    for i in range(height * width // 2):
+        x, y = randint(3, height - 1) + 0.5, randint(3, width - 1) + 0.5
+        if map_[int(y)][int(x)] == 0:
+            map_[int(y)][int(x)] += 1
+            slaves.append(slave(randint(0, 2), x, y, 100, 100))
+    # inits render core
+
+    rend = rendering(0.5, density, dl, render_zone, height +
+                        2, width + 2, update_render, redraw_all, 1)
+    # creates bill
+    bill = billy((width - 1) * 100 + 40, height * 100 + 40,
+                    2 * math.pi / 2, "VAn", W, H, map)
+    if map[int(bill.y / 100)][int(bill.x / 100)] != 0:
+        bill = billy((width - 2) * 100 + 40, height * 100 + 40,
+                        3 * math.pi / 2, "VAn", W, H, map)
     # returns new variables
-    else:
-        rend = rendering(0.5, density, dl, render_zone, len(
-            map), len(map[0]), update_render, redraw_all, 1)
-        bill = billy((len(map[0])-1) * 100 + 40, (len(map)-1) * 100 +
-                     40, 2 * math.pi / 2, "VAn", W, H, map)
-        slaves = []
     return rend, bill, map, slaves
 
 
@@ -234,7 +228,7 @@ def game_start():
     slaves = 0
     Tx = 0
     Ty = 0
-    rend, bill, map, slaves = start(False)
+    rend, bill, map, slaves = start()
 
     pygame.mouse.set_visible(False)
     game_st = 1
@@ -262,8 +256,8 @@ def multiplayer_start_create():
            [1, 0, 2, 2, 0, 0, 2, 2, 0, 1], [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
            [1, 4, 4, 4, 4, 4, 4, 4, 4, 1]]
     map = tuple(tuple(i) for i in map)
-    rend, bill, map, slaves = start(map)  # генерируем все кроме врагов
-
+    rend = rendering(0.5, density, dl, render_zone, len(map), len(map[0]), update_render, redraw_all, 1)
+    bill = billy((len(map[0])-2) * 100 + 40, (len(map)-2) * 100 +40, 2 * math.pi / 2, "VAn", W, H, map)
 
     slaves = [slave(randint(0, 2), 150, 150, 100, 100)]
     
@@ -300,16 +294,20 @@ def multiplayer_start_join():
     Tx = 0
     Ty = 0
 
-    rend, bill, map, slaves = start(False)  # создаем рендер просто из старта
+   
+
     slaves = []  # Готовим массив для врага
     slaves.append(
         slave(randint(0, 2), (width - 1) * 100 + 40, height * 100 + 40, 100, 100))  # Создаем врага, владелец сервака
     # всегда спавнится в начале лабиринта
     # подключаемся к серваку
     client = Client(server_info[1], int(server_info[0]), delegate_data)
+    
+    map = client.map  # запоминаем карту по инфе с сервака
+    rend = rendering(0.5, density, dl, render_zone, len(map), len(map[0]), update_render, redraw_all, 1)
     bill = billy(client.start_x, client.start_x,
                  2 * math.pi / 2, "VAn", W, H, mazeG.maze)  # создаем игрока по координатам от сервака
-    map = client.map  # запоминаем карту по инфе с сервака
+    
     bill.map = map
     slaves[0].lifes = 100
     update()
