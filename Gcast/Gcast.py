@@ -45,6 +45,8 @@ fps_text_r = font.render("FPS: ", True, (255, 255, 255))
 counter = 0
 
 # def for user input in menues
+
+
 def input_menu(user_input):
     '''
     user_input - pygame ivents
@@ -92,6 +94,8 @@ def draw_stuff():
     pygame.display.flip()
 
 # def that starts gameplay and inits all stuff
+
+
 def redraw_all():
     # takes global variables
     global W, H, start_time_r, counter_r, fps_text_r
@@ -112,6 +116,8 @@ def redraw_all():
     thread_draw_stuff.start()
 
 # def which is called by render core and updates render data
+
+
 def update_render():
     global u, enemies, map
     a = bill.a
@@ -170,13 +176,13 @@ def start():
     # inits render core
 
     rend = rendering(0.5, density, dl, render_zone, height +
-                        2, width + 2, update_render, redraw_all, 1)
+                     2, width + 2, update_render, redraw_all, 1)
     # creates bill
     bill = billy((width - 1) * 100 + 40, height * 100 + 40,
-                    2 * math.pi / 2, "VAn", W, H, map)
+                 2 * math.pi / 2, "VAn", W, H, map)
     if map[int(bill.y / 100)][int(bill.x / 100)] != 0:
         bill = billy((width - 2) * 100 + 40, height * 100 + 40,
-                        3 * math.pi / 2, "VAn", W, H, map)
+                     3 * math.pi / 2, "VAn", W, H, map)
     # returns new variables
     return rend, bill, map, slaves
 
@@ -223,8 +229,10 @@ def multiplayer_start_create():
            [1, 0, 2, 2, 0, 0, 2, 2, 0, 1], [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
            [1, 4, 4, 4, 4, 4, 4, 4, 4, 1]]
     map = tuple(tuple(i) for i in map)
-    rend = rendering(0.5, density, dl, render_zone, len(map), len(map[0]), update_render, redraw_all, 1)
-    bill = billy((len(map[0])-2) * 100 + 40, (len(map)-2) * 100 +40, 2 * math.pi / 2, "VAn", W, H, map)
+    rend = rendering(0.5, density, dl, render_zone, len(
+        map), len(map[0]), update_render, redraw_all, 1)
+    bill = billy((len(map[0])-2) * 100 + 40, (len(map)-2)
+                 * 100 + 40, 2 * math.pi / 2, "VAn", W, H, map)
 
     slaves = [slave(randint(0, 2), 150, 150, 100, 100)]
 
@@ -269,7 +277,8 @@ def multiplayer_start_join():
     client = Client(server_info[1], int(server_info[0]), delegate_data)
 
     map = client.map  # запоминаем карту по инфе с сервака
-    rend = rendering(0.5, density, dl, render_zone, len(map), len(map[0]), update_render, redraw_all, 1)
+    rend = rendering(0.5, density, dl, render_zone, len(
+        map), len(map[0]), update_render, redraw_all, 1)
     bill = billy(client.start_x, client.start_x,
                  2 * math.pi / 2, "VAn", W, H, map)  # создаем игрока по координатам от сервака
 
@@ -284,7 +293,9 @@ def multiplayer_start_join():
     if not client.is_alive():
         client.start()
 
-#def which sends data to online
+# def which sends data to online
+
+
 def delegate_data():
     global me_shoot
 
@@ -435,7 +446,7 @@ main_screen = pygame.transform.scale(main_screen, (Wdisp, Hdisp))
 
 
 menu1, menu2, menu3, menu4, menu5 = create_menus(screen, game_start, game_finish, game_return, game_resume, multiplayer_start_join,
-                 multiplayer_start_create, back_to_menu, open_multiplayer_menu1, create_server_menu, join_server_menu)
+                                                 multiplayer_start_create, back_to_menu, open_multiplayer_menu1, create_server_menu, join_server_menu)
 
 # main core loop
 while not finished:

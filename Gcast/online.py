@@ -26,7 +26,7 @@ class Server(threading.Thread):
                [1, 0, 0, 0, 0, 0, 0, 0, 0, 1], [1, 0, 2, 2, 0, 0, 2, 2, 0, 1],
                [1, 0, 2, 2, 0, 0, 2, 2, 0, 1], [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
                [1, 4, 4, 4, 4, 4, 4, 4, 4, 1]]
-        
+
         map = tuple(tuple(i) for i in map)
 
         data_bytes = bytearray(str(map), 'utf8')
