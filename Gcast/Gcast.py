@@ -252,12 +252,8 @@ def multiplayer_start_create():
     global enemies
 
     multiplayer, is_server = True, True
-    rend = 0
-    bill = 0
-    map = 0
-    slaves = 0
-    Tx = 0
-    Ty = 0
+    rend,bill,map,slaves,Tx,Ty = 0,0,0,0,0,0
+
 
     map = [[1, 5, 5, 5, 5, 5, 5, 5, 5, 1], [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
            [1, 0, 2, 2, 0, 0, 2, 2, 0, 1], [1, 0, 2, 2, 0, 0, 2, 2, 0, 1],
