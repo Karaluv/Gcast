@@ -118,8 +118,68 @@ def draw_stuff():
     bill.draw(screen)
     pygame.display.flip()
 
-
 # def that starts gameplay and inits all stuff
+
+
+def redraw_all():
+    # takes global variables
+    global W, H, start_time_r, counter_r, fps_text_r
+    # prints out fps
+    counter_r += 1
+    if counter_r == 10:
+        fps_text_r = font.render(
+            "REND CORE FPS: " + str(round(counter_r / (time.time() - start_time_r))), True, (255, 255, 255))
+        counter_r = 0
+        start_time_r = time.time()
+    # blits rendered image
+    x = rend.xs
+    final_render = pygame.transform.scale(
+        render_zone, (int(W * render_zone.get_width() / x), int(H)))
+    screen.blit(final_render, (math.sin(bill.x) *
+                0 - 0, math.cos(bill.Ty) * 0 - 0))
+    thread_draw_stuff = Thread(target=draw_stuff, args=())
+    thread_draw_stuff.start()
+
+# def which is called by render core and updates render data
+
+
+def update_render():
+    global u, enemies, map
+    a = bill.a
+    x0, y0 = bill.x, bill.y
+    return map, enemies, math.cos(a - u), math.sin(a - u), math.cos(a + u), math.sin(
+        a + u), 0.15, 7, bill.x, bill.y, bill.z
+
+
+# def which updates parametrs of enemies and all other stuff by every tick of main core
+def update():
+    # loads global variables
+    global density, u, Tx, Ty, W, H, get
+    global enemies, bill
+    # updtae bill
+    bill.update(slaves)
+    # update enemy data
+    slave_data = ()
+    for i in range(len(slaves)):
+        slave_data += ((slaves[i].x, slaves[i].y, 3))
+
+    # check if slaves shoot at main hero
+    enemies = ()
+    l = 0
+    if multiplayer:
+        if len(slaves) > 0:
+            slaves[0].walk(map, bill.x, bill.y, [], 0, True)
+
+    for i in range(len(slaves)):
+        if not multiplayer:
+            if slaves[i - l].walk(map, bill.x, bill.y, slaves, i-l, False):
+                bill.hp -= 0.5
+        enemies += ((slaves[i - l].x, slaves[i - l].y,
+                     slaves[i - l].type, slaves[i - l].frame))
+
+        if (slaves[i - l].death(bill.x, bill.y)):
+            del (slaves[i - l])
+            l += 1
 
 
 def start(map):
@@ -157,137 +217,6 @@ def start(map):
     return rend, bill, map, slaves
 
 
-# def which is called by render core and updates render data
-
-
-def update_render():
-    global u, enemies, map
-    a = bill.a
-    x0, y0 = bill.x, bill.y
-    return map, enemies, math.cos(a - u), math.sin(a - u), math.cos(a + u), math.sin(
-        a + u), 0.15, 7, bill.x, bill.y, bill.z
-
-
-# def which draws stuff too
-
-
-def redraw_all():
-    # takes global variables
-    global W, H, start_time_r, counter_r, fps_text_r
-    # prints out fps
-    counter_r += 1
-    if counter_r == 10:
-        fps_text_r = font.render(
-            "REND CORE FPS: " + str(round(counter_r / (time.time() - start_time_r))), True, (255, 255, 255))
-        counter_r = 0
-        start_time_r = time.time()
-    # blits rendered image
-    x = rend.xs
-    final_render = pygame.transform.scale(
-        render_zone, (int(W * render_zone.get_width() / x), int(H)))
-    screen.blit(final_render, (math.sin(bill.x) *
-                0 - 0, math.cos(bill.Ty) * 0 - 0))
-    thread_draw_stuff = Thread(target=draw_stuff, args=())
-    thread_draw_stuff.start()
-
-
-# def which updates parametrs of enemies and all other stuff by every tick of main core
-def update():
-    # loads global variables
-    global density, u, Tx, Ty, W, H, get
-    global enemies, bill
-    # updtae bill
-    bill.update(slaves)
-    # update enemy data
-    slave_data = ()
-    for i in range(len(slaves)):
-        slave_data += ((slaves[i].x, slaves[i].y, 3))
-
-    # check if slaves shoot at main hero
-    enemies = ()
-    l = 0
-    if multiplayer:
-        if len(slaves) > 0:
-            slaves[0].walk(map, bill.x, bill.y, [], 0, True)
-
-    for i in range(len(slaves)):
-        if not multiplayer:
-            if slaves[i - l].walk(map, bill.x, bill.y, slaves, i-l, False):
-                bill.hp -= 0.5
-        enemies += ((slaves[i - l].x, slaves[i - l].y,
-                     slaves[i - l].type, slaves[i - l].frame))
-
-        if (slaves[i - l].death(bill.x, bill.y)):
-            del (slaves[i - l])
-            l += 1
-
-
-# starts out game and inits parametrs
-pygame.init()
-
-infoObject = pygame.display.Info()
-W, H = infoObject.current_w, infoObject.current_h
-Wdisp, Hdisp = infoObject.current_w, infoObject.current_h
-render_zone = pygame.Surface((700, 200))
-
-# sets white and black
-wh = (255, 255, 255)
-bl = (0, 0, 0)
-
-# loads video for intro
-cap = cv2.VideoCapture(os.path.join(
-    sys.path[0] + "\\pony\\video\\", "Intro_video_resized.mp4"))
-success, img = cap.read()
-shape = img.shape[1::-1]
-wn = pygame.display.set_mode((W, H))
-clock = pygame.time.Clock()
-
-# plays intro sound
-pygame.mixer.music.load(os.path.join(
-    sys.path[0] + "\\pony\\music\\", "Intro_sound.mp3"))
-pygame.mixer.music.set_volume(1)
-pygame.mixer.music.play(1)
-
-# plays intro
-while success:
-    clock.tick(24)
-    success, img = cap.read()
-    if (img is None):
-        break
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            success = False
-        elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_ESCAPE:
-                success = False
-    wn.blit(pygame.transform.scale(pygame.image.frombuffer(
-        img.tobytes(), shape, "BGR"), (Wdisp, Hdisp)), (0, 0))
-    pygame.display.update()
-
-
-# sets ingame music
-pygame.mixer.music.load(os.path.join(
-    sys.path[0] + "\\pony\\music\\", "main_theme.mp3"))
-pygame.mixer.music.set_volume(0.2)
-pygame.mixer.music.play(-1)
-
-# resets creen and pygame
-screen = pygame.display.set_mode((W, H), pygame.SRCALPHA)
-pygame.display.update()
-# for timer data
-clock = pygame.time.Clock()
-
-# sets ingame varibles again
-finished = False
-rend = 0
-bill = 0
-map = 0
-slaves = 0
-render_w = 355
-render_h = 200
-Tx, Ty = 0, 0
-
-
 # def for buttons
 
 
@@ -312,19 +241,6 @@ def game_start():
         rend.start()
 
 
-def delegate_data():
-    global me_shoot
-
-    if len(slaves) > 0:
-        if me_shoot == 1:
-            me_shoot = 0
-            return bill.x, bill.y, slaves[0].lifes, 1, bill.moving
-        else:
-            return bill.x, bill.y, slaves[0].lifes, 0, bill.moving
-    else:
-        return 0, 0, 0, 0, 0
-
-
 def multiplayer_start_create():
     global server_info
     global game_st, W, H
@@ -335,8 +251,7 @@ def multiplayer_start_create():
     global is_server
     global enemies
 
-    multiplayer = True
-    is_server = True
+    multiplayer, is_server = True, True
     rend = 0
     bill = 0
     map = 0
@@ -353,11 +268,13 @@ def multiplayer_start_create():
 
     rend, bill, map, slaves = start(map)  # генерируем все кроме врагов
     slaves = []  # готовим пустой массив для противника
+
     for i in range(height * width // 2):  # ищем свободное место для спавна противника
         x, y = randint(3, height - 1) + 0.5, randint(3, width - 1) + 0.5
         if mazeG.maze[int(y)][int(x)] == 0:
             slaves.append(slave(randint(0, 2), x, y, 100, 100))
             break  # Когда находим, создаем врага и прерываем цикл
+
     server = Server(2, int(server_info[0]), map, x * 100, y * 100,
                     delegate_data)  # Создаем сервак и отправляем сразу карту
     # и координаты спавна врага
@@ -413,6 +330,19 @@ def multiplayer_start_join():
         client.start()
 
 
+def delegate_data():
+    global me_shoot
+
+    if len(slaves) > 0:
+        if me_shoot == 1:
+            me_shoot = 0
+            return bill.x, bill.y, slaves[0].lifes, 1, bill.moving
+        else:
+            return bill.x, bill.y, slaves[0].lifes, 0, bill.moving
+    else:
+        return 0, 0, 0, 0, 0
+
+
 def game_finish():
     global finished
     finished = True
@@ -452,10 +382,60 @@ def game_reset_mode(paused):
     return not paused
 
 
+def back_to_menu():
+    global game_st
+    game_st = 0
+
+
 def open_multiplayer_menu1():
     global game_st
     game_st = 3
 
+
+def create_server_menu():
+    global game_st
+    game_st = 4
+
+
+def join_server_menu():
+    global game_st
+    game_st = 5
+
+
+# starts out game and inits parametrs
+pygame.init()
+
+infoObject = pygame.display.Info()
+W, H = infoObject.current_w, infoObject.current_h
+Wdisp, Hdisp = infoObject.current_w, infoObject.current_h
+render_zone = pygame.Surface((700, 200))
+
+# sets white and black
+wh = (255, 255, 255)
+bl = (0, 0, 0)
+
+
+# sets ingame music
+pygame.mixer.music.load(os.path.join(
+    sys.path[0] + "\\pony\\music\\", "main_theme.mp3"))
+pygame.mixer.music.set_volume(0.2)
+pygame.mixer.music.play(-1)
+
+# resets creen and pygame
+screen = pygame.display.set_mode((W, H), pygame.SRCALPHA)
+pygame.display.update()
+# for timer data
+clock = pygame.time.Clock()
+
+# sets ingame varibles again
+finished = False
+rend = 0
+bill = 0
+map = 0
+slaves = 0
+render_w = 355
+render_h = 200
+Tx, Ty = 0, 0
 
 # gets display size
 Wdisp, Hdisp = screen.get_size()
@@ -483,17 +463,6 @@ menu2 = Menu(buttons2, screen)
 # Меню где выбираем, создаем сервер или присоединяемся
 buttons3 = [0] * 3
 
-
-def create_server_menu():
-    global game_st
-    game_st = 4
-
-
-def join_server_menu():
-    global game_st
-    game_st = 5
-
-
 s = textsurf('Create server')
 buttons3[0] = button(s, Wdisp, Hdisp, 0.375, 0.3,
                      0.25, 0.08, create_server_menu)
@@ -501,11 +470,6 @@ buttons3[0] = button(s, Wdisp, Hdisp, 0.375, 0.3,
 s = textsurf('Join server')
 buttons3[1] = button(s, Wdisp, Hdisp, 0.375, 0.44,
                      0.25, 0.08, join_server_menu)
-
-
-def back_to_menu():
-    global game_st
-    game_st = 0
 
 
 s = textsurf('   Back   ')
@@ -546,6 +510,39 @@ game_st = 0
 main_screen = pygame.image.load(os.path.join(
     sys.path[0] + "\\pony\\", "main_screen.png"))
 main_screen = pygame.transform.scale(main_screen, (Wdisp, Hdisp))
+
+
+# loads video for intro
+cap = cv2.VideoCapture(os.path.join(
+    sys.path[0] + "\\pony\\video\\", "Intro_video_resized.mp4"))
+success, img = cap.read()
+shape = img.shape[1::-1]
+wn = pygame.display.set_mode((W, H))
+clock = pygame.time.Clock()
+
+# plays intro sound
+pygame.mixer.music.load(os.path.join(
+    sys.path[0] + "\\pony\\music\\", "Intro_sound.mp3"))
+pygame.mixer.music.set_volume(1)
+pygame.mixer.music.play(1)
+
+
+# plays intro
+while success:
+    clock.tick(24)
+    success, img = cap.read()
+    if (img is None):
+        break
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            success = False
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                success = False
+    wn.blit(pygame.transform.scale(pygame.image.frombuffer(
+        img.tobytes(), shape, "BGR"), (Wdisp, Hdisp)), (0, 0))
+    pygame.display.update()
+
 
 # main core loop
 while not finished:
