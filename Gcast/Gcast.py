@@ -144,6 +144,10 @@ def update():
     if multiplayer:
         if len(slaves) > 0:
             slaves[0].walk(map, bill.x, bill.y, [], 0, True)
+            
+            if slaves[0].death(bill.x,bill.y):
+                slaves[0] = slave(randint(0, 2), 1.5, 1.5, 100, 100)
+                
 
     for i in range(len(slaves)):
         if not multiplayer:
