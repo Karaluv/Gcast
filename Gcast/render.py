@@ -205,7 +205,7 @@ class rendering(threading.Thread):
                     k = ch / zn
                     w = k / density
                     #checks if enemy is in field of view
-                    if ch<0 and zn<0:
+                    if ch<-0.2 and zn<-0.2:
                         if wall_data[min(int(w),len(wall_data)-1)][0]>l:
                             enemy_render_data.append([l,w,enemies[i+2],enemies[i+3]])
 

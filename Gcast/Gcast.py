@@ -399,6 +399,13 @@ def game_resume():
 def game_return():
     global game_st
     game_st = 0
+    if multiplayer:
+        if is_server == True:
+            server.stop()
+            server.join()
+        else:
+            client.stop()
+            client.join()
     rend.stop()
     rend.join()
     screen.fill(bl)
@@ -543,7 +550,10 @@ while not finished:
             if bill.is_shoot():
                 slaves = bill.shoot(slaves, map)
                 me_shoot = 1
-        update()
+        if not bill.died:
+            update()
+        else:
+            game_st = 2
     if game_st == 0:
         screen.blit(main_screen, (0, 0))
         menu1.draw_all()

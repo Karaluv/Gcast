@@ -65,6 +65,7 @@ class Server(threading.Thread):
             coords = str(x) + "!" + str(y) + "!" + str(hp) + "!" + str(shoot) + "!" + str(move) + "!"
             self.send_data(coords)
             self.data = self.get_data()
+        self.close_server()
 
 
 
