@@ -382,14 +382,7 @@ class billy:
             pygame.mixer.Channel(2).play(pygame.mixer.Sound(
                 os.path.join(sys.path[0], "pony\\music\\die.mp3")))
             
-            go = True
-            while go:
-                x0,y0 = randint(1,len(self.map[0])-1),randint(1,len(self.map)-1)
-                if self.map[y0][x0] == 0:
-                    self.x = x0*100+40
-                    self.y = y0*100+40
-                    self.hp = 100
-                    go = False
+
                     
 
     def keyinput(self, event):
@@ -503,7 +496,7 @@ class billy:
         dsin = math.sin(a) * dl
 
         l = 0
-
+        
         while not find and l < maxR:
 
             if map[int(y)][int(x)] > 0:
