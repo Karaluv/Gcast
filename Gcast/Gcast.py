@@ -542,6 +542,10 @@ while not finished:
             is_enemy_shooting = server.data[3]*2
             is_enemy_moving = server.data[4]
             
+            if is_enemy_shooting == 1:
+                    pygame.mixer.Channel(2).play(pygame.mixer.Sound(os.path.join(sys.path[0], "pony\\music\\enemy3_shoot.mp3")))
+                    pygame.mixer.Channel(2).set_volume(1)
+            
             slaves[0].state = max(is_enemy_moving,is_enemy_shooting)
             if bill.is_shoot():
                 slaves = bill.shoot(slaves, map)
@@ -556,6 +560,10 @@ while not finished:
             is_enemy_moving = client.data[4]
             
             slaves[0].state = max(is_enemy_moving,is_enemy_shooting)
+            
+            if is_enemy_shooting == 1:
+                    pygame.mixer.Channel(2).play(pygame.mixer.Sound(os.path.join(sys.path[0], "pony\\music\\enemy3_shoot.mp3")))
+                    pygame.mixer.Channel(2).set_volume(1)
             
             
                 
