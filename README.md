@@ -16,6 +16,7 @@
 - moviepy.editor
 - time
 - colorama
+- copy
 
 **Управление**
 
