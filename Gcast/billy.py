@@ -433,7 +433,7 @@ class billy:
         self.WEAPONS[self.CURRENT_WEAPON].input(event)
 
     def draw(self, screen):
-
+        
         minimap_small = pygame.Surface.copy(
             self.minimap.subsurface((self.y / 100 * self.res, self.x / 100 * self.res, 200, 200)))
         minimap_small = pygame.transform.flip(minimap_small, False, True)
@@ -455,7 +455,7 @@ class billy:
                            (screen.get_width() - 100, 100), 5)
         pygame.draw.circle(screen, (100, 100, 100),
                            (screen.get_width() - 100, 100), 102, 4)
-
+        
         W, H = self.W, self.H
 
         # text = font.render("Ammo: " + str(self.ammo), True, (255, 255, 255))
