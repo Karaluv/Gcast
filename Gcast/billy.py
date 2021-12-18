@@ -284,10 +284,15 @@ class billy:
 
         self.ak.z_recoil = 0.03
         self.ak.a_recoil = 0.07
+        
+        self.ppsh = load_gun("ppsh", (True, 50, 0.3 * scale_x,
+                           0.13 * scale_y, 1, 2, 0.62, 0.67, 1))
+        self.ppsh.z_recoil = 0.02
+        self.ppsh.a_recoil = 0.04
 
         self.pm.sleeve_posx = 0.82
 
-        self.WEAPONS = [self.ak, self.svt, self.pm]
+        self.WEAPONS = [self.ak, self.svt, self.ppsh,self.pm]
         self.CURRENT_WEAPON = 0
 
         self.died = False
