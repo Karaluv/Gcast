@@ -4,7 +4,7 @@ import os
 import sys
 from random import randint
 
-
+sep = os.path.sep
 class slave:
 
     def __init__(self, type, x, y, stepx, stepy):
@@ -52,7 +52,7 @@ class slave:
                 self.start_frame = 17
                 self.maxFrame = 21
                 pygame.mixer.Channel(3).play(pygame.mixer.Sound(
-                    os.path.join(sys.path[0], "pony\\music\\slave_1_death_sound.mp3")))
+                    os.path.join(sys.path[0], f"pony{sep}music{sep}slave_1_death_sound.mp3")))
                 if r < 2:
                     pygame.mixer.Channel(3).set_volume(1)
                 elif r < 4:
@@ -63,7 +63,7 @@ class slave:
                 self.start_frame = 18
                 self.maxFrame = 25
                 pygame.mixer.Channel(4).play(pygame.mixer.Sound(
-                    os.path.join(sys.path[0], "pony\\music\\slave_2_death_sound.mp3")))
+                    os.path.join(sys.path[0], f"pony{sep}music{sep}slave_2_death_sound.mp3")))
                 if r < 2:
                     pygame.mixer.Channel(4).set_volume(1.5)
                 elif r < 4:
@@ -74,7 +74,7 @@ class slave:
                 self.start_frame = 14
                 self.maxFrame = 30
                 pygame.mixer.Channel(5).play(pygame.mixer.Sound(
-                    os.path.join(sys.path[0], "pony\\music\\slave_3_death_sound.mp3")))
+                    os.path.join(sys.path[0], f"pony{sep}music{sep}slave_3_death_sound.mp3")))
                 if r < 2:
                     pygame.mixer.Channel(5).set_volume(1)
                 elif r < 4:
@@ -138,13 +138,14 @@ class slave:
                     if c == 1:
                         hit = True
                         #pygame.mixer.music.load(os.path.join(sys.path[0] + "\\pony\\music\\", "enemy_shoot.mp3"))
+
                         if self.type == 1 or self.type == 2:
                             pygame.mixer.Channel(2).play(pygame.mixer.Sound(
-                                os.path.join(sys.path[0], "pony\\music\\enemy3_shoot.mp3")))
+                                os.path.join(sys.path[0], f"pony{sep}music{sep}enemy3_shoot.mp3")))
                             pygame.mixer.Channel(2).set_volume(1)
                         if self.type == 0:
                             pygame.mixer.Channel(2).play(pygame.mixer.Sound(
-                                os.path.join(sys.path[0], "pony\\music\\enemy2_shoot.mp3")))
+                                os.path.join(sys.path[0], f"pony{sep}music{sep}enemy2_shoot.mp3")))
                             pygame.mixer.Channel(2).set_volume(1)
 
             else:

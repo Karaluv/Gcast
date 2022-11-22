@@ -9,7 +9,7 @@ import pygame
 
 pygame.init()
 pygame.font.init()
-font = pygame.font.Font(sys.path[0] + "\\pony\\hud\\font_elec.ttf", 40)
+font = pygame.font.Font(os.path.join(sys.path[0], "pony", "hud", "font_elec.ttf"), 40)
 
 infoObject = pygame.display.Info()
 W, H = infoObject.current_w, infoObject.current_h
@@ -34,12 +34,14 @@ class gun:
         self.a_recoil = 0.1
 
         self.sleeve = []
+
+        sep = os.path.sep
         self.sleeve.append(pygame.image.load(
-            sys.path[0] + "\\pony\\weapon\\sleeve0.png"))
+            sys.path[0] + f"{sep}pony{sep}weapon{sep}sleeve0.png"))
         self.sleeve.append(pygame.image.load(
-            sys.path[0] + "\\pony\\weapon\\sleeve1.png"))
+            sys.path[0] + f"{sep}pony{sep}weapon{sep}sleeve1.png"))
         self.sleeve.append(pygame.image.load(
-            sys.path[0] + "\\pony\\weapon\\sleeve2.png"))
+            sys.path[0] + f"{sep}pony{sep}weapon{sep}sleeve2.png"))
 
         self.sleeve_x = 0
         self.sleeve_y = 0
@@ -212,22 +214,24 @@ class billy:
         self.ka = False
         self.kd = False
 
+        sep = os.path.sep
+
         # Загрузка текстурок для худа и прочего
         self.bullet = pygame.image.load(
-            sys.path[0] + "\\pony\\hud\\bullet.png")
+            sys.path[0] + f"{sep}pony{sep}hud{sep}bullet.png")
         self.bullet.set_colorkey((0, 0, 0))
 
         self.hp_bar = pygame.image.load(
-            sys.path[0] + "\\pony\\hud\\hp_bar.png")
+            sys.path[0] + f"{sep}pony{sep}hud{sep}hp_bar.png")
 
         self.ammo_bar = pygame.image.load(
-            sys.path[0] + "\\pony\\hud\\ammo_bar.png")
+            sys.path[0] + f"{sep}pony{sep}hud{sep}ammo_bar.png")
 
-        self.scope = pygame.image.load(sys.path[0] + "\\pony\\hud\\scope.png")
+        self.scope = pygame.image.load(sys.path[0] + f"{sep}pony{sep}hud{sep}scope.png")
         self.scope = pygame.transform.rotozoom(self.scope, 0, 0.5)
 
         self.hitmark = pygame.image.load(
-            sys.path[0] + "\\pony\\hud\\hitmark.png")
+            sys.path[0] + f"{sep}pony{sep}hud{sep}hitmark.png")
         self.hitmark = pygame.transform.rotozoom(self.hitmark, 0, 0.1)
 
         def load(arr, name):
@@ -241,21 +245,19 @@ class billy:
             onlyfiles = next(os.walk(path))
             for i in range(len(onlyfiles[2])):
 
-                arr.append(pygame.image.load(
-                    files[0] + "\\" + "(" + str(i + 1) + ").png").convert_alpha())
+                arr.append(pygame.image.load(os.path.join(files[0], "(" + str(i + 1) + ").png")).convert_alpha())
             return arr
 
         def load_gun(folder, args):
-            idle = pygame.image.load(
-                sys.path[0] + "\\pony\\weapon\\" + folder + "\\idle.png")
+            idle = pygame.image.load(os.path.join(sys.path[0], "pony", "weapon", folder, "idle.png"))
             shoot1 = []
-            shoot1 = load(shoot1, "pony\\weapon\\" + folder + "\\shoot")
+            shoot1 = load(shoot1, f"pony{sep}weapon{sep}" + folder + f"{sep}shoot")
             reload1 = []
-            reload1 = load(reload1, "pony\\weapon\\" + folder + "\\reload")
+            reload1 = load(reload1, f"pony{sep}weapon{sep}" + folder + f"{sep}reload")
             reload_sound = pygame.mixer.Sound(
-                sys.path[0] + "\\pony\\weapon\\" + folder + "\\reload.mp3")
+                sys.path[0] + f"{sep}pony{sep}weapon{sep}" + folder + f"{sep}reload.mp3")
             shoot_sound = pygame.mixer.Sound(
-                sys.path[0] + "\\pony\\weapon\\" + folder + "\\shoot.mp3")
+                sys.path[0] + f"{sep}pony{sep}weapon{sep}" + folder + f"{sep}shoot.mp3")
             gun_ = gun(args[0], args[1], shoot1, idle, reload1, reload_sound, shoot_sound, args[2], args[3], args[4],
                        args[5], args[8])
             gun_.sleeve_posx = args[6]
@@ -301,8 +303,7 @@ class billy:
                 if self.map[i][j] != 0:
                     pygame.draw.rect(self.minimap, (100, 100, 100),
                                      (i * self.res + 100, j * self.res + 100, self.res, self.res))
-        self.minimap_circle = pygame.image.load(
-            sys.path[0] + "\\pony\\hud\\minimap.png")
+        self.minimap_circle = pygame.image.load(os.path.join(sys.path[0], "pony", "hud", "minimap.png"))
 
     def is_shoot(self):
         if self.WEAPONS[self.CURRENT_WEAPON].shooting and self.WEAPONS[self.CURRENT_WEAPON].frame_counter == \
