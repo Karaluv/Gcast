@@ -13,6 +13,8 @@ from render import rendering
 from slave import slave
 from menu_create import create_menus
 
+sep = os.path.sep
+
 # parameters for the program
 # target core fps
 FPS = 30
@@ -37,8 +39,7 @@ last_enemy_coords_y = 0
 # init some stuff for printing out stats
 pygame.font.init()
 font = pygame.font.Font(None, 30)
-font1 = pygame.font.Font(os.path.join(
-    sys.path[0] + "\\ttf\\", "MAGNETOB.ttf"), 40)
+font1 = pygame.font.Font(os.path.join(sys.path[0], "ttf", "MAGNETOB.ttf"), 40)
 fps_text = font.render("FPS: ", True, (255, 255, 255))
 fps_text_r = font.render("FPS: ", True, (255, 255, 255))
 # FPS core timer
@@ -386,16 +387,14 @@ wh = (255, 255, 255)
 bl = (0, 0, 0)
 
 # plays intro sound
-pygame.mixer.music.load(os.path.join(
-    sys.path[0] + "\\pony\\music\\", "Intro_sound.mp3"))
+pygame.mixer.music.load(os.path.join(sys.path[0], "pony", "music", "Intro_sound.mp3"))
 pygame.mixer.music.set_volume(1)
 pygame.mixer.music.play(1)
 
 
 # plays intro
 # loads video for intro
-cap = cv2.VideoCapture(os.path.join(
-    sys.path[0] + "\\pony\\video\\", "Intro_video_resized.mp4"))
+cap = cv2.VideoCapture(os.path.join(sys.path[0], "pony", "video", "Intro_video_resized.mp4"))
 success, img = cap.read()
 shape = img.shape[1::-1]
 wn = pygame.display.set_mode((W, H))
@@ -417,8 +416,7 @@ while success:
 
 
 # sets ingame music
-pygame.mixer.music.load(os.path.join(
-    sys.path[0] + "\\pony\\music\\", "main_theme.mp3"))
+pygame.mixer.music.load(os.path.join(sys.path[0], "pony", "music", "main_theme.mp3"))
 pygame.mixer.music.set_volume(0.2)
 pygame.mixer.music.play(-1)
 
@@ -445,8 +443,7 @@ counter_r = 0
 game_paused = False
 game_st = 0
 
-main_screen = pygame.image.load(os.path.join(
-    sys.path[0] + "\\pony\\", "main_screen.png"))
+main_screen = pygame.image.load(os.path.join(sys.path[0], "pony", "main_screen.png"))
 main_screen = pygame.transform.scale(main_screen, (Wdisp, Hdisp))
 
 
@@ -475,7 +472,7 @@ while not finished:
 
                 if is_enemy_shooting == 2:
                     pygame.mixer.Channel(2).play(pygame.mixer.Sound(
-                        os.path.join(sys.path[0], "pony\\music\\enemy3_shoot.mp3")))
+                        os.path.join(sys.path[0], f"pony{sep}music{sep}enemy3_shoot.mp3")))
                     pygame.mixer.Channel(2).set_volume(1)
 
                 slaves[0].state = max(is_enemy_moving, is_enemy_shooting)
@@ -497,7 +494,7 @@ while not finished:
 
                 if is_enemy_shooting == 2:
                     pygame.mixer.Channel(2).play(pygame.mixer.Sound(
-                        os.path.join(sys.path[0], "pony\\music\\enemy3_shoot.mp3")))
+                        os.path.join(sys.path[0], f"pony{sep}music{sep}enemy3_shoot.mp3")))
                     pygame.mixer.Channel(2).set_volume(1)
 
                 if bill.is_shoot():
@@ -537,18 +534,17 @@ while not finished:
 
     if game_st == 1 and bill.y < 150 and not multiplayer:
         # loads video for intro
-        cap = cv2.VideoCapture(os.path.join(
-            sys.path[0] + "\\pony\\video\\", "Ending_video_resized.mp4"))
+        cap = cv2.VideoCapture(os.path.join(sys.path[0], "pony", "video", "Ending_video_resized.mp4"))
         success, img = cap.read()
         shape = img.shape[1::-1]
 
         ending_time = 0
         h = -3330
-        file = os.path.join(sys.path[0] + "\\pony\\", "titles.txt")
+        file = os.path.join(sys.path[0] + f"{sep}pony{sep}", "titles.txt")
         titles = []
-        with open(os.path.join(sys.path[0] + "\\pony\\", "titles.txt")) as file:
+        with open(os.path.join(sys.path[0] + f"{sep}pony{sep}", "titles.txt")) as file:
             inp = open(os.path.join(
-                sys.path[0] + "\\pony\\", "titles.txt"), 'r')
+                sys.path[0] + f"{sep}pony{sep}", "titles.txt"), 'r')
             while True:
                 line = inp.readline()
                 line = line.replace('\n', ' ')
@@ -566,7 +562,7 @@ while not finished:
 
         # plays intro sound
         pygame.mixer.music.load(os.path.join(
-            sys.path[0] + "\\pony\\music\\", "Ending_sound.mp3"))
+            sys.path[0] + f"{sep}pony{sep}music{sep}", "Ending_sound.mp3"))
         pygame.mixer.music.set_volume(1)
         pygame.mixer.music.play(1)
 
@@ -592,8 +588,7 @@ while not finished:
             pygame.display.update()
             ending_time += 1
         pygame.mouse.set_visible(True)
-        pygame.mixer.music.load(os.path.join(
-            sys.path[0] + "\\pony\\music\\", "main_theme.mp3"))
+        pygame.mixer.music.load(os.path.join(sys.path[0] + f"{sep}pony{sep}music{sep}", "main_theme.mp3"))
         pygame.mixer.music.set_volume(0.2)
         pygame.mixer.music.play(-1)
     # fps counter

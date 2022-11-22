@@ -53,8 +53,7 @@ class rendering(threading.Thread):
             files = next(os.walk(path))
             onlyfiles = next(os.walk(path))
             for i in range(len(onlyfiles[2])):
-                arr[-1].append(pygame.image.load(files[0]+"\\" +
-                               onlyfiles[2][i]).convert_alpha())
+                arr[-1].append(pygame.image.load(os.path.join(files[0], onlyfiles[2][i])).convert_alpha())
                 arr[-1][-1] = pygame.transform.scale(arr[-1][-1], (200, 200))
             return arr
 
@@ -69,23 +68,24 @@ class rendering(threading.Thread):
             files = next(os.walk(path))
             onlyfiles = next(os.walk(path))
             for i in range(len(onlyfiles[2])):
-                arr[-1].append(pygame.image.load(files[0]+"\\" +
-                               "  ("+str(i+1)+").png").convert_alpha())
+                arr[-1].append(pygame.image.load(os.path.join(files[0], "  ("+str(i+1)+").png")).convert_alpha())
             return arr
 
         # block which loads all data
         self.ston = []
         self.sprites = []
 
-        self.ston = load_wall(self.ston, "pony\\wall\\cia")
-        self.ston = load_wall(self.ston, "pony\\wall\\flag")
-        self.ston = load_wall(self.ston, "pony\\wall\\flagblood")
-        self.ston = load_wall(self.ston, "pony\\wall\\enter")
-        self.ston = load_wall(self.ston, "pony\\wall\\exit")
+        sep = os.path.sep
 
-        self.sprites = load_slaves(self.sprites, "pony\\sprites\\slave1")
-        self.sprites = load_slaves(self.sprites, "pony\\sprites\\slave2")
-        self.sprites = load_slaves(self.sprites, "pony\\sprites\\slave3")
+        self.ston = load_wall(self.ston, f"pony{sep}wall{sep}cia")
+        self.ston = load_wall(self.ston, f"pony{sep}wall{sep}flag")
+        self.ston = load_wall(self.ston, f"pony{sep}wall{sep}flagblood")
+        self.ston = load_wall(self.ston, f"pony{sep}wall{sep}enter")
+        self.ston = load_wall(self.ston, f"pony{sep}wall{sep}exit")
+
+        self.sprites = load_slaves(self.sprites, f"pony{sep}sprites{sep}slave1")
+        self.sprites = load_slaves(self.sprites, f"pony{sep}sprites{sep}slave2")
+        self.sprites = load_slaves(self.sprites, f"pony{sep}sprites{sep}slave3")
 
         self.sprites = tuple(tuple(i) for i in self.sprites)
         self.ston = tuple(tuple(i) for i in self.ston)

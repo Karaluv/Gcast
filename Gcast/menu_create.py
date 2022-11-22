@@ -4,8 +4,7 @@ import pygame
 from buttons import button, inputfield, just_text
 from menu import Menu
 
-font1 = pygame.font.Font(os.path.join(
-    sys.path[0] + "\\ttf\\", "MAGNETOB.ttf"), 40)
+font1 = pygame.font.Font(os.path.join(sys.path[0], "ttf", "MAGNETOB.ttf"), 40)
 
 # def for creating text
 def textsurf(text):

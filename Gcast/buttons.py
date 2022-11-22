@@ -1,8 +1,11 @@
-import pygame
 import sys
 import math
+import os
 
-font1 = pygame.font.Font(sys.path[0]+"\\ttf\\MAGNETOB.ttf", 40)
+import pygame
+
+pygame.font.init()
+font1 = pygame.font.Font(os.path.join(sys.path[0], "ttf", "MAGNETOB.ttf"), 40)
 
 
 def textsurf(text):
