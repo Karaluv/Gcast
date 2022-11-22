@@ -380,8 +380,7 @@ class billy:
         if self.hp <= 0:
             self.died = True
             self.hp = 0
-            pygame.mixer.Channel(2).play(pygame.mixer.Sound(
-                os.path.join(sys.path[0], "pony\\music\\die.mp3")))
+            pygame.mixer.Channel(2).play(pygame.mixer.Sound(os.path.join(sys.path[0], f"pony{sep}music{sep}die.mp3")))
             
             go = True
             while go:
